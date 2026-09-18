@@ -731,6 +731,23 @@ function canvasToBlob(canvas) {
   return new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
 }
 
+function downloadBlob(blob) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = souvenirFilename();
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+function canShareFile(file) {
+  return typeof navigator.share === "function"
+    && typeof navigator.canShare === "function"
+    && navigator.canShare({ files: [file] });
+}
+
 async function exportSouvenir() {
   if (Object.keys(state.photos).length === 0) {
     showToast("Capture at least one photo first.");
@@ -747,15 +764,27 @@ async function exportSouvenir() {
       showToast("Couldn't create the image — try again.");
       return;
     }
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = souvenirFilename();
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 4000);
-    showToast("Souvenir saved to your device.");
+    const file = new File([blob], souvenirFilename(), { type: "image/png" });
+
+    // On iPhone/Android, a plain <a download> link lands in the Files app,
+    // not the Photos library — the share sheet's "Save Image" action is the
+    // only way a website can put an image into Photos, so try that first.
+    if (canShareFile(file)) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: "My AI Human Bingo souvenir",
+        });
+        showToast("Choose “Save Image” in the share sheet to add it to your Photos.", 4200);
+        return;
+      } catch (err) {
+        if (err && err.name === "AbortError") return; // user cancelled, nothing to fall back to
+        console.warn("Web Share failed, falling back to a direct download.", err);
+      }
+    }
+
+    downloadBlob(blob);
+    showToast("Souvenir downloaded to this device.");
   } catch (err) {
     console.error(err);
     showToast("Something went wrong saving the souvenir.");
@@ -792,13 +821,9 @@ async function shareSouvenir(platform) {
       showToast("Couldn't prepare the image — try again.");
       return;
     }
-
     const file = new File([blob], souvenirFilename(), { type: "image/png" });
-    const canShareFiles = typeof navigator.share === "function"
-      && typeof navigator.canShare === "function"
-      && navigator.canShare({ files: [file] });
 
-    if (canShareFiles) {
+    if (canShareFile(file)) {
       try {
         await navigator.share({
           files: [file],
@@ -806,10 +831,11 @@ async function shareSouvenir(platform) {
           text: "I filled my AI Human Bingo board — check it out!",
         });
         showToast(`Opened your share sheet — pick ${PLATFORM_LABEL[platform]} there.`);
+        return;
       } catch (err) {
-        if (err && err.name !== "AbortError") throw err;
+        if (err && err.name === "AbortError") return; // user cancelled, don't fall back
+        console.warn("Web Share failed, falling back.", err);
       }
-      return;
     }
 
     // No file-sharing support in this browser (mainly desktop): fall back per platform,
