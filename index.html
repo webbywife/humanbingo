@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>AI Human Bingo</title>
+<meta name="description" content="A photo-based human bingo card for AI events — tap a square, take the selfie, fill the board, reveal your AI persona, and save it to your phone as a souvenir." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📸</text></svg>" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="board-header">
+    <div class="header-row">
+      <div class="brand">
+        <span class="kicker">AI Human Bingo</span>
+        <input id="eventTitle" type="text" maxlength="40" placeholder="Name this event…" />
+      </div>
+      <div class="progress-chip" aria-live="polite">
+        <svg class="progress-ring" viewBox="0 0 36 36">
+          <circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--ink-softer)" stroke-width="4"></circle>
+          <circle id="progressCircle" cx="18" cy="18" r="15.5" fill="none" stroke="var(--accent)" stroke-width="4"
+                  stroke-linecap="round" stroke-dasharray="97.4" stroke-dashoffset="97.4"
+                  transform="rotate(-90 18 18)"></circle>
+        </svg>
+        <span class="progress-text"><span id="progressCount">0</span><small>/25</small></span>
+      </div>
+    </div>
+    <p class="subline">Tap a square, snap the selfie that proves it. Fill the board to reveal your AI persona, then save your souvenir — it only ever stays on this phone.</p>
+    <span id="personaHint" class="persona-hint" hidden></span>
+  </header>
+
+  <div class="letters" aria-hidden="true">
+    <span>B</span><span>I</span><span>N</span><span>G</span><span>O</span>
+  </div>
+
+  <div id="winBanner" class="win-banner" role="status">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.2 21 12 17.4 5.8 21 7 14.14l-5-4.87 7.1-1.01z"/></svg>
+    <div>
+      <strong>BINGO! Board complete.</strong>
+      <p>Save it below to keep it as your souvenir.</p>
+    </div>
+  </div>
+
+  <main id="board" class="board" aria-label="Bingo board"></main>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="action-bar">
+  <div class="action-bar-inner">
+    <button class="btn btn-reset" id="resetBtn" type="button" aria-label="Clear board">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+    </button>
+    <button class="btn btn-save" id="saveBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Save souvenir
+    </button>
+  </div>
+</div>
+
+<canvas id="confetti"></canvas>
+<canvas id="exportCanvas"></canvas>
+
+<script src="script.js"></script>
+</body>
+</html>

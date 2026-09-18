@@ -1,0 +1,466 @@
+/* ============================================================
+   Selfie Human Bingo — photo-booth strip aesthetic
+   Palette
+     --ink        #1b1815  backdrop, corkboard
+     --ink-soft   #26221d  panel / card back
+     --paper      #faf5ea  polaroid card stock
+     --accent     #2f8f5b  captured / go (green, kept per house style)
+     --accent-ink #10331f  accent text-on-accent
+     --coral      #ef6a4c  camera / action pop
+     --sky        #4f7fb3  third badge colour (B I N G O chips)
+     --muted      #a89f92  secondary text on dark
+     --muted-2    #6b6459  secondary text on paper
+   Type
+     display  "Permanent Marker"  — BINGO letters, headline, captions
+     body     "Work Sans"         — UI copy, buttons, task labels
+     mono     "IBM Plex Mono"     — counters, timestamps, stamp text
+   Layout
+     Single dark "photo booth" world (deliberately one theme): a corkboard
+     backdrop holds a 5x5 grid of tilted polaroid cards; a sticky marker-
+     board header up top and a film-strip action bar pinned to the bottom.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Work+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root {
+  --ink: #1b1815;
+  --ink-soft: #26221d;
+  --ink-softer: #322c25;
+  --paper: #faf5ea;
+  --paper-dim: #efe7d8;
+  --accent: #2f8f5b;
+  --accent-deep: #1f6b42;
+  --accent-ink: #0e2e1c;
+  --coral: #ef6a4c;
+  --coral-deep: #c94d32;
+  --sky: #4f7fb3;
+  --gold-banned: none; /* reminder: never use gold */
+  --muted: #a89f92;
+  --muted-2: #6b6459;
+  --line: rgba(250, 245, 234, 0.12);
+  --shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.65);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding-inline: 16px;
+  background: var(--ink);
+  background-image:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(239, 106, 76, 0.10), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 0%, rgba(79, 127, 179, 0.10), transparent 55%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 3px);
+  color: var(--paper);
+  font-family: "Work Sans", -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100%;
+}
+
+.wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding-bottom: 128px;
+}
+
+/* ---------- header ---------- */
+
+header.board-header {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 20;
+  padding-block: 14px 10px;
+  background: linear-gradient(180deg, var(--ink) 78%, rgba(27,24,21,0));
+  margin-inline: -16px;
+  padding-inline: 16px;
+}
+
+.header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.brand .kicker {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--coral);
+}
+
+#eventTitle {
+  font-family: "Permanent Marker", cursive;
+  font-size: clamp(22px, 6vw, 30px);
+  line-height: 1.15;
+  color: var(--paper);
+  background: transparent;
+  border: none;
+  border-bottom: 2px dashed var(--line);
+  padding: 2px 0 4px;
+  width: 100%;
+  max-width: 420px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+#eventTitle:focus { border-bottom-color: var(--coral); }
+#eventTitle::placeholder { color: var(--muted); opacity: 0.7; }
+
+.progress-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--ink-soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 14px 8px 10px;
+  flex-shrink: 0;
+}
+
+.progress-ring {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.progress-ring circle { transition: stroke-dashoffset 0.4s ease; }
+
+.progress-text {
+  font-family: "IBM Plex Mono", monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--paper);
+  white-space: nowrap;
+}
+
+.progress-text small {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.subline {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--muted);
+  max-width: 46ch;
+}
+
+.persona-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+  padding: 6px 12px 6px 10px;
+  border-radius: 999px;
+  background: var(--ink-soft);
+  border: 1px solid var(--line);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--paper);
+}
+
+.persona-hint::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--persona-color, var(--accent));
+  flex-shrink: 0;
+}
+
+/* ---------- bingo letters ---------- */
+
+.letters {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin: 14px 0 12px;
+}
+
+.letters span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  font-family: "Permanent Marker", cursive;
+  font-size: clamp(20px, 5.5vw, 30px);
+  color: var(--ink);
+  border-radius: 14px;
+  transform: rotate(var(--tilt, 0deg));
+  box-shadow: var(--shadow);
+}
+
+.letters span:nth-child(1) { background: var(--coral); --tilt: -4deg; }
+.letters span:nth-child(2) { background: var(--sky); color: var(--paper); --tilt: 3deg; }
+.letters span:nth-child(3) { background: var(--accent); --tilt: -3deg; }
+.letters span:nth-child(4) { background: var(--sky); color: var(--paper); --tilt: 4deg; }
+.letters span:nth-child(5) { background: var(--coral); --tilt: -2deg; }
+
+/* ---------- grid of polaroids ---------- */
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 480px) {
+  .board { gap: 7px; }
+  .letters { gap: 7px; }
+}
+
+.cell {
+  position: relative;
+  background: var(--paper);
+  border-radius: 8px;
+  padding: 6px 6px 8px;
+  box-shadow: var(--shadow);
+  transform: rotate(var(--tilt, 0deg));
+  cursor: pointer;
+  border: none;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cell:nth-child(5n+1) { --tilt: -2deg; }
+.cell:nth-child(5n+2) { --tilt: 1.5deg; }
+.cell:nth-child(5n+3) { --tilt: -1deg; }
+.cell:nth-child(5n+4) { --tilt: 2deg; }
+.cell:nth-child(5n+5) { --tilt: -1.5deg; }
+
+.cell:hover,
+.cell:focus-visible {
+  transform: rotate(0deg) scale(1.035);
+  z-index: 5;
+  outline: none;
+}
+
+.cell:focus-visible { box-shadow: var(--shadow), 0 0 0 3px var(--coral); }
+
+.cell-photo {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--ink-softer);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cell-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cell-photo svg { width: 34%; height: 34%; color: var(--muted); }
+
+.cell.done .cell-photo svg { display: none; }
+
+.cell-caption {
+  margin-top: 6px;
+  font-size: clamp(9px, 2.6vw, 11px);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink);
+  min-height: 2.5em;
+  display: flex;
+  align-items: center;
+}
+
+.cell.free .cell-caption { color: var(--accent-deep); }
+.cell.free .cell-photo { background: var(--accent); }
+.cell.free .cell-photo svg { color: var(--accent-ink); }
+
+.check-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), opacity 0.2s ease;
+}
+
+.cell.done .check-badge { opacity: 1; transform: scale(1); }
+.check-badge svg { width: 11px; height: 11px; stroke: var(--paper); }
+
+.cell-retake {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(27,24,21,0.65);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.cell.done .cell-retake { opacity: 1; }
+.cell-retake svg { width: 12px; height: 12px; stroke: var(--paper); }
+
+/* ---------- action bar ---------- */
+
+.action-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(0deg, var(--ink) 60%, rgba(27,24,21,0));
+}
+
+.action-bar-inner {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.btn {
+  font-family: "Work Sans", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 12px;
+  border: none;
+  padding: 13px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+.btn:active { transform: scale(0.97); }
+.btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+.btn-save {
+  flex: 1;
+  background: var(--coral);
+  color: var(--paper);
+  box-shadow: 0 10px 26px -10px rgba(239, 106, 76, 0.55);
+}
+
+.btn-save:hover { filter: brightness(1.06); }
+.btn-save:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+
+.btn-reset {
+  background: var(--ink-soft);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  width: 48px;
+  flex-shrink: 0;
+}
+
+.btn-reset:hover { color: var(--paper); border-color: var(--muted); }
+
+/* ---------- toast ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  transform: translate(-50%, 12px);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 10px 16px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  z-index: 40;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  max-width: min(90vw, 420px);
+  text-align: center;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ---------- win banner ---------- */
+
+.win-banner {
+  margin: 4px 0 14px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease, margin 0.3s ease, padding 0.3s ease;
+}
+
+.win-banner.show { opacity: 1; max-height: 120px; }
+.win-banner svg { width: 26px; height: 26px; flex-shrink: 0; }
+.win-banner strong { font-family: "Permanent Marker", cursive; font-size: 18px; display: block; }
+.win-banner p { margin: 2px 0 0; font-size: 12.5px; opacity: 0.85; }
+
+/* ---------- confetti canvas ---------- */
+
+#confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* ---------- offscreen export canvas (never shown) ---------- */
+
+#exportCanvas { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
+}
