@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>The Personal Challenge</title>
+<meta name="description" content="A private, individual reflection pledge for AI events — three honest prompts, downloaded as a keepsake card you can post as a reminder to yourself." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="page-header">
+    <a class="back-link" href="../">&larr; AI Human Bingo</a>
+    <span class="kicker">Personal Challenge</span>
+    <h1>The Personal Challenge</h1>
+    <p class="subline">Answer this for yourself, not for the room. Download it and keep it somewhere you'll actually see it again.</p>
+  </header>
+
+  <div class="framing-note">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+    <p>This isn't about becoming an AI expert by Monday. For people doing science and public service work, the real opportunity is using AI and data to get services to citizens faster — not just doing the same paperwork quicker. Be honest with yourself here: most of what's actually slowing that down isn't the technology. It's habit, procedure, and the comfort of doing it the way it's always been done. Being the one who tries the new way first is the contribution.</p>
+  </div>
+
+  <main class="pledge-card-wrap">
+    <div class="tape tape-a" aria-hidden="true"></div>
+    <div class="tape tape-b" aria-hidden="true"></div>
+    <form class="pledge-card" id="pledgeForm">
+      <div class="field-row">
+        <label class="field">
+          <span class="field-label">Signed by</span>
+          <input type="text" id="nameInput" maxlength="40" placeholder="Your name" autocomplete="name" />
+        </label>
+        <label class="field">
+          <span class="field-label">For the event</span>
+          <input type="text" id="eventInput" maxlength="50" placeholder="Name this event…" />
+        </label>
+      </div>
+
+      <div class="doodle-divider" aria-hidden="true">
+        <svg viewBox="0 0 400 16" preserveAspectRatio="none"><path d="M0,8 C 20,-2 40,18 60,8 C 80,-2 100,18 120,8 C 140,-2 160,18 180,8 C 200,-2 220,18 240,8 C 260,-2 280,18 300,8 C 320,-2 340,18 360,8 C 380,-2 400,18 400,8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+
+      <div class="prompt-block">
+        <span class="prompt-tag" style="--tag-color: var(--sky)">Redesign</span>
+        <label class="prompt-question" for="q1">What task do I currently do manually that I could redesign — not just automate?</label>
+        <textarea id="q1" maxlength="200" rows="3" placeholder="Be specific — name the actual task."></textarea>
+        <span class="char-count" id="q1Count">0/200</span>
+      </div>
+
+      <div class="prompt-block">
+        <span class="prompt-tag" style="--tag-color: var(--accent)">Skill</span>
+        <label class="prompt-question" for="q2">What skill do I need to build so I add value AI can't replace? <span class="hint">(judgment, context, relationships)</span></label>
+        <textarea id="q2" maxlength="200" rows="3" placeholder="One real skill, not a buzzword."></textarea>
+        <span class="char-count" id="q2Count">0/200</span>
+      </div>
+
+      <div class="prompt-block">
+        <span class="prompt-tag" style="--tag-color: var(--coral)">Resistance</span>
+        <label class="prompt-question" for="q3">Where am I resistant to change out of comfort rather than good reason?</label>
+        <textarea id="q3" maxlength="200" rows="3" placeholder="The honest answer, not the safe one."></textarea>
+        <span class="char-count" id="q3Count">0/200</span>
+      </div>
+
+      <label class="revisit-row">
+        <input type="checkbox" id="revisitCheck" />
+        <span>I'll revisit this in 90 days<span class="revisit-date" id="revisitDate"></span></span>
+      </label>
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <p class="disclaimer">
+      Your answers stay on this device only — nothing is uploaded to <strong>events.webprvw.xyz</strong> or any server.
+      Downloading or sharing your pledge only ever happens when you tap it.
+    </p>
+    <div class="share-section" id="shareSection" hidden>
+      <span class="share-label">Nice! Now share your pledge</span>
+      <div class="share-row">
+        <button type="button" class="share-btn" id="shareFbBtn" data-platform="facebook" aria-label="Share on Facebook">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h-2a5 5 0 0 0-5 5v3H6v4h2v6h4v-6h3l1-4h-4V8a1 1 0 0 1 1-1h3z"/></svg>
+        </button>
+        <button type="button" class="share-btn" id="shareIgBtn" data-platform="instagram" aria-label="Share on Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"/></svg>
+        </button>
+      </div>
+    </div>
+    <a class="module-link" href="../">&larr; Back to AI Human Bingo</a>
+    <p class="credit">Designed &amp; Developed by Lheyai :)</p>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="action-bar">
+  <div class="action-bar-inner">
+    <button class="btn btn-reset" id="resetBtn" type="button" aria-label="Clear pledge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+    </button>
+    <button class="btn btn-save" id="saveBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download my pledge
+    </button>
+  </div>
+</div>
+
+<canvas id="exportCanvas"></canvas>
+
+<script src="../shared.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

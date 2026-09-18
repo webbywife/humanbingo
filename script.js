@@ -498,65 +498,15 @@ function confettiBurst(count = 140) {
 }
 
 /* ---------------- souvenir export ---------------- */
+/* wrapLines, roundRect, loadImage, ensureFontsReady, canvasToBlob,
+   downloadBlob, canShareFile, deliverImage all come from shared.js */
 
-async function ensureFontsReady() {
-  try {
-    await Promise.all([
-      document.fonts.load('700 44px "Permanent Marker"'),
-      document.fonts.load('600 20px "IBM Plex Mono"'),
-      document.fonts.load('700 20px "Work Sans"'),
-      document.fonts.load('600 15px "Work Sans"'),
-    ]);
-    await document.fonts.ready;
-  } catch (err) {
-    console.warn("Font preload for export skipped.", err);
-  }
-}
-
-function loadImage(src) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = () => resolve(null);
-    img.src = src;
-  });
-}
-
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
-}
-
-function wrapLines(ctx, text, maxWidth, maxLines) {
-  const words = text.split(" ");
-  const lines = [];
-  let current = "";
-  for (const word of words) {
-    const test = current ? current + " " + word : word;
-    if (ctx.measureText(test).width > maxWidth && current) {
-      lines.push(current);
-      current = word;
-      if (lines.length === maxLines - 1) break;
-    } else {
-      current = test;
-    }
-  }
-  if (current) lines.push(current);
-  if (lines.length > maxLines) lines.length = maxLines;
-  const last = lines.length - 1;
-  if (last >= 0 && ctx.measureText(lines[last]).width > maxWidth) {
-    while (lines[last].length > 1 && ctx.measureText(lines[last] + "…").width > maxWidth) {
-      lines[last] = lines[last].slice(0, -1);
-    }
-    lines[last] += "…";
-  }
-  return lines;
-}
+const EXPORT_FONTS = [
+  '700 44px "Permanent Marker"',
+  '600 20px "IBM Plex Mono"',
+  '700 20px "Work Sans"',
+  '600 15px "Work Sans"',
+];
 
 function slugifyTitle() {
   return (state.title || "my-board").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "my-board";
@@ -568,7 +518,7 @@ function souvenirFilename() {
 }
 
 async function renderSouvenirCanvas() {
-  await ensureFontsReady();
+  await ensureFontsReady(EXPORT_FONTS);
 
   const n = cols();
   const showLetters = config().showLetters;
@@ -749,27 +699,6 @@ async function renderSouvenirCanvas() {
   return canvas;
 }
 
-function canvasToBlob(canvas) {
-  return new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
-}
-
-function downloadBlob(blob) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = souvenirFilename();
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 4000);
-}
-
-function canShareFile(file) {
-  return typeof navigator.share === "function"
-    && typeof navigator.canShare === "function"
-    && navigator.canShare({ files: [file] });
-}
-
 async function exportSouvenir() {
   if (!isBoardComplete()) {
     showToast("Fill every square before you can save your souvenir.");
@@ -786,28 +715,18 @@ async function exportSouvenir() {
       showToast("Couldn't create the image — try again.");
       return;
     }
-    const file = new File([blob], souvenirFilename(), { type: "image/png" });
 
     // On iPhone/Android, a plain <a download> link lands in the Files app,
     // not the Photos library — the share sheet's "Save Image" action is the
-    // only way a website can put an image into Photos, so try that first.
-    if (canShareFile(file)) {
-      try {
-        await navigator.share({
-          files: [file],
-          title: "My AI Human Bingo souvenir",
-        });
-        showToast("Choose “Save Image” in the share sheet to add it to your Photos.", 4200);
-        revealShareSection();
-        return;
-      } catch (err) {
-        if (err && err.name === "AbortError") return; // user cancelled, nothing to fall back to
-        console.warn("Web Share failed, falling back to a direct download.", err);
-      }
+    // only way a website can put an image into Photos, so deliverImage tries
+    // that first and only falls back to a direct download when unsupported.
+    const result = await deliverImage(blob, souvenirFilename(), { title: "My AI Human Bingo souvenir" });
+    if (result === "cancelled") return;
+    if (result === "shared") {
+      showToast("Choose “Save Image” in the share sheet to add it to your Photos.", 4200);
+    } else {
+      showToast("Souvenir downloaded to this device.");
     }
-
-    downloadBlob(blob);
-    showToast("Souvenir downloaded to this device.");
     revealShareSection();
   } catch (err) {
     console.error(err);
