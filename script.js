@@ -536,207 +536,226 @@ function wrapLines(ctx, text, maxWidth, maxLines) {
   return lines;
 }
 
+function slugifyTitle() {
+  return (state.title || "my-board").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "my-board";
+}
+
+function souvenirFilename() {
+  const stamp = new Date().toISOString().slice(0, 10);
+  return `ai-human-bingo-${slugifyTitle()}-${state.size}-${stamp}.png`;
+}
+
+async function renderSouvenirCanvas() {
+  await ensureFontsReady();
+
+  const n = cols();
+  const showLetters = config().showLetters;
+  const W = 1080;
+  const PAD = 48;
+  const GAP = 14;
+  const CELL = (W - PAD * 2 - GAP * (n - 1)) / n;
+  const HEADER_H = 220;
+  const LETTERS_H = showLetters ? CELL * 0.62 : 0;
+  const LETTERS_GAP = showLetters ? GAP : 0;
+  const CAPTION_H = 66;
+  const CELL_TOTAL = CELL + CAPTION_H;
+  const FOOTER_H = 76;
+  const H = HEADER_H + LETTERS_H + LETTERS_GAP + (CELL_TOTAL + GAP) * n + FOOTER_H;
+
+  const canvas = document.getElementById("exportCanvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d");
+
+  const ink = "#1b1815";
+  const paper = "#faf5ea";
+  const accent = "#2f8f5b";
+  const accentInk = "#0e2e1c";
+  const coral = "#ef6a4c";
+  const sky = "#4f7fb3";
+  const muted = "#a89f92";
+
+  ctx.fillStyle = ink;
+  ctx.fillRect(0, 0, W, H);
+
+  // header
+  ctx.fillStyle = coral;
+  ctx.font = '600 20px "IBM Plex Mono", monospace';
+  ctx.textBaseline = "alphabetic";
+  ctx.fillText("AI HUMAN BINGO", PAD, 56);
+
+  const title = (state.title && state.title.trim()) || "My AI Human Bingo Souvenir";
+  ctx.fillStyle = paper;
+  ctx.font = '400 50px "Permanent Marker", cursive';
+  const titleLines = wrapLines(ctx, title, W - PAD * 2 - 260, 2);
+  let ty = 106;
+  titleLines.forEach((line) => {
+    ctx.fillText(line, PAD, ty);
+    ty += 50;
+  });
+
+  const dateStr = new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+  ctx.fillStyle = muted;
+  ctx.font = '600 18px "Work Sans", sans-serif';
+  ctx.fillText(dateStr, PAD, HEADER_H - 14);
+
+  // persona badge (top-right of header)
+  const counts = computeCategoryCounts();
+  const personaKey = dominantCategory(counts);
+  if (personaKey) {
+    const meta = CATEGORY_META[personaKey];
+    const badgeW = 300;
+    const badgeX = W - PAD - badgeW;
+    const badgeY = 30;
+    ctx.fillStyle = meta.color;
+    roundRect(ctx, badgeX, badgeY, badgeW, 40, 20);
+    ctx.fill();
+    ctx.fillStyle = "#1b1815";
+    ctx.font = '700 15px "Work Sans", sans-serif';
+    const label = meta.name.toUpperCase();
+    const lw = ctx.measureText(label).width;
+    ctx.fillText(label, badgeX + badgeW / 2 - lw / 2, badgeY + 26);
+
+    ctx.fillStyle = muted;
+    ctx.font = '500 15px "Work Sans", sans-serif';
+    const taglineLines = wrapLines(ctx, meta.tagline, badgeW, 2);
+    let py = badgeY + 40 + 22;
+    taglineLines.forEach((line) => {
+      const pw = ctx.measureText(line).width;
+      ctx.fillText(line, badgeX + badgeW / 2 - pw / 2, py);
+      py += 19;
+    });
+  }
+
+  // letters row (5x5 only)
+  let gridTop = HEADER_H;
+  if (showLetters) {
+    const letters = ["B", "I", "N", "G", "O"];
+    const letterColors = [coral, sky, accent, sky, coral];
+    let lx = PAD;
+    const ly = HEADER_H;
+    letters.forEach((letter, i) => {
+      ctx.fillStyle = letterColors[i];
+      roundRect(ctx, lx, ly, CELL, LETTERS_H, 16);
+      ctx.fill();
+      ctx.fillStyle = i === 1 || i === 3 ? paper : ink;
+      ctx.font = '400 40px "Permanent Marker", cursive';
+      const tw = ctx.measureText(letter).width;
+      ctx.fillText(letter, lx + CELL / 2 - tw / 2, ly + LETTERS_H / 2 + 14);
+      lx += CELL + GAP;
+    });
+    gridTop = HEADER_H + LETTERS_H + LETTERS_GAP;
+  }
+
+  // grid
+  const tasks = config().tasks;
+  const photoEntries = [];
+  tasks.forEach((task, idx) => {
+    const dataUrl = state.photos[String(idx)];
+    if (dataUrl) photoEntries.push([idx, dataUrl]);
+  });
+  const loaded = new Map();
+  const imgs = await Promise.all(photoEntries.map(([, src]) => loadImage(src)));
+  photoEntries.forEach(([idx], i) => loaded.set(idx, imgs[i]));
+
+  tasks.forEach((task, idx) => {
+    const row = Math.floor(idx / n);
+    const col = idx % n;
+    const x = PAD + col * (CELL + GAP);
+    const y = gridTop + row * (CELL_TOTAL + GAP);
+
+    ctx.fillStyle = paper;
+    roundRect(ctx, x, y, CELL, CELL_TOTAL, 12);
+    ctx.fill();
+
+    const photoPad = 8;
+    const px = x + photoPad, py = y + photoPad, pSize = CELL - photoPad * 2;
+    const img = loaded.get(idx);
+    ctx.save();
+    roundRect(ctx, px, py, pSize, pSize, 8);
+    ctx.clip();
+    if (img) {
+      const s = Math.min(img.width, img.height);
+      const sx = (img.width - s) / 2, sy = (img.height - s) / 2;
+      ctx.drawImage(img, sx, sy, s, s, px, py, pSize, pSize);
+    } else {
+      ctx.fillStyle = task.free ? accent : "#322c25";
+      ctx.fillRect(px, py, pSize, pSize);
+      ctx.fillStyle = task.free ? accentInk : muted;
+      ctx.font = `${Math.round(pSize * 0.32)}px sans-serif`;
+      const glyph = "\u{1F4F7}";
+      const gw = ctx.measureText(glyph).width;
+      ctx.fillText(glyph, px + pSize / 2 - gw / 2, py + pSize / 2 + pSize * 0.12);
+    }
+    ctx.restore();
+
+    if (img) {
+      ctx.fillStyle = accent;
+      ctx.beginPath();
+      ctx.arc(x + CELL - 16, y + 16, 13, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = paper;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(x + CELL - 21, y + 16);
+      ctx.lineTo(x + CELL - 17, y + 20.5);
+      ctx.lineTo(x + CELL - 10.5, y + 11);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = task.free ? accentInk : ink;
+    ctx.font = '700 15px "Work Sans", sans-serif';
+    const lines = wrapLines(ctx, task.text, CELL - 12, 3);
+    let cy = y + CELL + 22;
+    lines.forEach((line) => {
+      ctx.fillText(line, x + 8, cy);
+      cy += 18;
+    });
+  });
+
+  // footer
+  const footerY = H - FOOTER_H / 2;
+  const count = Object.keys(state.photos).length;
+  ctx.fillStyle = muted;
+  ctx.font = '600 16px "IBM Plex Mono", monospace';
+  ctx.fillText(`${count}/${state.size} captured`, PAD, footerY + 5);
+  const madeWith = "made with AI Human Bingo";
+  ctx.font = '500 15px "IBM Plex Mono", monospace';
+  const mw = ctx.measureText(madeWith).width;
+  ctx.fillText(madeWith, W - PAD - mw, footerY + 5);
+
+  return canvas;
+}
+
+function canvasToBlob(canvas) {
+  return new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+}
+
 async function exportSouvenir() {
+  if (Object.keys(state.photos).length === 0) {
+    showToast("Capture at least one photo first.");
+    return;
+  }
   saveBtn.disabled = true;
   const originalLabel = saveBtn.innerHTML;
   saveBtn.innerHTML = "Preparing…";
 
   try {
-    await ensureFontsReady();
-
-    const n = cols();
-    const showLetters = config().showLetters;
-    const W = 1080;
-    const PAD = 48;
-    const GAP = 14;
-    const CELL = (W - PAD * 2 - GAP * (n - 1)) / n;
-    const HEADER_H = 220;
-    const LETTERS_H = showLetters ? CELL * 0.62 : 0;
-    const LETTERS_GAP = showLetters ? GAP : 0;
-    const CAPTION_H = 66;
-    const CELL_TOTAL = CELL + CAPTION_H;
-    const FOOTER_H = 76;
-    const H = HEADER_H + LETTERS_H + LETTERS_GAP + (CELL_TOTAL + GAP) * n + FOOTER_H;
-
-    const canvas = document.getElementById("exportCanvas");
-    canvas.width = W;
-    canvas.height = H;
-    const ctx = canvas.getContext("2d");
-
-    const ink = "#1b1815";
-    const paper = "#faf5ea";
-    const accent = "#2f8f5b";
-    const accentInk = "#0e2e1c";
-    const coral = "#ef6a4c";
-    const sky = "#4f7fb3";
-    const muted = "#a89f92";
-
-    ctx.fillStyle = ink;
-    ctx.fillRect(0, 0, W, H);
-
-    // header
-    ctx.fillStyle = coral;
-    ctx.font = '600 20px "IBM Plex Mono", monospace';
-    ctx.textBaseline = "alphabetic";
-    ctx.fillText("AI HUMAN BINGO", PAD, 56);
-
-    const title = (state.title && state.title.trim()) || "My AI Human Bingo Souvenir";
-    ctx.fillStyle = paper;
-    ctx.font = '400 50px "Permanent Marker", cursive';
-    const titleLines = wrapLines(ctx, title, W - PAD * 2 - 260, 2);
-    let ty = 106;
-    titleLines.forEach((line) => {
-      ctx.fillText(line, PAD, ty);
-      ty += 50;
-    });
-
-    const dateStr = new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
-    ctx.fillStyle = muted;
-    ctx.font = '600 18px "Work Sans", sans-serif';
-    ctx.fillText(dateStr, PAD, HEADER_H - 14);
-
-    // persona badge (top-right of header)
-    const counts = computeCategoryCounts();
-    const personaKey = dominantCategory(counts);
-    if (personaKey) {
-      const meta = CATEGORY_META[personaKey];
-      const badgeW = 300;
-      const badgeX = W - PAD - badgeW;
-      const badgeY = 30;
-      ctx.fillStyle = meta.color;
-      roundRect(ctx, badgeX, badgeY, badgeW, 40, 20);
-      ctx.fill();
-      ctx.fillStyle = "#1b1815";
-      ctx.font = '700 15px "Work Sans", sans-serif';
-      const label = meta.name.toUpperCase();
-      const lw = ctx.measureText(label).width;
-      ctx.fillText(label, badgeX + badgeW / 2 - lw / 2, badgeY + 26);
-
-      ctx.fillStyle = muted;
-      ctx.font = '500 15px "Work Sans", sans-serif';
-      const taglineLines = wrapLines(ctx, meta.tagline, badgeW, 2);
-      let py = badgeY + 40 + 22;
-      taglineLines.forEach((line) => {
-        const pw = ctx.measureText(line).width;
-        ctx.fillText(line, badgeX + badgeW / 2 - pw / 2, py);
-        py += 19;
-      });
+    const canvas = await renderSouvenirCanvas();
+    const blob = await canvasToBlob(canvas);
+    if (!blob) {
+      showToast("Couldn't create the image — try again.");
+      return;
     }
-
-    // letters row (5x5 only)
-    let gridTop = HEADER_H;
-    if (showLetters) {
-      const letters = ["B", "I", "N", "G", "O"];
-      const letterColors = [coral, sky, accent, sky, coral];
-      let lx = PAD;
-      const ly = HEADER_H;
-      letters.forEach((letter, i) => {
-        ctx.fillStyle = letterColors[i];
-        roundRect(ctx, lx, ly, CELL, LETTERS_H, 16);
-        ctx.fill();
-        ctx.fillStyle = i === 1 || i === 3 ? paper : ink;
-        ctx.font = '400 40px "Permanent Marker", cursive';
-        const tw = ctx.measureText(letter).width;
-        ctx.fillText(letter, lx + CELL / 2 - tw / 2, ly + LETTERS_H / 2 + 14);
-        lx += CELL + GAP;
-      });
-      gridTop = HEADER_H + LETTERS_H + LETTERS_GAP;
-    }
-
-    // grid
-    const tasks = config().tasks;
-    const photoEntries = [];
-    tasks.forEach((task, idx) => {
-      const dataUrl = state.photos[String(idx)];
-      if (dataUrl) photoEntries.push([idx, dataUrl]);
-    });
-    const loaded = new Map();
-    const imgs = await Promise.all(photoEntries.map(([, src]) => loadImage(src)));
-    photoEntries.forEach(([idx], i) => loaded.set(idx, imgs[i]));
-
-    tasks.forEach((task, idx) => {
-      const row = Math.floor(idx / n);
-      const col = idx % n;
-      const x = PAD + col * (CELL + GAP);
-      const y = gridTop + row * (CELL_TOTAL + GAP);
-
-      ctx.fillStyle = paper;
-      roundRect(ctx, x, y, CELL, CELL_TOTAL, 12);
-      ctx.fill();
-
-      const photoPad = 8;
-      const px = x + photoPad, py = y + photoPad, pSize = CELL - photoPad * 2;
-      const img = loaded.get(idx);
-      ctx.save();
-      roundRect(ctx, px, py, pSize, pSize, 8);
-      ctx.clip();
-      if (img) {
-        const s = Math.min(img.width, img.height);
-        const sx = (img.width - s) / 2, sy = (img.height - s) / 2;
-        ctx.drawImage(img, sx, sy, s, s, px, py, pSize, pSize);
-      } else {
-        ctx.fillStyle = task.free ? accent : "#322c25";
-        ctx.fillRect(px, py, pSize, pSize);
-        ctx.fillStyle = task.free ? accentInk : muted;
-        ctx.font = `${Math.round(pSize * 0.32)}px sans-serif`;
-        const glyph = "\u{1F4F7}";
-        const gw = ctx.measureText(glyph).width;
-        ctx.fillText(glyph, px + pSize / 2 - gw / 2, py + pSize / 2 + pSize * 0.12);
-      }
-      ctx.restore();
-
-      if (img) {
-        ctx.fillStyle = accent;
-        ctx.beginPath();
-        ctx.arc(x + CELL - 16, y + 16, 13, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = paper;
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(x + CELL - 21, y + 16);
-        ctx.lineTo(x + CELL - 17, y + 20.5);
-        ctx.lineTo(x + CELL - 10.5, y + 11);
-        ctx.stroke();
-      }
-
-      ctx.fillStyle = task.free ? accentInk : ink;
-      ctx.font = '700 15px "Work Sans", sans-serif';
-      const lines = wrapLines(ctx, task.text, CELL - 12, 3);
-      let cy = y + CELL + 22;
-      lines.forEach((line) => {
-        ctx.fillText(line, x + 8, cy);
-        cy += 18;
-      });
-    });
-
-    // footer
-    const footerY = H - FOOTER_H / 2;
-    const count = Object.keys(state.photos).length;
-    ctx.fillStyle = muted;
-    ctx.font = '600 16px "IBM Plex Mono", monospace';
-    ctx.fillText(`${count}/${state.size} captured`, PAD, footerY + 5);
-    const madeWith = "made with AI Human Bingo";
-    ctx.font = '500 15px "IBM Plex Mono", monospace';
-    const mw = ctx.measureText(madeWith).width;
-    ctx.fillText(madeWith, W - PAD - mw, footerY + 5);
-
-    canvas.toBlob((blob) => {
-      if (!blob) {
-        showToast("Couldn't create the image — try again.");
-        return;
-      }
-      const url = URL.createObjectURL(blob);
-      const slug = (state.title || "my-board").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "my-board";
-      const stamp = new Date().toISOString().slice(0, 10);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `ai-human-bingo-${slug}-${state.size}-${stamp}.png`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 4000);
-      showToast("Souvenir saved to your device.");
-    }, "image/png");
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = souvenirFilename();
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    showToast("Souvenir saved to your device.");
   } catch (err) {
     console.error(err);
     showToast("Something went wrong saving the souvenir.");
@@ -747,6 +766,71 @@ async function exportSouvenir() {
 }
 
 saveBtn.addEventListener("click", exportSouvenir);
+
+/* ---------------- social share ---------------- */
+
+const shareButtons = {
+  facebook: document.getElementById("shareFbBtn"),
+  instagram: document.getElementById("shareIgBtn"),
+};
+
+const PLATFORM_LABEL = { facebook: "Facebook", instagram: "Instagram" };
+
+async function shareSouvenir(platform) {
+  if (Object.keys(state.photos).length === 0) {
+    showToast("Capture at least one photo before sharing.");
+    return;
+  }
+
+  const btn = shareButtons[platform];
+  btn.disabled = true;
+
+  try {
+    const canvas = await renderSouvenirCanvas();
+    const blob = await canvasToBlob(canvas);
+    if (!blob) {
+      showToast("Couldn't prepare the image — try again.");
+      return;
+    }
+
+    const file = new File([blob], souvenirFilename(), { type: "image/png" });
+    const canShareFiles = typeof navigator.share === "function"
+      && typeof navigator.canShare === "function"
+      && navigator.canShare({ files: [file] });
+
+    if (canShareFiles) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: "My AI Human Bingo board",
+          text: "I filled my AI Human Bingo board — check it out!",
+        });
+        showToast(`Opened your share sheet — pick ${PLATFORM_LABEL[platform]} there.`);
+      } catch (err) {
+        if (err && err.name !== "AbortError") throw err;
+      }
+      return;
+    }
+
+    // No file-sharing support in this browser (mainly desktop): fall back per platform,
+    // and never send the photo itself anywhere — only ever a plain page link.
+    if (platform === "facebook") {
+      const shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(location.href);
+      window.open(shareUrl, "_blank", "noopener,noreferrer");
+      showToast("This browser can't attach your photo directly — save your souvenir below, then add it to your Facebook post.");
+    } else {
+      showToast("Instagram doesn't support sharing straight from a browser — save your souvenir below, then post it from your camera roll.");
+    }
+  } catch (err) {
+    console.error(err);
+    showToast("Something went wrong preparing the share.");
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+shareButtons.facebook.addEventListener("click", () => shareSouvenir("facebook"));
+shareButtons.instagram.addEventListener("click", () => shareSouvenir("instagram"));
 
 /* ---------------- init ---------------- */
 

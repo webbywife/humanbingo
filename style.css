@@ -386,6 +386,73 @@ header.board-header {
 .cell.done .cell-retake { opacity: 1; }
 .cell-retake svg { width: 12px; height: 12px; stroke: var(--paper); }
 
+/* ---------- footer ---------- */
+
+.site-footer {
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.disclaimer {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.disclaimer strong {
+  color: var(--paper);
+  font-weight: 700;
+}
+
+.share-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.share-label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.share-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--ink-soft);
+  border: 1px solid var(--line);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.12s ease, color 0.15s ease;
+}
+
+.share-btn svg { width: 17px; height: 17px; }
+.share-btn:hover { border-color: var(--coral); color: var(--coral); }
+.share-btn:active { transform: scale(0.94); }
+.share-btn:disabled { opacity: 0.5; cursor: progress; }
+
+.credit {
+  margin: 0;
+  font-family: "Permanent Marker", cursive;
+  font-size: 15px;
+  color: var(--muted);
+}
+
 /* ---------- action bar ---------- */
 
 .action-bar {
