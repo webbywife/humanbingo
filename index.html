@@ -25,14 +25,22 @@
                   stroke-linecap="round" stroke-dasharray="97.4" stroke-dashoffset="97.4"
                   transform="rotate(-90 18 18)"></circle>
         </svg>
-        <span class="progress-text"><span id="progressCount">0</span><small>/25</small></span>
+        <span class="progress-text"><span id="progressCount">0</span><small>/<span id="progressTotal">25</span></small></span>
       </div>
     </div>
     <p class="subline">Tap a square, snap the selfie that proves it. Fill the board to reveal your AI persona, then save your souvenir — it only ever stays on this phone.</p>
-    <span id="personaHint" class="persona-hint" hidden></span>
+    <div class="header-foot">
+      <span id="personaHint" class="persona-hint" hidden></span>
+      <div class="size-picker" role="group" aria-label="Board size">
+        <span class="size-picker-label">Board</span>
+        <button type="button" class="size-btn" data-size="9">3×3</button>
+        <button type="button" class="size-btn" data-size="16">4×4</button>
+        <button type="button" class="size-btn" data-size="25">5×5</button>
+      </div>
+    </div>
   </header>
 
-  <div class="letters" aria-hidden="true">
+  <div id="lettersRow" class="letters" aria-hidden="true">
     <span>B</span><span>I</span><span>N</span><span>G</span><span>O</span>
   </div>
 

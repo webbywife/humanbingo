@@ -187,7 +187,61 @@ header.board-header {
   flex-shrink: 0;
 }
 
+.header-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.persona-hint:not([hidden]) { margin-top: 0; }
+
+.size-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--ink-soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px;
+  margin-left: auto;
+}
+
+.size-picker-label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-left: 8px;
+}
+
+.size-btn {
+  font-family: "Work Sans", sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  padding: 6px 11px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.size-btn:hover { color: var(--paper); }
+
+.size-btn.active {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
 /* ---------- bingo letters ---------- */
+
+.letters[hidden] { display: none; }
 
 .letters {
   display: grid;
@@ -219,7 +273,7 @@ header.board-header {
 
 .board {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(var(--cols, 5), 1fr);
   gap: 10px;
 }
 
@@ -245,11 +299,7 @@ header.board-header {
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.cell:nth-child(5n+1) { --tilt: -2deg; }
-.cell:nth-child(5n+2) { --tilt: 1.5deg; }
-.cell:nth-child(5n+3) { --tilt: -1deg; }
-.cell:nth-child(5n+4) { --tilt: 2deg; }
-.cell:nth-child(5n+5) { --tilt: -1.5deg; }
+/* --tilt is set inline per cell in JS so it works for any column count */
 
 .cell:hover,
 .cell:focus-visible {
