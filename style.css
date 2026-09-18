@@ -412,6 +412,13 @@ header.board-header {
   font-weight: 700;
 }
 
+.share-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
 .share-row {
   display: flex;
   align-items: center;
@@ -419,12 +426,10 @@ header.board-header {
 }
 
 .share-label {
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
+  font-family: "Work Sans", sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--paper);
 }
 
 .share-btn {

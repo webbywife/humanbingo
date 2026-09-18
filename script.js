@@ -110,6 +110,7 @@ const personaHint = document.getElementById("personaHint");
 const toastEl = document.getElementById("toast");
 const saveBtn = document.getElementById("saveBtn");
 const resetBtn = document.getElementById("resetBtn");
+const shareSection = document.getElementById("shareSection");
 const confettiCanvas = document.getElementById("confetti");
 const sizeButtons = document.querySelectorAll(".size-btn");
 
@@ -120,10 +121,27 @@ let state = { title: "", size: DEFAULT_SIZE, photos: {} };
 let wasComplete = false;
 let completedLines = new Set();
 let toastTimer = null;
+let souvenirSaved = false;
 
 function config() { return BOARD_SIZES[state.size]; }
 function cols() { return config().cols; }
 function taskAt(idx) { return config().tasks[idx]; }
+function isBoardComplete() { return Object.keys(state.photos).length >= state.size; }
+
+function eventHashtag() {
+  const clean = (state.title || "").replace(/[^a-zA-Z0-9]+/g, "");
+  return clean ? `#AIHumanBingo #${clean}` : "#AIHumanBingo";
+}
+
+function hideShareSection() {
+  souvenirSaved = false;
+  shareSection.hidden = true;
+}
+
+function revealShareSection() {
+  souvenirSaved = true;
+  shareSection.hidden = false;
+}
 
 function buildLines(n) {
   const lines = [];
@@ -356,6 +374,8 @@ function updateProgress(triggerEffects) {
 
   const isComplete = count >= total;
   winBanner.classList.toggle("show", isComplete);
+  saveBtn.disabled = !isComplete;
+  saveBtn.title = isComplete ? "" : "Fill every square to unlock your souvenir";
 
   if (isComplete) {
     const key = dominantCategory(counts) || CATEGORY_ORDER[0];
@@ -384,6 +404,7 @@ function setSize(newSize) {
   state.photos = {};
   completedLines = new Set();
   wasComplete = false;
+  hideShareSection();
   saveState();
   updateSizeButtons();
   buildBoard();
@@ -405,6 +426,7 @@ resetBtn.addEventListener("click", () => {
   state.photos = {};
   completedLines = new Set();
   wasComplete = false;
+  hideShareSection();
   saveState();
   applyPhotosToBoard();
   updateProgress(false);
@@ -749,8 +771,8 @@ function canShareFile(file) {
 }
 
 async function exportSouvenir() {
-  if (Object.keys(state.photos).length === 0) {
-    showToast("Capture at least one photo first.");
+  if (!isBoardComplete()) {
+    showToast("Fill every square before you can save your souvenir.");
     return;
   }
   saveBtn.disabled = true;
@@ -776,6 +798,7 @@ async function exportSouvenir() {
           title: "My AI Human Bingo souvenir",
         });
         showToast("Choose “Save Image” in the share sheet to add it to your Photos.", 4200);
+        revealShareSection();
         return;
       } catch (err) {
         if (err && err.name === "AbortError") return; // user cancelled, nothing to fall back to
@@ -785,11 +808,12 @@ async function exportSouvenir() {
 
     downloadBlob(blob);
     showToast("Souvenir downloaded to this device.");
+    revealShareSection();
   } catch (err) {
     console.error(err);
     showToast("Something went wrong saving the souvenir.");
   } finally {
-    saveBtn.disabled = false;
+    saveBtn.disabled = !isBoardComplete();
     saveBtn.innerHTML = originalLabel;
   }
 }
@@ -823,12 +847,14 @@ async function shareSouvenir(platform) {
     }
     const file = new File([blob], souvenirFilename(), { type: "image/png" });
 
+    const hashtag = eventHashtag();
+
     if (canShareFile(file)) {
       try {
         await navigator.share({
           files: [file],
           title: "My AI Human Bingo board",
-          text: "I filled my AI Human Bingo board — check it out!",
+          text: `I filled my AI Human Bingo board — check it out! ${hashtag}`,
         });
         showToast(`Opened your share sheet — pick ${PLATFORM_LABEL[platform]} there.`);
         return;
@@ -841,11 +867,13 @@ async function shareSouvenir(platform) {
     // No file-sharing support in this browser (mainly desktop): fall back per platform,
     // and never send the photo itself anywhere — only ever a plain page link.
     if (platform === "facebook") {
-      const shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(location.href);
+      const hashtagParts = hashtag.split(" ");
+      const fbHashtag = hashtagParts[hashtagParts.length - 1]; // sharer.php accepts one hashtag; prefer the event-specific tag
+      const shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(location.href) + "&hashtag=" + encodeURIComponent(fbHashtag);
       window.open(shareUrl, "_blank", "noopener,noreferrer");
       showToast("This browser can't attach your photo directly — save your souvenir below, then add it to your Facebook post.");
     } else {
-      showToast("Instagram doesn't support sharing straight from a browser — save your souvenir below, then post it from your camera roll.");
+      showToast(`Instagram doesn't support sharing straight from a browser — save your souvenir below, then post it from your camera roll with ${hashtag}.`, 3600);
     }
   } catch (err) {
     console.error(err);

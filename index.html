@@ -28,7 +28,7 @@
         <span class="progress-text"><span id="progressCount">0</span><small>/<span id="progressTotal">25</span></small></span>
       </div>
     </div>
-    <p class="subline">Tap a square, snap the selfie that proves it. Fill the board to reveal your AI persona, then save your souvenir — it only ever stays on this phone.</p>
+    <p class="subline">Tap a square, snap the selfie that proves it. Fill every square to reveal your AI persona and unlock your souvenir — it only ever stays on this phone.</p>
     <div class="header-foot">
       <span id="personaHint" class="persona-hint" hidden></span>
       <div class="size-picker" role="group" aria-label="Board size">
@@ -59,14 +59,16 @@
       Your photos stay on this device only — nothing is uploaded to <strong>events.webprvw.xyz</strong> or any server.
       Sharing to Facebook or Instagram below happens straight from your phone's own share sheet, and only when you tap it.
     </p>
-    <div class="share-row">
-      <span class="share-label">Share your board</span>
-      <button type="button" class="share-btn" id="shareFbBtn" data-platform="facebook" aria-label="Share on Facebook">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h-2a5 5 0 0 0-5 5v3H6v4h2v6h4v-6h3l1-4h-4V8a1 1 0 0 1 1-1h3z"/></svg>
-      </button>
-      <button type="button" class="share-btn" id="shareIgBtn" data-platform="instagram" aria-label="Share on Instagram">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"/></svg>
-      </button>
+    <div class="share-section" id="shareSection" hidden>
+      <span class="share-label">Nice! Now share your board</span>
+      <div class="share-row">
+        <button type="button" class="share-btn" id="shareFbBtn" data-platform="facebook" aria-label="Share on Facebook">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h-2a5 5 0 0 0-5 5v3H6v4h2v6h4v-6h3l1-4h-4V8a1 1 0 0 1 1-1h3z"/></svg>
+        </button>
+        <button type="button" class="share-btn" id="shareIgBtn" data-platform="instagram" aria-label="Share on Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"/></svg>
+        </button>
+      </div>
     </div>
     <p class="credit">Designed &amp; Developed by Lheyai :)</p>
   </footer>
