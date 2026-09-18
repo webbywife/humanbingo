@@ -9,11 +9,11 @@
 ------------------------------------------------------------------- */
 
 const CATEGORY_META = {
-  BUILDER: { name: "The Builder", tagline: "You don't just use AI — you make things with it.", color: "#4f7fb3" },
-  EXPLORER: { name: "The Explorer", tagline: "New tool just dropped? You've already tried it.", color: "#ef6a4c" },
-  CONNECTOR: { name: "The Connector", tagline: "You bring people along — AI is better with company.", color: "#2f8f5b" },
-  ETHICIST: { name: "The Critical Thinker", tagline: "You ask the questions everyone else forgets to.", color: "#7c6fb0" },
-  VISIONARY: { name: "The Visionary", tagline: "You're already living five years ahead.", color: "#c9678f" },
+  BUILDER: { name: "The Builder", tagline: "You don't just use AI — you make things with it.", color: "#a9c6de" },
+  EXPLORER: { name: "The Explorer", tagline: "New tool just dropped? You've already tried it.", color: "#d99aa6" },
+  CONNECTOR: { name: "The Connector", tagline: "You bring people along — AI is better with company.", color: "#9dbb8a" },
+  ETHICIST: { name: "The Critical Thinker", tagline: "You ask the questions everyone else forgets to.", color: "#b3a4d1" },
+  VISIONARY: { name: "The Visionary", tagline: "You're already living five years ahead.", color: "#e6d98f" },
 };
 const CATEGORY_ORDER = ["BUILDER", "EXPLORER", "CONNECTOR", "ETHICIST", "VISIONARY"];
 
@@ -450,7 +450,7 @@ function confettiBurst(count = 140) {
   confettiCanvas.style.height = h + "px";
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-  const colors = ["#2f8f5b", "#ef6a4c", "#4f7fb3", "#7c6fb0", "#c9678f", "#faf5ea"];
+  const colors = ["#9dbb8a", "#d99aa6", "#a9c6de", "#b3a4d1", "#e6d98f", "#faf5ea"];
   const particles = Array.from({ length: count }, () => ({
     x: w / 2 + (Math.random() - 0.5) * w * 0.4,
     y: h * 0.35 + (Math.random() - 0.5) * 60,
@@ -539,13 +539,13 @@ async function renderSouvenirCanvas() {
   canvas.height = H;
   const ctx = canvas.getContext("2d");
 
-  const ink = "#1b1815";
+  const ink = "#3d4a63";
   const paper = "#faf5ea";
-  const accent = "#2f8f5b";
-  const accentInk = "#0e2e1c";
-  const coral = "#ef6a4c";
-  const sky = "#4f7fb3";
-  const muted = "#a89f92";
+  const accent = "#9dbb8a";
+  const accentInk = "#232c3e";
+  const coral = "#d99aa6";
+  const sky = "#a9c6de";
+  const muted = "#98a2b8";
 
   ctx.fillStyle = ink;
   ctx.fillRect(0, 0, W, H);
@@ -582,7 +582,7 @@ async function renderSouvenirCanvas() {
     ctx.fillStyle = meta.color;
     roundRect(ctx, badgeX, badgeY, badgeW, 40, 20);
     ctx.fill();
-    ctx.fillStyle = "#1b1815";
+    ctx.fillStyle = accentInk;
     ctx.font = '700 15px "Work Sans", sans-serif';
     const label = meta.name.toUpperCase();
     const lw = ctx.measureText(label).width;
@@ -610,7 +610,7 @@ async function renderSouvenirCanvas() {
       ctx.fillStyle = letterColors[i];
       roundRect(ctx, lx, ly, CELL, LETTERS_H, 16);
       ctx.fill();
-      ctx.fillStyle = i === 1 || i === 3 ? paper : ink;
+      ctx.fillStyle = accentInk;
       ctx.font = '400 40px "Permanent Marker", cursive';
       const tw = ctx.measureText(letter).width;
       ctx.fillText(letter, lx + CELL / 2 - tw / 2, ly + LETTERS_H / 2 + 14);
@@ -651,7 +651,7 @@ async function renderSouvenirCanvas() {
       const sx = (img.width - s) / 2, sy = (img.height - s) / 2;
       ctx.drawImage(img, sx, sy, s, s, px, py, pSize, pSize);
     } else {
-      ctx.fillStyle = task.free ? accent : "#322c25";
+      ctx.fillStyle = task.free ? accent : "#57647d";
       ctx.fillRect(px, py, pSize, pSize);
       ctx.fillStyle = task.free ? accentInk : muted;
       ctx.font = `${Math.round(pSize * 0.32)}px sans-serif`;
@@ -666,7 +666,7 @@ async function renderSouvenirCanvas() {
       ctx.beginPath();
       ctx.arc(x + CELL - 16, y + 16, 13, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = paper;
+      ctx.strokeStyle = accentInk;
       ctx.lineWidth = 2.5;
       ctx.beginPath();
       ctx.moveTo(x + CELL - 21, y + 16);

@@ -1,18 +1,9 @@
 /* ============================================================
-   The Personal Challenge — scrapbook / journal-page aesthetic
-   Same navy + pastel world as AI Human Bingo and 3 Commitments: a
-   dark backdrop holds a tilted, taped-down paper card. Two text
-   contexts to keep straight throughout this file:
-     - directly on the navy page (body, header, footer, toast) → light
-       text: --paper or --muted
-     - on the light paper card (the form itself) → dark text: --ink,
-       --accent-ink or --muted-2, and rule lines use --paper-line
-   Palette (identical tokens/values to the root stylesheet)
-     --ink #3d4a63 (navy, doubles as dark text-on-paper)
-     --paper #faf5ea (card stock)      --muted-2 #6b6459 (text-on-paper, secondary)
-     --accent #9dbb8a (sage)  --coral #d99aa6 (dusty pink)  --sky #a9c6de (powder)
-     --cream #e6d98f  --accent-ink #232c3e (dark text-on-pastel-fill)
-   Type: Permanent Marker (handwriting) / Work Sans (body) / IBM Plex Mono (meta)
+   3 Commitments — same navy scrapbook family as The Personal
+   Challenge, with numbered pastel badges (matching the source
+   slide) in place of tag pills. See /pledge/style.css for the
+   full note on the two text contexts (on-navy vs on-paper-card).
+   Palette identical to /pledge and the root stylesheet.
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Work+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap');
@@ -46,7 +37,7 @@ body {
   background: var(--ink);
   background-image:
     radial-gradient(ellipse 800px 460px at 12% -8%, rgba(217, 154, 166, 0.12), transparent 60%),
-    radial-gradient(ellipse 700px 460px at 100% 4%, rgba(169, 198, 222, 0.12), transparent 55%);
+    radial-gradient(ellipse 700px 460px at 100% 4%, rgba(157, 187, 138, 0.12), transparent 55%);
   color: var(--paper);
   font-family: "Work Sans", -apple-system, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -136,7 +127,7 @@ body {
   color: var(--ink);
 }
 
-/* ---------- pledge card ---------- */
+/* ---------- commitment card ---------- */
 
 .pledge-card-wrap {
   position: relative;
@@ -232,43 +223,47 @@ body {
   color: var(--muted-2);
   opacity: 0.4;
   height: 14px;
-  margin: 4px 0 20px;
+  margin: 4px 0 22px;
 }
 
 .doodle-divider svg { width: 100%; height: 100%; display: block; }
 
-.prompt-block {
-  margin-bottom: 20px;
+.commit-block {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+.commit-badge {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--badge-color, var(--accent));
+  color: var(--accent-ink);
+  font-family: "Permanent Marker", cursive;
+  font-size: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px -4px rgba(15, 19, 28, 0.4);
+}
+
+.commit-body {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
-.prompt-tag {
-  display: inline-flex;
-  align-self: flex-start;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: var(--tag-color, var(--accent));
-  color: var(--accent-ink);
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.prompt-question {
+.commit-prompt {
+  margin: 0;
   font-size: 14.5px;
   font-weight: 700;
   line-height: 1.4;
   color: var(--ink);
-}
-
-.prompt-question .hint {
-  font-weight: 500;
-  color: var(--muted-2);
-  font-size: 13px;
 }
 
 .examples {
@@ -279,23 +274,20 @@ body {
   color: var(--muted-2);
 }
 
-.prompt-block textarea {
+.commit-body input {
   font-family: "Work Sans", sans-serif;
   font-size: 14px;
   color: var(--ink);
-  background: repeating-linear-gradient(var(--paper) 0px, var(--paper) 26px, var(--paper-line) 27px);
-  line-height: 27px;
+  background: var(--paper);
   border: 1px solid var(--paper-line);
   border-radius: 4px;
-  padding: 2px 10px;
-  resize: vertical;
-  min-height: 84px;
+  padding: 9px 10px;
   outline: none;
   transition: border-color 0.15s ease;
 }
 
-.prompt-block textarea:focus { border-color: var(--coral-deep); }
-.prompt-block textarea::placeholder { color: var(--muted-2); opacity: 0.7; }
+.commit-body input:focus { border-color: var(--coral-deep); }
+.commit-body input::placeholder { color: var(--muted-2); opacity: 0.7; }
 
 .char-count {
   align-self: flex-end;
@@ -303,19 +295,6 @@ body {
   font-size: 10.5px;
   color: var(--muted-2);
 }
-
-.revisit-row {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  font-size: 13px;
-  color: var(--ink);
-  cursor: pointer;
-  margin-top: 4px;
-}
-
-.revisit-row input { width: 16px; height: 16px; accent-color: var(--accent-deep); }
-.revisit-date { color: var(--muted-2); margin-left: 4px; }
 
 /* ---------- footer ---------- */
 

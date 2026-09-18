@@ -1,14 +1,17 @@
 /* ============================================================
-   Selfie Human Bingo — photo-booth strip aesthetic
-   Palette
-     --ink        #1b1815  backdrop, corkboard
-     --ink-soft   #26221d  panel / card back
+   AI Human Bingo — photo-booth strip aesthetic
+   Palette (navy + soft pastels, shared across Human Bingo, the
+   Personal Challenge, and 3 Commitments)
+     --ink        #3d4a63  backdrop, corkboard (navy)
+     --ink-soft   #4a5872  panel / card back
      --paper      #faf5ea  polaroid card stock
-     --accent     #2f8f5b  captured / go (green, kept per house style)
-     --accent-ink #10331f  accent text-on-accent
-     --coral      #ef6a4c  camera / action pop
-     --sky        #4f7fb3  third badge colour (B I N G O chips)
-     --muted      #a89f92  secondary text on dark
+     --accent     #9dbb8a  captured / go (sage — DATA)
+     --accent-deep #466b3d accent text-on-paper (dark sage)
+     --accent-ink #232c3e  text/icon on any pastel fill (near-navy)
+     --coral      #d99aa6  camera / action pop (dusty pink — PEOPLE)
+     --sky        #a9c6de  third badge colour (powder blue — TECHNOLOGY)
+     --cream      #e6d98f  fourth accent (pale yellow — IMPACT)
+     --muted      #98a2b8  secondary text on dark
      --muted-2    #6b6459  secondary text on paper
    Type
      display  "Permanent Marker"  — BINGO letters, headline, captions
@@ -18,27 +21,30 @@
      Single dark "photo booth" world (deliberately one theme): a corkboard
      backdrop holds a 5x5 grid of tilted polaroid cards; a sticky marker-
      board header up top and a film-strip action bar pinned to the bottom.
+   Note: all four accents are light pastels now, so anything filled
+   with one of them needs --accent-ink (dark) text/icons, not --paper.
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Work+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap');
 
 :root {
-  --ink: #1b1815;
-  --ink-soft: #26221d;
-  --ink-softer: #322c25;
+  --ink: #3d4a63;
+  --ink-soft: #4a5872;
+  --ink-softer: #57647d;
   --paper: #faf5ea;
   --paper-dim: #efe7d8;
-  --accent: #2f8f5b;
-  --accent-deep: #1f6b42;
-  --accent-ink: #0e2e1c;
-  --coral: #ef6a4c;
-  --coral-deep: #c94d32;
-  --sky: #4f7fb3;
-  --gold-banned: none; /* reminder: never use gold */
-  --muted: #a89f92;
+  --accent: #9dbb8a;
+  --accent-deep: #466b3d;
+  --accent-ink: #232c3e;
+  --coral: #d99aa6;
+  --coral-deep: #b06e7a;
+  --sky: #a9c6de;
+  --cream: #e6d98f;
+  --gold-banned: none; /* reminder: never use saturated gold — cream is the closest we get */
+  --muted: #98a2b8;
   --muted-2: #6b6459;
-  --line: rgba(250, 245, 234, 0.12);
-  --shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.65);
+  --line: rgba(250, 245, 234, 0.14);
+  --shadow: 0 18px 40px -18px rgba(15, 19, 28, 0.65);
   color-scheme: dark;
 }
 
@@ -53,8 +59,8 @@ body {
   padding-inline: 16px;
   background: var(--ink);
   background-image:
-    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(239, 106, 76, 0.10), transparent 60%),
-    radial-gradient(ellipse 700px 500px at 100% 0%, rgba(79, 127, 179, 0.10), transparent 55%),
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(217, 154, 166, 0.12), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 0%, rgba(169, 198, 222, 0.12), transparent 55%),
     repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 3px);
   color: var(--paper);
   font-family: "Work Sans", -apple-system, "Segoe UI", sans-serif;
@@ -75,7 +81,7 @@ header.board-header {
   top: env(safe-area-inset-top, 0px);
   z-index: 20;
   padding-block: 14px 10px;
-  background: linear-gradient(180deg, var(--ink) 78%, rgba(27,24,21,0));
+  background: linear-gradient(180deg, var(--ink) 78%, rgba(61,74,99,0));
   margin-inline: -16px;
   padding-inline: 16px;
 }
@@ -257,16 +263,16 @@ header.board-header {
   aspect-ratio: 1;
   font-family: "Permanent Marker", cursive;
   font-size: clamp(20px, 5.5vw, 30px);
-  color: var(--ink);
+  color: var(--accent-ink);
   border-radius: 14px;
   transform: rotate(var(--tilt, 0deg));
   box-shadow: var(--shadow);
 }
 
 .letters span:nth-child(1) { background: var(--coral); --tilt: -4deg; }
-.letters span:nth-child(2) { background: var(--sky); color: var(--paper); --tilt: 3deg; }
+.letters span:nth-child(2) { background: var(--sky); --tilt: 3deg; }
 .letters span:nth-child(3) { background: var(--accent); --tilt: -3deg; }
-.letters span:nth-child(4) { background: var(--sky); color: var(--paper); --tilt: 4deg; }
+.letters span:nth-child(4) { background: var(--sky); --tilt: 4deg; }
 .letters span:nth-child(5) { background: var(--coral); --tilt: -2deg; }
 
 /* ---------- grid of polaroids ---------- */
@@ -365,7 +371,7 @@ header.board-header {
 }
 
 .cell.done .check-badge { opacity: 1; transform: scale(1); }
-.check-badge svg { width: 11px; height: 11px; stroke: var(--paper); }
+.check-badge svg { width: 11px; height: 11px; stroke: var(--accent-ink); }
 
 .cell-retake {
   position: absolute;
@@ -374,7 +380,7 @@ header.board-header {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: rgba(27,24,21,0.65);
+  background: rgba(35,44,62,0.7);
   backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
@@ -451,6 +457,16 @@ header.board-header {
 .share-btn:active { transform: scale(0.94); }
 .share-btn:disabled { opacity: 0.5; cursor: progress; }
 
+.module-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.module-links-sep { color: var(--muted); }
+
 .module-link {
   font-family: "Work Sans", sans-serif;
   font-size: 12.5px;
@@ -480,7 +496,7 @@ header.board-header {
   display: flex;
   justify-content: center;
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
-  background: linear-gradient(0deg, var(--ink) 60%, rgba(27,24,21,0));
+  background: linear-gradient(0deg, var(--ink) 60%, rgba(61,74,99,0));
 }
 
 .action-bar-inner {
@@ -512,8 +528,8 @@ header.board-header {
 .btn-save {
   flex: 1;
   background: var(--coral);
-  color: var(--paper);
-  box-shadow: 0 10px 26px -10px rgba(239, 106, 76, 0.55);
+  color: var(--accent-ink);
+  box-shadow: 0 10px 26px -10px rgba(217, 154, 166, 0.55);
 }
 
 .btn-save:hover { filter: brightness(1.06); }
