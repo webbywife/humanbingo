@@ -206,7 +206,7 @@ function buildBoard() {
     input.accept = "image/*";
     input.capture = "user";
     input.hidden = true;
-    input.setAttribute("aria-label", `Take a photo: ${task.text}`);
+    input.setAttribute("aria-label", task.free ? `Take a photo: ${task.text}` : `Take a selfie or groupie with someone who: ${task.text}`);
     input.addEventListener("change", (e) => onFileChange(idx, e.target));
 
     const photoWrap = document.createElement("div");

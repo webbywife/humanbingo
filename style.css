@@ -547,6 +547,38 @@ header.board-header {
   transform: translate(-50%, 0);
 }
 
+/* ---------- rules banner ---------- */
+
+.rules-banner {
+  margin: 2px 0 14px;
+  background: var(--ink-soft);
+  border: 1px solid var(--coral-deep);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+}
+
+.rules-banner svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--coral);
+}
+
+.rules-banner p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.rules-banner strong {
+  color: var(--paper);
+}
+
 /* ---------- win banner ---------- */
 
 .win-banner {
