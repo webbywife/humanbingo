@@ -269,6 +269,14 @@ body {
   font-size: 13px;
 }
 
+.examples {
+  margin: 0;
+  font-style: italic;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
 .prompt-block textarea {
   font-family: "Work Sans", sans-serif;
   font-size: 14px;
