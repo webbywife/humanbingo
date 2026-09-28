@@ -37,6 +37,8 @@
     --radius: 14px;
     --font: "Poppins", "Avenir Next", "Segoe UI", system-ui, sans-serif;
   }
+  *, *::before, *::after { box-sizing: border-box; }
+  .choices, .opts, .area, .panel { grid-template-columns: minmax(0, 1fr); }
   html, body { background: var(--ground); }
   body {
     margin: 0; color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.55;
