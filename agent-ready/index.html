@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Agent-Ready Challenge</title>
+<meta name="description" content="Eight quick questions on AI agents in schools, before and after the talk, plus a check of how agent-ready your school is. Get a results card to keep and share." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://events.webprvw.xyz/agent-ready/" />
+<meta property="og:title" content="How agent-ready is your school?" />
+<meta property="og:description" content="The Agent-Ready Challenge from Track A, “When AI Takes Action” (Mapúa iPeople, 1 Oct 2026). Take the quiz and get your school's level on the autonomy dial." />
+<meta property="og:image" content="https://events.webprvw.xyz/agent-ready/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2248%22 fill=%22%2335445A%22/><path d=%22M22 64a28 28 0 0 1 56 0%22 stroke=%22%239FC4AB%22 stroke-width=%2210%22 fill=%22none%22 stroke-linecap=%22round%22/><line x1=%2250%22 y1=%2264%22 x2=%2262%22 y2=%2242%22 stroke=%22%23E9F1FA%22 stroke-width=%227%22 stroke-linecap=%22round%22/></svg>" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap">
+<style>
+  /* Single dark look, taken from the "When AI Takes Action" deck */
+  :root {
+    color-scheme: dark;
+    --ground: #35445A;
+    --ground-deep: #2C394C;
+    --card: #40516B;
+    --card-hi: #4A5D7A;
+    --line: #5A6C88;
+    --text: #E9F1FA;
+    --muted: #A9B4C2;
+    --mint: #9FC4AB;
+    --pink: #F4ACB7;
+    --sky: #B6D8E1;
+    --ok: #9FC4AB;
+    --bad: #F4ACB7;
+    --radius: 14px;
+    --font: "Poppins", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  }
+  html, body { background: var(--ground); }
+  body {
+    margin: 0; color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.55;
+    padding-inline: 16px; padding-block: 20px 40px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; width: 100%; }
+  .wrap > *, .panel > * { min-width: 0; }
+  h1, h2, .q { overflow-wrap: anywhere; }
+  h1, h2, h3 { margin: 0; text-wrap: balance; line-height: 1.15; }
+  p { margin: 0; }
+  .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .muted { color: var(--muted); }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* header */
+  .brand { display: grid; gap: 6px; }
+  .brand h1 { font-size: clamp(30px, 8vw, 44px); font-weight: 800; letter-spacing: -.01em; }
+  .brand h1 .ai { color: var(--pink); }
+  .brand .sub { color: var(--mint); font-weight: 600; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; }
+
+  /* agent loop strip: used as the quiz progress */
+  .loop { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 13px; font-weight: 700; letter-spacing: .06em; }
+  .loop span { color: var(--line); transition: color .3s; }
+  .loop span.on { color: var(--c); }
+  .loop i { color: var(--line); font-style: normal; }
+
+  .panel { background: var(--card); border-radius: var(--radius); padding: 22px 20px; display: grid; gap: 16px; }
+  .choices { display: grid; gap: 12px; }
+  .bigbtn {
+    display: grid; gap: 4px; text-align: left; width: 100%;
+    background: var(--card); color: var(--text); border: 2px solid var(--line); border-radius: var(--radius);
+    padding: 18px 18px; font: inherit; cursor: pointer; transition: border-color .15s, background .15s;
+  }
+  .bigbtn:hover { border-color: var(--sky); background: var(--card-hi); }
+  .bigbtn strong { font-size: 18px; }
+  .bigbtn small { color: var(--muted); font-size: 14px; }
+  .bigbtn.pre strong { color: var(--mint); }
+  .bigbtn.post strong { color: var(--pink); }
+  .note { font-size: 13px; color: var(--muted); }
+
+  button { font-family: inherit; }
+  button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+  .btn {
+    appearance: none; border: 0; border-radius: 999px; padding: 13px 22px; font-size: 15px; font-weight: 700;
+    background: var(--mint); color: var(--ground-deep); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn.alt { background: transparent; color: var(--text); border: 2px solid var(--line); }
+  .btn.pink { background: var(--pink); }
+  .btn[disabled] { opacity: .45; cursor: default; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .spread { justify-content: space-between; }
+
+  /* quiz */
+  .qhead { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+  .q { font-size: clamp(19px, 5vw, 23px); font-weight: 700; }
+  .opts { display: grid; gap: 10px; }
+  .opt {
+    text-align: left; width: 100%; font: inherit; font-size: 16px; color: var(--text);
+    background: var(--ground); border: 2px solid var(--line); border-radius: 12px; padding: 13px 15px; cursor: pointer;
+    display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start;
+  }
+  .opt:hover:not([disabled]) { border-color: var(--sky); }
+  .opt .k { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; font-size: 13px; font-weight: 700; color: var(--muted); }
+  .opt.picked { border-color: var(--sky); background: var(--card-hi); }
+  .opt.picked .k { border-color: var(--sky); color: var(--sky); }
+  .opt.right { border-color: var(--ok); }
+  .opt.right .k { background: var(--ok); border-color: var(--ok); color: var(--ground-deep); }
+  .opt.wrong { border-color: var(--bad); }
+  .opt.wrong .k { background: var(--bad); border-color: var(--bad); color: var(--ground-deep); }
+  .opt[disabled] { cursor: default; }
+  .explain { border-radius: 12px; background: var(--ground); padding: 12px 14px; font-size: 15px; }
+  .explain b { color: var(--mint); }
+  .explain.miss b { color: var(--pink); }
+
+  /* readiness */
+  .area { display: grid; gap: 10px; }
+  .area h3 { font-size: 15px; letter-spacing: .06em; text-transform: uppercase; color: var(--sky); }
+  .item { background: var(--ground); border-radius: 12px; padding: 12px 14px; display: grid; gap: 10px; }
+  .seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .seg button {
+    font: inherit; font-size: 14px; font-weight: 600; padding: 8px 4px; border-radius: 999px; cursor: pointer;
+    background: transparent; color: var(--muted); border: 2px solid var(--line);
+  }
+  .seg button[aria-pressed="true"] { color: var(--ground-deep); border-color: transparent; }
+  .seg button[data-v="2"][aria-pressed="true"] { background: var(--mint); }
+  .seg button[data-v="1"][aria-pressed="true"] { background: var(--sky); }
+  .seg button[data-v="0"][aria-pressed="true"] { background: var(--pink); }
+
+  /* results */
+  .scores { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 10px; align-items: center; text-align: center; }
+  .score b { display: block; font-size: 40px; line-height: 1.1; }
+  .score small { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
+  .arrow { color: var(--muted); font-size: 26px; }
+  .gain { text-align: center; font-weight: 700; color: var(--mint); }
+  .dialbox { display: grid; justify-items: center; gap: 6px; text-align: center; }
+  .dialbox svg { width: 100%; max-width: 320px; height: auto; }
+  .level { font-size: 22px; font-weight: 800; }
+  .card-img { width: 100%; max-width: 420px; border-radius: 12px; display: block; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+  .field { display: grid; gap: 6px; }
+  .field label { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .field input {
+    font: inherit; color: var(--text); background: var(--ground); border: 2px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; box-sizing: border-box;
+  }
+  .caption { background: var(--ground); border-radius: 12px; padding: 12px 14px; font-size: 14px; white-space: pre-wrap; user-select: all; }
+  .status { font-size: 14px; color: var(--mint); min-height: 1.4em; }
+  .social a { font-size: 14px; padding: 10px 16px; }
+  .fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+  @media (max-width: 460px) { .fields { grid-template-columns: 1fr; } .score b { font-size: 34px; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app">
+  <header class="brand">
+    <span class="sub">Track A · Agentic AI &amp; Education Workflows</span>
+    <h1>When <span class="ai">AI</span> Takes Action</h1>
+    <span class="muted">Mapúa iPeople · 1 October 2026 · the Agent-Ready Challenge</span>
+  </header>
+  <main id="screen" class="wrap"></main>
+</div>
+
+<script>
+/* ---------- content ---------- */
+const QUESTIONS = [
+  { q: "What's the biggest difference between a chatbot and an AI agent?",
+    o: ["The agent runs on a smarter model", "The agent works toward a goal and takes the steps itself, using tools", "The agent only works offline", "The agent never makes mistakes"],
+    a: 1, why: "The brain can be the same model. A chatbot answers your question. An agent gets a goal and does the steps." },
+  { q: "Which order does an agent loop through?",
+    o: ["Think → Act → Perceive → Learn", "Act → Learn → Think → Perceive", "Perceive → Think → Act → Learn", "Learn → Perceive → Act → Think"],
+    a: 2, why: "It takes in what's around it, plans, does the steps, then checks what happened and adjusts." },
+  { q: "An agent will remind parents about missing enrollment documents. Where on the autonomy dial should you start?",
+    o: ["Level 4: it acts alone, you check later", "Level 3: it runs routine cases by itself", "Level 2: it drafts, a person approves each step", "Skip the dial and send everything at once"],
+    a: 2, why: "Start at Level 2. Earn Level 3 with evidence. Anything touching parents, grades or health stays close to a human." },
+  { q: "Your class records live in five spreadsheets with different spellings of the same student. You add an agent. What happens?",
+    o: ["The agent quietly fixes the data", "The agent acts on the wrong records, with total confidence", "The agent refuses to run", "Nothing changes"],
+    a: 1, why: "An agent is only as good as what it can see. Bad data becomes a wrong action, not just a wrong answer." },
+  { q: "Which of these should always stay with a person?",
+    o: ["Sorting helpdesk tickets by category", "Drafting a weekly quiz from the syllabus", "Checking the server room temperature", "Deciding how to approach a student who just lost a parent"],
+    a: 3, why: "Empathy, ethics and context are the human layer. The agent can flag the student. The adviser decides." },
+  { q: "TOIC's Monitoring Agent spots a 'rogue access point' near campus. What happens next?",
+    o: ["It blocks the device right away", "It writes a brief, and the security team makes the call", "It shuts down campus Wi-Fi", "It emails every student"],
+    a: 1, why: "Act, then stop. It might just be the café next door, so a person on the SOC team decides." },
+  { q: "Why keep a log of everything an agent does?",
+    o: ["To slow the agent down", "It shows who did what and who approved it, which is the evidence ISO 21001 auditors ask for", "It trains the model for free", "You don't need one if the agent is accurate"],
+    a: 1, why: "An audit log is evidence. The agents create it as they go, and it feeds the management review." },
+  { q: "You want to demo an agent to colleagues. Which data should you use?",
+    o: ["Real student records, since it's only a demo", "Sample data with fake names", "Whatever is in your downloads folder", "Last year's grades, since they're old"],
+    a: 1, why: "Use fake data for demos. Real student data goes only into approved tools, under RA 10173 (Data Privacy Act)." },
+];
+
+const AREAS = [
+  { name: "Data & systems", tip: "Pick one important record, like class lists, and get it into one clean, owned system.", items: [
+    "Our key records live in one system, not scattered spreadsheets.",
+    "Every key system has a named owner.",
+    "We watch our systems instead of waiting for complaints.",
+  ]},
+  { name: "Workflows & operations", tip: "Get everyone who touches one workflow into a room and map it start to finish on a whiteboard.", items: [
+    "We've mapped at least one workflow from start to finish.",
+    "Requests and issues go through one ticketing or tracking system.",
+    "Our devices have an inventory and a maintenance schedule we follow.",
+  ]},
+  { name: "People & governance", tip: "Write down who approves what before any agent acts, and share your AI policy with the people doing the work.", items: [
+    "Teachers and staff know our AI policy.",
+    "Every automated action would have a named human approver.",
+    "We know which data AI tools may and may not touch (RA 10173).",
+    "Our quality system, like ISO 21001, has KPIs and a regular review we can plug agents into.",
+  ]},
+];
+const LEVELS = [
+  { n: 1, name: "Build the foundation", color: "#F4ACB7", move: "Map one workflow and clean one dataset before any agent acts." },
+  { n: 2, name: "Pilot one agent", color: "#B6D8E1", move: "Pick one workflow. The agent drafts, a named person approves every step." },
+  { n: 3, name: "Scale with evidence", color: "#9FC4AB", move: "Let the agent run routine cases, spot-check it, and report the KPIs." },
+];
+const HASHTAGS = "#WhenAITakesAction #AgenticAI #iPeople #AIinEducation";
+const SHARE_URL = "https://events.webprvw.xyz/agent-ready/";
+const PRE_KEY = "agent-ready-pre-v1";
+
+/* ---------- state ---------- */
+let S = { screen: "home", mode: "pre", i: 0, answers: [], revealed: false, ready: {}, name: "", school: "" };
+
+const store = {
+  get() { try { return JSON.parse(localStorage.getItem(PRE_KEY) || "null"); } catch { return null; } },
+  set(v) { try { localStorage.setItem(PRE_KEY, JSON.stringify(v)); } catch {} },
+};
+const $ = (sel, root = document) => root.querySelector(sel);
+function h(tag, attrs = {}, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") el.className = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat()) if (k != null && k !== false) el.append(k.nodeType ? k : document.createTextNode(k));
+  return el;
+}
+const score = (ans) => ans.reduce((s, a, i) => s + (a === QUESTIONS[i].a ? 1 : 0), 0);
+function go(patch) { Object.assign(S, patch); render(); window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" }); }
+
+/* ---------- screens ---------- */
+function render() {
+  const root = $("#screen"); root.replaceChildren();
+  ({ home, quiz, preDone, ready, results })[S.screen](root);
+}
+
+function home(root) {
+  const pre = store.get();
+  root.append(
+    h("div", { class: "panel" },
+      h("p", {}, "Eight quick questions about AI agents in schools. Take them before the talk, then again at the end, and see how far you've come. At the end you'll also check how agent-ready your school is."),
+      h("p", { class: "note" }, "About 3 minutes. No sign-up. Nothing you enter leaves this phone.")),
+    h("div", { class: "choices" },
+      h("button", { class: "bigbtn pre", onclick: () => go({ screen: "quiz", mode: "pre", i: 0, answers: [], revealed: false }) },
+        h("strong", {}, "Start the pre-test"), h("small", {}, pre ? `Already done: ${pre.score}/8. Tap to retake.` : "Before the talk starts")),
+      h("button", { class: "bigbtn post", onclick: () => go({ screen: "quiz", mode: "post", i: 0, answers: [], revealed: false }) },
+        h("strong", {}, "Take the post-test"), h("small", {}, "At the end of the talk, with answers explained, then the school check"))),
+  );
+}
+
+function loopStrip(i) {
+  const steps = [["PERCEIVE", "var(--mint)"], ["THINK", "var(--sky)"], ["ACT", "var(--pink)"], ["LEARN", "var(--text)"]];
+  const on = Math.min(3, Math.floor((i / QUESTIONS.length) * 4));
+  const el = h("div", { class: "loop", "aria-hidden": "true" });
+  steps.forEach(([t, c], k) => {
+    if (k) el.append(h("i", {}, "→"));
+    const s = h("span", { class: k <= on ? "on" : "" }, t); s.style.setProperty("--c", c); el.append(s);
+  });
+  return el;
+}
+
+function quiz(root) {
+  const Q = QUESTIONS[S.i], picked = S.answers[S.i], post = S.mode === "post";
+  const panel = h("div", { class: "panel" },
+    h("div", { class: "qhead" },
+      h("span", { class: "eyebrow" }, post ? "Post-test" : "Pre-test"),
+      h("span", { class: "eyebrow num" }, `${S.i + 1} of ${QUESTIONS.length}`)),
+    loopStrip(S.i),
+    h("h2", { class: "q", id: "qtext" }, Q.q));
+  const opts = h("div", { class: "opts", role: "group", "aria-labelledby": "qtext" });
+  Q.o.forEach((text, k) => {
+    let cls = "opt";
+    if (picked === k) cls += " picked";
+    if (post && S.revealed) { if (k === Q.a) cls += " right"; else if (k === picked) cls += " wrong"; }
+    opts.append(h("button", {
+      class: cls, disabled: post && S.revealed,
+      onclick: () => { S.answers[S.i] = k; if (post) S.revealed = true; render(); },
+    }, h("span", { class: "k" }, "ABCD"[k]), h("span", {}, text)));
+  });
+  panel.append(opts);
+  if (post && S.revealed) {
+    const ok = picked === Q.a;
+    panel.append(h("p", { class: "explain" + (ok ? "" : " miss"), role: "status" }, h("b", {}, ok ? "Correct. " : "Not quite. "), Q.why));
+  }
+  const last = S.i === QUESTIONS.length - 1;
+  const canNext = picked != null;
+  panel.append(h("div", { class: "row spread" },
+    h("button", { class: "btn alt", disabled: S.i === 0, onclick: () => go({ i: S.i - 1, revealed: post }) }, "Back"),
+    h("button", { class: "btn", disabled: !canNext, onclick: () => {
+      if (!last) return go({ i: S.i + 1, revealed: post && S.answers[S.i + 1] != null });
+      if (!post) { store.set({ score: score(S.answers), at: Date.now() }); return go({ screen: "preDone" }); }
+      go({ screen: "ready" });
+    }}, last ? (post ? "Next: school check" : "Lock in my answers") : "Next")));
+  root.append(panel);
+}
+
+function preDone(root) {
+  const s = score(S.answers);
+  root.append(h("div", { class: "panel" },
+    h("span", { class: "eyebrow" }, "Pre-test locked in"),
+    h("h2", { class: "num", style: "font-size:44px" }, `${s} / 8`),
+    h("p", {}, "The answers stay hidden for now. At the end of the talk, open this page again on this phone and tap “Take the post-test” to see how far you've come."),
+    h("p", { class: "note" }, `Using another device later? Write down your score: ${s}/8.`),
+    h("div", { class: "row" }, h("button", { class: "btn alt", onclick: () => go({ screen: "home" }) }, "Back to start"))));
+}
+
+function ready(root) {
+  const panel = h("div", { class: "panel" },
+    h("span", { class: "eyebrow" }, "Last step"),
+    h("h2", {}, "How agent-ready is your school?"),
+    h("p", { class: "muted" }, "Answer for your school or your office. Be honest: this only shows up on your phone."));
+  let idx = 0;
+  AREAS.forEach((area) => {
+    const box = h("section", { class: "area" }, h("h3", {}, area.name));
+    area.items.forEach((text) => {
+      const id = idx++, cur = S.ready[id];
+      const seg = h("div", { class: "seg", role: "group", "aria-label": text });
+      [["2", "Yes"], ["1", "Partly"], ["0", "Not yet"]].forEach(([v, label]) =>
+        seg.append(h("button", { "data-v": v, "aria-pressed": String(cur === +v), onclick: () => { S.ready[id] = +v; render(); } }, label)));
+      box.append(h("div", { class: "item" }, h("span", {}, text), seg));
+    });
+    panel.append(box);
+  });
+  const total = AREAS.reduce((n, a) => n + a.items.length, 0);
+  const done = Object.keys(S.ready).length;
+  panel.append(h("div", { class: "row spread" },
+    h("span", { class: "note num" }, `${done} of ${total} answered`),
+    h("button", { class: "btn pink", disabled: done < total, onclick: () => go({ screen: "results" }) }, "See my results")));
+  root.append(panel);
+}
+
+function readiness() {
+  let id = 0, total = 0, weakest = null;
+  const areas = AREAS.map((a) => {
+    let got = 0; a.items.forEach(() => { got += S.ready[id++] ?? 0; });
+    const pct = got / (a.items.length * 2); total += got;
+    const r = { ...a, pct }; if (!weakest || pct < weakest.pct) weakest = r; return r;
+  });
+  const level = total <= 8 ? LEVELS[0] : total <= 15 ? LEVELS[1] : LEVELS[2];
+  return { total, level, weakest, areas };
+}
+
+function dialSVG(level) {
+  // four notches on a half dial; level 4 is shown greyed out ("rarely right for schools")
+  const cx = 160, cy = 150, r = 120, segs = 4, gap = 0.04;
+  const arc = (a0, a1, rr) => {
+    const p = (a) => [cx + rr * Math.cos(a), cy - rr * Math.sin(a)];
+    const [x0, y0] = p(a0), [x1, y1] = p(a1);
+    return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${rr} ${rr} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+  };
+  const cols = ["#F4ACB7", "#B6D8E1", "#9FC4AB", "#5A6C88"];
+  let paths = "";
+  for (let k = 0; k < segs; k++) {
+    const a0 = Math.PI - (k / segs) * Math.PI - gap, a1 = Math.PI - ((k + 1) / segs) * Math.PI + gap;
+    const active = k + 1 <= level.n && k < 3;
+    paths += `<path d="${arc(a0, a1, r)}" stroke="${cols[k]}" stroke-opacity="${active ? 1 : 0.28}" stroke-width="26" fill="none" stroke-linecap="round"/>`;
+    const mid = (a0 + a1) / 2;
+    paths += `<text x="${(cx + (r - 44) * Math.cos(mid)).toFixed(1)}" y="${(cy - (r - 44) * Math.sin(mid) + 6).toFixed(1)}" fill="#A9B4C2" font-family="Poppins, sans-serif" font-size="15" font-weight="700" text-anchor="middle">${k + 1}</text>`;
+  }
+  const na = Math.PI - ((level.n - 0.5) / segs) * Math.PI;
+  const nx = cx + (r - 30) * Math.cos(na), ny = cy - (r - 30) * Math.sin(na);
+  return `<svg viewBox="0 0 320 175" role="img" aria-label="Autonomy dial pointing at level ${level.n} of 4">${paths}
+    <line x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="#E9F1FA" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="9" fill="#E9F1FA"/>
+    <text x="290" y="170" fill="#A9B4C2" font-family="Poppins, sans-serif" font-size="11" text-anchor="end">4 = acts alone, rarely right for schools</text></svg>`;
+}
+
+function captionText(post, pre, R) {
+  const who = S.name.trim() ? `${S.name.trim()}${S.school.trim() ? ", " + S.school.trim() : ""}` : "";
+  const scoreLine = pre != null ? `My agentic AI score went from ${pre}/8 to ${post}/8` : `I scored ${post}/8 on agentic AI`;
+  return `${scoreLine} at Track A, "When AI Takes Action" (Mapúa iPeople, 1 Oct 2026).${who ? " — " + who : ""}
+My school is at Level ${R.level.n} on the autonomy dial: ${R.level.name}.
+AI prepares. People decide.${SHARE_URL ? "\nTry it: " + SHARE_URL : ""}
+${HASHTAGS}`;
+}
+
+function results(root) {
+  const post = score(S.answers), preRec = store.get(), pre = preRec ? preRec.score : null, R = readiness();
+  const scoreBox = h("div", { class: "panel" }, h("span", { class: "eyebrow" }, "Your quiz"));
+  if (pre != null) {
+    scoreBox.append(h("div", { class: "scores num" },
+      h("div", { class: "score" }, h("b", {}, `${pre}/8`), h("small", {}, "Before")),
+      h("span", { class: "arrow", "aria-hidden": "true" }, "→"),
+      h("div", { class: "score" }, h("b", { style: "color:var(--mint)" }, `${post}/8`), h("small", {}, "After"))),
+      h("p", { class: "gain num" }, post > pre ? `+${post - pre} since the start of the talk` : post === pre ? "Same score. You came in ready." : "Worth a second look at the slides"));
+  } else {
+    scoreBox.append(h("div", { class: "scores num" }, h("span", {}), h("div", { class: "score" }, h("b", { style: "color:var(--mint)" }, `${post}/8`), h("small", {}, "Post-test")), h("span", {})),
+      h("p", { class: "note", style: "text-align:center" }, "No pre-test on this phone, so there's no before score to compare."));
+  }
+
+  const dial = h("div", { class: "panel" },
+    h("span", { class: "eyebrow" }, "Your school"),
+    h("div", { class: "dialbox" }));
+  $(".dialbox", dial).innerHTML = dialSVG(R.level);
+  const lvl = h("p", { class: "level" }, `Level ${R.level.n}: ${R.level.name}`); lvl.style.color = R.level.color;
+  $(".dialbox", dial).append(lvl, h("p", { class: "muted num" }, `Readiness score ${R.total} of 20`));
+  dial.append(h("p", {}, h("b", {}, "Your Monday move: "), R.level.move),
+    h("p", {}, h("b", {}, `Start with ${R.weakest.name.toLowerCase()}: `), R.weakest.tip));
+
+  const share = h("div", { class: "panel" },
+    h("span", { class: "eyebrow" }, "Keep a copy and share it"),
+    h("div", { class: "fields" },
+      h("div", { class: "field" }, h("label", { for: "nm" }, "Name on your card (optional)"),
+        h("input", { id: "nm", value: S.name, maxlength: "40", autocomplete: "off", oninput: (e) => { S.name = e.target.value; refresh(); } })),
+      h("div", { class: "field" }, h("label", { for: "sc" }, "School (optional)"),
+        h("input", { id: "sc", value: S.school, maxlength: "50", autocomplete: "off", oninput: (e) => { S.school = e.target.value; refresh(); } }))),
+    h("img", { class: "card-img", id: "cardimg", alt: "Your results card" }),
+    h("p", { class: "note", style: "text-align:center" }, "On a phone you can also press and hold the card to save it."),
+    h("div", { class: "row", id: "savebtns" }),
+    h("p", { class: "status", id: "status", role: "status" }),
+    h("span", { class: "eyebrow" }, "Caption for your post"),
+    h("p", { class: "caption", id: "caption" }),
+    h("div", { class: "row social", id: "social" }));
+
+  root.append(scoreBox, dial, share,
+    h("div", { class: "panel" },
+      h("span", { class: "eyebrow" }, "One more step"),
+      h("p", {}, "Turn your Monday move into three commitments you can keep."),
+      h("div", { class: "row" }, h("a", { class: "btn", href: "../commitment/" }, "Make my 3 commitments"))),
+    h("div", { class: "row" },
+      h("button", { class: "btn alt", onclick: () => go({ screen: "home", answers: [], ready: {} }) }, "Start over")));
+
+  let blob = null, timer = null;
+  const status = (t) => { $("#status").textContent = t; };
+  async function refresh() {
+    $("#caption").textContent = captionText(post, pre, R);
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      blob = await drawCard(post, pre, R);
+      if (blob) { const u = URL.createObjectURL(blob); const img = $("#cardimg"); const old = img.src; img.src = u; if (old.startsWith("blob:")) URL.revokeObjectURL(old); }
+    }, 150);
+  }
+  refresh();
+
+  const btns = $("#savebtns");
+  const saveBtn = h("button", { class: "btn", onclick: async () => {
+    if (!blob) return;
+    const filename = "agent-ready-results.png";
+    const dl = window.claude?.use ? await window.claude.use("downloads").catch(() => null) : null;
+    if (dl) {
+      try { await dl.save({ filename, data: blob }); status("Saved. Post it with the caption below."); }
+      catch (e) { status(e?.code === "declined" ? "Not saved." : "Saving isn't available here. Press and hold the card to save it."); }
+      return;
+    }
+    const a = h("a", { href: URL.createObjectURL(blob), download: filename }); document.body.append(a); a.click(); a.remove();
+    status("Saved to your downloads. Post it with the caption below.");
+  }}, "Download my card");
+  btns.append(saveBtn);
+  if (navigator.canShare) {
+    btns.append(h("button", { class: "btn pink", onclick: async () => {
+      if (!blob) return;
+      const file = new File([blob], "agent-ready-results.png", { type: "image/png" });
+      const data = { files: [file], text: captionText(post, pre, R) };
+      try { if (navigator.canShare(data)) { await navigator.share(data); status("Shared."); } else status("Your browser can't share images. Download the card instead."); }
+      catch (e) { if (e?.name !== "AbortError") status("Sharing isn't available here. Download the card instead."); }
+    }}, "Share"));
+  }
+  btns.append(h("button", { class: "btn alt", onclick: async () => {
+    const t = captionText(post, pre, R);
+    try { await navigator.clipboard.writeText(t); status("Caption copied."); }
+    catch { const r = document.createRange(); r.selectNodeContents($("#caption")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); status("Caption selected. Copy it from your menu."); }
+  }}, "Copy caption"));
+
+  const social = $("#social"), text = encodeURIComponent(captionText(post, pre, R));
+  if (SHARE_URL) {
+    const u = encodeURIComponent(SHARE_URL);
+    social.append(
+      h("a", { class: "btn alt", href: `https://www.facebook.com/sharer/sharer.php?u=${u}`, target: "_blank", rel: "noopener" }, "Facebook"),
+      h("a", { class: "btn alt", href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}`, target: "_blank", rel: "noopener" }, "LinkedIn"));
+  }
+  social.append(h("a", { class: "btn alt", href: `https://x.com/intent/post?text=${text}`, target: "_blank", rel: "noopener" }, "Post on X"));
+  social.append(h("p", { class: "note", style: "flex-basis:100%" }, "For Instagram or a Facebook photo post, download the card, then attach it with the caption."));
+}
+
+/* ---------- the results card (1080 × 1350, portrait for social feeds) ---------- */
+async function drawCard(post, pre, R) {
+  try { await Promise.all([document.fonts.load("800 60px Poppins"), document.fonts.load("600 30px Poppins"), document.fonts.load("400 30px Poppins")]); } catch {}
+  const W = 1080, H = 1350, c = document.createElement("canvas"); c.width = W; c.height = H;
+  const x = c.getContext("2d"), F = (w, s) => `${w} ${s}px Poppins, "Avenir Next", system-ui, sans-serif`;
+  x.fillStyle = "#35445A"; x.fillRect(0, 0, W, H);
+  x.fillStyle = "#2C394C"; x.beginPath(); x.arc(W - 40, 120, 300, 0, Math.PI * 2); x.fill();
+
+  x.textBaseline = "alphabetic"; x.textAlign = "left";
+  x.fillStyle = "#9FC4AB"; x.font = F(600, 28); x.fillText("TRACK A · AGENTIC AI & EDUCATION WORKFLOWS", 80, 130);
+  x.font = F(800, 92); x.fillStyle = "#E9F1FA"; x.fillText("When ", 80, 250);
+  let w = x.measureText("When ").width; x.fillStyle = "#F4ACB7"; x.fillText("AI", 80 + w, 250);
+  x.fillStyle = "#E9F1FA"; x.fillText("Takes Action", 80, 350);
+  x.fillStyle = "#A9B4C2"; x.font = F(400, 30); x.fillText("Mapúa iPeople · 1 October 2026", 80, 405);
+
+  const who = S.name.trim();
+  if (who) { x.fillStyle = "#E9F1FA"; x.font = F(600, 38); x.fillText(clip(x, who + (S.school.trim() ? " · " + S.school.trim() : ""), 920), 80, 490); }
+
+  // score panel
+  const py = 540; round(x, 80, py, 920, 270, 28, "#40516B");
+  x.fillStyle = "#A9B4C2"; x.font = F(600, 26); x.fillText("AGENTIC AI QUIZ", 120, py + 60);
+  x.font = F(800, 110);
+  if (pre != null) {
+    x.fillStyle = "#E9F1FA"; x.fillText(`${pre}/8`, 120, py + 190);
+    w = x.measureText(`${pre}/8`).width; x.fillStyle = "#A9B4C2"; x.font = F(600, 70); x.fillText("→", 150 + w, py + 180);
+    x.font = F(800, 110); x.fillStyle = "#9FC4AB"; x.fillText(`${post}/8`, 260 + w, py + 190);
+    x.font = F(600, 30); x.fillStyle = "#9FC4AB"; x.textAlign = "right";
+    x.fillText(post > pre ? `+${post - pre} learned` : "before → after", 960, py + 60); x.textAlign = "left";
+  } else { x.fillStyle = "#9FC4AB"; x.fillText(`${post}/8`, 120, py + 190); }
+  x.fillStyle = "#A9B4C2"; x.font = F(400, 26); x.fillText(pre != null ? "before and after the talk" : "post-test score", 120, py + 235);
+
+  // readiness panel with mini dial
+  const ry = 850; round(x, 80, ry, 920, 330, 28, "#40516B");
+  x.fillStyle = "#A9B4C2"; x.font = F(600, 26); x.fillText("HOW AGENT-READY IS MY SCHOOL?", 120, ry + 60);
+  const cx = 250, cy = ry + 250, r = 110, cols = ["#F4ACB7", "#B6D8E1", "#9FC4AB", "#5A6C88"];
+  x.lineWidth = 26; x.lineCap = "round";
+  for (let k = 0; k < 4; k++) {
+    const a0 = Math.PI + (k / 4) * Math.PI + 0.05, a1 = Math.PI + ((k + 1) / 4) * Math.PI - 0.05;
+    x.strokeStyle = cols[k]; x.globalAlpha = (k + 1 <= R.level.n && k < 3) ? 1 : 0.28;
+    x.beginPath(); x.arc(cx, cy, r, a0, a1); x.stroke();
+  }
+  x.globalAlpha = 1; const na = Math.PI + ((R.level.n - 0.5) / 4) * Math.PI;
+  x.strokeStyle = "#E9F1FA"; x.lineWidth = 7; x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + (r - 28) * Math.cos(na), cy + (r - 28) * Math.sin(na)); x.stroke();
+  x.fillStyle = "#E9F1FA"; x.beginPath(); x.arc(cx, cy, 11, 0, Math.PI * 2); x.fill();
+  x.fillStyle = R.level.color; x.font = F(800, 50); x.fillText(`Level ${R.level.n}`, 420, ry + 150);
+  x.fillStyle = "#E9F1FA"; x.font = F(600, 36); x.fillText(R.level.name, 420, ry + 200);
+  x.fillStyle = "#A9B4C2"; x.font = F(400, 26); wrap(x, R.level.move, 420, ry + 245, 540, 34);
+
+  x.fillStyle = "#E9F1FA"; x.font = F(700, 34); x.fillText("AI prepares. People decide.", 80, 1255);
+  x.fillStyle = "#9FC4AB"; x.font = F(600, 24); x.fillText(HASHTAGS, 80, 1300);
+  return new Promise((res) => c.toBlob((b) => res(b), "image/png"));
+}
+function round(x, X, Y, W, H, r, fill) { x.fillStyle = fill; x.beginPath(); x.roundRect ? x.roundRect(X, Y, W, H, r) : x.rect(X, Y, W, H); x.fill(); }
+function clip(x, t, max) { if (x.measureText(t).width <= max) return t; while (t.length && x.measureText(t + "…").width > max) t = t.slice(0, -1); return t + "…"; }
+function wrap(x, t, X, Y, max, lh) {
+  let line = "", y = Y;
+  for (const word of t.split(" ")) {
+    const test = line ? line + " " + word : word;
+    if (x.measureText(test).width > max && line) { x.fillText(line, X, y); line = word; y += lh; } else line = test;
+  }
+  if (line) x.fillText(line, X, y);
+}
+
+render();
+</script>
+
+</body>
+</html>
