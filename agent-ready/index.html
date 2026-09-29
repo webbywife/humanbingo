@@ -18,8 +18,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap">
+<meta name="theme-color" content="#35445A" id="meta-theme" />
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("agent-ready-theme"); } catch (e) {}
+    if (t !== "light" && t !== "dark") t = (window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
 <style>
-  /* Single dark look, taken from the "When AI Takes Action" deck */
+  /* Two themes. Dark = the "When AI Takes Action" deck navy (default).
+     Light = soft blue-grey ground, white cards, deeper accents for text.
+     Pastel fills (buttons, dial) stay the same in both; *-ink tokens are for text. */
   :root {
     color-scheme: dark;
     --ground: #35445A;
@@ -32,14 +43,56 @@
     --mint: #9FC4AB;
     --pink: #F4ACB7;
     --sky: #B6D8E1;
+    --mint-ink: #9FC4AB;
+    --pink-ink: #F4ACB7;
+    --sky-ink: #B6D8E1;
+    --on-accent: #2C394C;
     --ok: #9FC4AB;
     --bad: #F4ACB7;
+    --glow: rgba(159, 196, 171, 0.10);
     --radius: 14px;
     --font: "Poppins", "Avenir Next", "Segoe UI", system-ui, sans-serif;
   }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --ground: #E9EEF4;
+    --card: #FFFFFF;
+    --card-hi: #F3F6FA;
+    --line: #C6D0DC;
+    --text: #243247;
+    --muted: #5C6A7D;
+    --mint-ink: #3D7556;
+    --pink-ink: #A94A5E;
+    --sky-ink: #2E6A80;
+    --ok: #6FA383;
+    --bad: #D9798A;
+    --glow: rgba(182, 216, 225, 0.45);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) {
+      color-scheme: light;
+      --ground: #E9EEF4; --card: #FFFFFF; --card-hi: #F3F6FA; --line: #C6D0DC; --text: #243247; --muted: #5C6A7D;
+      --mint-ink: #3D7556; --pink-ink: #A94A5E; --sky-ink: #2E6A80; --ok: #6FA383; --bad: #D9798A; --glow: rgba(182, 216, 225, 0.45);
+    }
+  }
   *, *::before, *::after { box-sizing: border-box; }
   .choices, .opts, .area, .panel { grid-template-columns: minmax(0, 1fr); }
-  html, body { background: var(--ground); }
+  html, body { background: var(--ground); transition: background-color .35s ease, color .35s ease; }
+  body { background-image: radial-gradient(900px 480px at 100% -10%, var(--glow), transparent 70%); background-repeat: no-repeat; }
+  .panel, .bigbtn, .opt, .item, .explain, .caption { transition: background-color .35s ease, border-color .35s ease, color .35s ease; }
+
+  /* theme switch */
+  .toprow { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .theme-toggle {
+    display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 999px;
+    background: var(--card); border: 1px solid var(--line);
+  }
+  .theme-toggle button {
+    display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 999px; padding: 6px 12px;
+    font: inherit; font-size: 13px; font-weight: 600; color: var(--muted); background: transparent; cursor: pointer;
+  }
+  .theme-toggle button svg { width: 16px; height: 16px; }
+  .theme-toggle button[aria-pressed="true"] { background: var(--sky); color: var(--on-accent); }
   body {
     margin: 0; color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.55;
     padding-inline: 16px; padding-block: 20px 40px;
@@ -57,8 +110,8 @@
   /* header */
   .brand { display: grid; gap: 6px; }
   .brand h1 { font-size: clamp(30px, 8vw, 44px); font-weight: 800; letter-spacing: -.01em; }
-  .brand h1 .ai { color: var(--pink); }
-  .brand .sub { color: var(--mint); font-weight: 600; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; }
+  .brand h1 .ai { color: var(--pink-ink); }
+  .brand .sub { color: var(--mint-ink); font-weight: 600; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; }
 
   /* agent loop strip: used as the quiz progress */
   .loop { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 13px; font-weight: 700; letter-spacing: .06em; }
@@ -76,15 +129,15 @@
   .bigbtn:hover { border-color: var(--sky); background: var(--card-hi); }
   .bigbtn strong { font-size: 18px; }
   .bigbtn small { color: var(--muted); font-size: 14px; }
-  .bigbtn.pre strong { color: var(--mint); }
-  .bigbtn.post strong { color: var(--pink); }
+  .bigbtn.pre strong { color: var(--mint-ink); }
+  .bigbtn.post strong { color: var(--pink-ink); }
   .note { font-size: 13px; color: var(--muted); }
 
   button { font-family: inherit; }
-  button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+  button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid var(--sky-ink); outline-offset: 2px; }
   .btn {
     appearance: none; border: 0; border-radius: 999px; padding: 13px 22px; font-size: 15px; font-weight: 700;
-    background: var(--mint); color: var(--ground-deep); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--mint); color: var(--on-accent); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   }
   .btn.alt { background: transparent; color: var(--text); border: 2px solid var(--line); }
   .btn.pink { background: var(--pink); }
@@ -103,27 +156,27 @@
   }
   .opt:hover:not([disabled]) { border-color: var(--sky); }
   .opt .k { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; font-size: 13px; font-weight: 700; color: var(--muted); }
-  .opt.picked { border-color: var(--sky); background: var(--card-hi); }
-  .opt.picked .k { border-color: var(--sky); color: var(--sky); }
+  .opt.picked { border-color: var(--sky-ink); background: var(--card-hi); }
+  .opt.picked .k { border-color: var(--sky-ink); color: var(--sky-ink); }
   .opt.right { border-color: var(--ok); }
-  .opt.right .k { background: var(--ok); border-color: var(--ok); color: var(--ground-deep); }
+  .opt.right .k { background: var(--ok); border-color: var(--ok); color: var(--on-accent); }
   .opt.wrong { border-color: var(--bad); }
-  .opt.wrong .k { background: var(--bad); border-color: var(--bad); color: var(--ground-deep); }
+  .opt.wrong .k { background: var(--bad); border-color: var(--bad); color: var(--on-accent); }
   .opt[disabled] { cursor: default; }
   .explain { border-radius: 12px; background: var(--ground); padding: 12px 14px; font-size: 15px; }
-  .explain b { color: var(--mint); }
-  .explain.miss b { color: var(--pink); }
+  .explain b { color: var(--mint-ink); }
+  .explain.miss b { color: var(--pink-ink); }
 
   /* readiness */
   .area { display: grid; gap: 10px; }
-  .area h3 { font-size: 15px; letter-spacing: .06em; text-transform: uppercase; color: var(--sky); }
+  .area h3 { font-size: 15px; letter-spacing: .06em; text-transform: uppercase; color: var(--sky-ink); }
   .item { background: var(--ground); border-radius: 12px; padding: 12px 14px; display: grid; gap: 10px; }
   .seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .seg button {
     font: inherit; font-size: 14px; font-weight: 600; padding: 8px 4px; border-radius: 999px; cursor: pointer;
     background: transparent; color: var(--muted); border: 2px solid var(--line);
   }
-  .seg button[aria-pressed="true"] { color: var(--ground-deep); border-color: transparent; }
+  .seg button[aria-pressed="true"] { color: var(--on-accent); border-color: transparent; }
   .seg button[data-v="2"][aria-pressed="true"] { background: var(--mint); }
   .seg button[data-v="1"][aria-pressed="true"] { background: var(--sky); }
   .seg button[data-v="0"][aria-pressed="true"] { background: var(--pink); }
@@ -133,7 +186,7 @@
   .score b { display: block; font-size: 40px; line-height: 1.1; }
   .score small { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
   .arrow { color: var(--muted); font-size: 26px; }
-  .gain { text-align: center; font-weight: 700; color: var(--mint); }
+  .gain { text-align: center; font-weight: 700; color: var(--mint-ink); }
   .dialbox { display: grid; justify-items: center; gap: 6px; text-align: center; }
   .dialbox svg { width: 100%; max-width: 320px; height: auto; }
   .level { font-size: 22px; font-weight: 800; }
@@ -144,7 +197,7 @@
     font: inherit; color: var(--text); background: var(--ground); border: 2px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; box-sizing: border-box;
   }
   .caption { background: var(--ground); border-radius: 12px; padding: 12px 14px; font-size: 14px; white-space: pre-wrap; user-select: all; }
-  .status { font-size: 14px; color: var(--mint); min-height: 1.4em; }
+  .status { font-size: 14px; color: var(--mint-ink); min-height: 1.4em; }
   .social a { font-size: 14px; padding: 10px 16px; }
   .fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
   @media (max-width: 460px) { .fields { grid-template-columns: 1fr; } .score b { font-size: 34px; } }
@@ -155,7 +208,13 @@
 <body>
 <div class="wrap" id="app">
   <header class="brand">
-    <span class="sub">Track A · Agentic AI &amp; Education Workflows</span>
+    <div class="toprow">
+      <span class="sub">Track A · Agentic AI &amp; Education Workflows</span>
+      <div class="theme-toggle" role="group" aria-label="Color theme">
+        <button type="button" id="theme-dark" data-set="dark" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>Dark</button>
+        <button type="button" id="theme-light" data-set="light" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Light</button>
+      </div>
+    </div>
     <h1>When <span class="ai">AI</span> Takes Action</h1>
     <span class="muted">Mapúa iPeople · 1 October 2026 · the Agent-Ready Challenge</span>
   </header>
@@ -260,7 +319,7 @@ function home(root) {
 }
 
 function loopStrip(i) {
-  const steps = [["PERCEIVE", "var(--mint)"], ["THINK", "var(--sky)"], ["ACT", "var(--pink)"], ["LEARN", "var(--text)"]];
+  const steps = [["PERCEIVE", "var(--mint-ink)"], ["THINK", "var(--sky-ink)"], ["ACT", "var(--pink-ink)"], ["LEARN", "var(--text)"]];
   const on = Math.min(3, Math.floor((i / QUESTIONS.length) * 4));
   const el = h("div", { class: "loop", "aria-hidden": "true" });
   steps.forEach(([t, c], k) => {
@@ -366,14 +425,14 @@ function dialSVG(level) {
     const active = k + 1 <= level.n && k < 3;
     paths += `<path d="${arc(a0, a1, r)}" stroke="${cols[k]}" stroke-opacity="${active ? 1 : 0.28}" stroke-width="26" fill="none" stroke-linecap="round"/>`;
     const mid = (a0 + a1) / 2;
-    paths += `<text x="${(cx + (r - 44) * Math.cos(mid)).toFixed(1)}" y="${(cy - (r - 44) * Math.sin(mid) + 6).toFixed(1)}" fill="#A9B4C2" font-family="Poppins, sans-serif" font-size="15" font-weight="700" text-anchor="middle">${k + 1}</text>`;
+    paths += `<text x="${(cx + (r - 44) * Math.cos(mid)).toFixed(1)}" y="${(cy - (r - 44) * Math.sin(mid) + 6).toFixed(1)}" style="fill:var(--muted)" font-family="Poppins, sans-serif" font-size="15" font-weight="700" text-anchor="middle">${k + 1}</text>`;
   }
   const na = Math.PI - ((level.n - 0.5) / segs) * Math.PI;
   const nx = cx + (r - 30) * Math.cos(na), ny = cy - (r - 30) * Math.sin(na);
   return `<svg viewBox="0 0 320 175" role="img" aria-label="Autonomy dial pointing at level ${level.n} of 4">${paths}
-    <line x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="#E9F1FA" stroke-width="5" stroke-linecap="round"/>
-    <circle cx="${cx}" cy="${cy}" r="9" fill="#E9F1FA"/>
-    <text x="290" y="170" fill="#A9B4C2" font-family="Poppins, sans-serif" font-size="11" text-anchor="end">4 = acts alone, rarely right for schools</text></svg>`;
+    <line x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" style="stroke:var(--text)" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="9" style="fill:var(--text)"/>
+    <text x="290" y="170" style="fill:var(--muted)" font-family="Poppins, sans-serif" font-size="11" text-anchor="end">4 = acts alone, rarely right for schools</text></svg>`;
 }
 
 function captionText(post, pre, R) {
@@ -392,10 +451,10 @@ function results(root) {
     scoreBox.append(h("div", { class: "scores num" },
       h("div", { class: "score" }, h("b", {}, `${pre}/8`), h("small", {}, "Before")),
       h("span", { class: "arrow", "aria-hidden": "true" }, "→"),
-      h("div", { class: "score" }, h("b", { style: "color:var(--mint)" }, `${post}/8`), h("small", {}, "After"))),
+      h("div", { class: "score" }, h("b", { style: "color:var(--mint-ink)" }, `${post}/8`), h("small", {}, "After"))),
       h("p", { class: "gain num" }, post > pre ? `+${post - pre} since the start of the talk` : post === pre ? "Same score. You came in ready." : "Worth a second look at the slides"));
   } else {
-    scoreBox.append(h("div", { class: "scores num" }, h("span", {}), h("div", { class: "score" }, h("b", { style: "color:var(--mint)" }, `${post}/8`), h("small", {}, "Post-test")), h("span", {})),
+    scoreBox.append(h("div", { class: "scores num" }, h("span", {}), h("div", { class: "score" }, h("b", { style: "color:var(--mint-ink)" }, `${post}/8`), h("small", {}, "Post-test")), h("span", {})),
       h("p", { class: "note", style: "text-align:center" }, "No pre-test on this phone, so there's no before score to compare."));
   }
 
@@ -403,7 +462,7 @@ function results(root) {
     h("span", { class: "eyebrow" }, "Your school"),
     h("div", { class: "dialbox" }));
   $(".dialbox", dial).innerHTML = dialSVG(R.level);
-  const lvl = h("p", { class: "level" }, `Level ${R.level.n}: ${R.level.name}`); lvl.style.color = R.level.color;
+  const lvl = h("p", { class: "level" }, `Level ${R.level.n}: ${R.level.name}`); lvl.style.color = ["var(--pink-ink)", "var(--sky-ink)", "var(--mint-ink)"][R.level.n - 1];
   $(".dialbox", dial).append(lvl, h("p", { class: "muted num" }, `Readiness score ${R.total} of 20`));
   dial.append(h("p", {}, h("b", {}, "Your Monday move: "), R.level.move),
     h("p", {}, h("b", {}, `Start with ${R.weakest.name.toLowerCase()}: `), R.weakest.tip));
@@ -545,6 +604,16 @@ function wrap(x, t, X, Y, max, lh) {
   }
   if (line) x.fillText(line, X, y);
 }
+
+/* ---------- theme switch ---------- */
+function applyTheme(t, save) {
+  document.documentElement.setAttribute("data-theme", t);
+  document.querySelectorAll(".theme-toggle button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.set === t)));
+  const m = document.getElementById("meta-theme"); if (m) m.setAttribute("content", t === "light" ? "#E9EEF4" : "#35445A");
+  if (save) { try { localStorage.setItem("agent-ready-theme", t); } catch {} }
+}
+document.querySelectorAll(".theme-toggle button").forEach((b) => b.addEventListener("click", () => applyTheme(b.dataset.set, true)));
+applyTheme(document.documentElement.getAttribute("data-theme") || "dark", false);
 
 render();
 </script>
