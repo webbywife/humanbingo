@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Challenge Builder</title>
+<meta name="description" content="Build a Challenge Based Learning plan for your own class: big idea, essential question, challenge, guiding questions and evidence.">
+<meta property="og:title" content="Challenge Builder · Instructional Design Using AI">
+<meta property="og:description" content="Engage, investigate, act. Build a challenge for your class and save it as a card.">
+<meta property="og:image" content="https://events.webprvw.xyz/mapua/og.png">
+<meta name="theme-color" content="#35445A">
+<link rel="icon" href="../img/pin-mint.png">
+<link rel="stylesheet" href="../m.css">
+<style>
+  .phases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: 0 0 22px; position: relative; }
+  .phases::before { content: ""; position: absolute; left: 16%; right: 16%; top: 17px; border-top: 3px dashed var(--line); }
+  .ph { text-align: center; position: relative; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .ph img { width: 30px; margin: 0 auto 4px; opacity: .45; }
+  .ph.on img { opacity: 1; }
+  .ph.on { color: var(--text); }
+  .stepno { font-size: 12px; color: var(--muted); font-weight: 600; margin: 0 0 4px; }
+  .q { font-size: 15px; color: var(--muted); margin: 0 0 14px; }
+  .nav { display: flex; gap: 10px; margin-top: 18px; }
+  .nav .btn { flex: 1; }
+  .sum dt { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-top: 14px; }
+  .sum dd { margin: 4px 0 0; white-space: pre-wrap; }
+  .sum ul { margin: 4px 0 0; padding-left: 18px; }
+  #preview { width: 100%; border-radius: 14px; margin: 14px 0 0; display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a href="../">&larr; All activities</a><span class="tag">Stop 3 · CBL</span></div>
+  <main id="app"></main>
+  <div class="foot"><span>Instructional Design Using AI</span><span>Lea Abarentos</span></div>
+</div>
+
+<script>
+const KEY = "mapua-challenge-draft";
+const PHASES = [["Engage", "../img/pin-pink.png"], ["Investigate", "../img/pin-sky.png"], ["Act", "../img/pin-mint.png"]];
+const STEPS = [
+  { id: "course", phase: 0, title: "Your course", q: "Which class is this for, and which course outcome should the challenge prove?",
+    fields: [["course", "Course", "e.g. Graphic Design, 2nd year"], ["outcome", "Course outcome", "e.g. Create visual designs that send a clear message to a real audience", true]],
+    hint: "Start from the outcome. In CBL the challenge is the alignment, so it has to lead back here." },
+  { id: "bigidea", phase: 0, title: "Big idea", q: "A broad concept that matters to your students, beyond this subject.",
+    fields: [["bigidea", "Big idea", "One short sentence", true]],
+    hint: "Design is a language, and everyone deserves to speak it." },
+  { id: "eq", phase: 0, title: "Essential question", q: "Turn the big idea into a question your students would actually care about.",
+    fields: [["eq", "Essential question", "Start with How, Why or What if", true]],
+    hint: "How can a design speak for people who aren't heard?" },
+  { id: "challenge", phase: 0, title: "The challenge", q: "A real, doable task with a real audience. This is the call to action.",
+    fields: [["challenge", "The challenge", "Start with a verb: Design…, Build…, Propose…", true]],
+    hint: "Design a real graphic for a real school or community need, so your audience gets it in 3 seconds." },
+  { id: "gq", phase: 1, title: "Guiding questions", q: "What will students need to learn to meet the challenge? Two or three questions.",
+    fields: [["gq1", "Guiding question 1", ""], ["gq2", "Guiding question 2", ""], ["gq3", "Guiding question 3 (optional)", ""]],
+    hint: "Why do some colors feel urgent and others calm?" },
+  { id: "evidence", phase: 2, title: "Evidence", q: "What will students make or do that proves the course outcome? How will you judge it?",
+    fields: [["evidence", "Evidence and assessment", "The product, who reviews it, and the rubric", true]],
+    hint: "The final graphic, a peer critique, and a four-level rubric." },
+];
+
+let S = {}; try { S = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch { S = {}; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
+const $app = document.getElementById("app");
+let step = -1;
+
+function el(tag, attrs = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") e.className = v; else if (k.startsWith("on")) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v);
+  }
+  for (const k of kids) if (k != null) e.append(k);
+  return e;
+}
+const kicker = t => el("p", { class: "kicker" }, el("img", { src: "../img/chev.png", alt: "" }), t);
+function phases(on) {
+  return el("div", { class: "phases", "aria-hidden": "true" },
+    ...PHASES.map(([n, img], k) => el("div", { class: "ph" + (k <= on ? " on" : "") }, el("img", { src: img, alt: "" }), n)));
+}
+
+function intro() {
+  $app.replaceChildren(
+    kicker("Your turn · 6 minutes"),
+    el("h1", {}, "Challenge ", el("span", { class: "mint" }, "builder")),
+    el("p", { class: "lead" }, "Challenge Based Learning came from Apple's classrooms in 2008: Engage, Investigate, Act. Build one for your own class in six short steps. Each step shows Lea's Graphic Design lesson as an example."),
+    phases(2),
+    el("div", { class: "panel" },
+      el("p", { class: "small", style: "margin:0" }, "Your answers stay on this phone. Nothing is sent anywhere. You'll get a card to download at the end.")),
+    el("button", { class: "btn mint block", onclick: () => { step = 0; show(); } }, Object.keys(S).length ? "Continue my challenge" : "Start"),
+    ...(Object.keys(S).length ? [el("button", { class: "btn alt block", style: "margin-top:10px", onclick: () => { S = {}; save(); step = 0; show(); } }, "Start over")] : [])
+  );
+}
+
+function show() {
+  const st = STEPS[step];
+  const form = el("div", {});
+  st.fields.forEach(([k, label, ph, big]) => {
+    const id = "f-" + k;
+    const input = big ? el("textarea", { id, placeholder: ph }) : el("input", { id, type: "text", placeholder: ph });
+    input.value = S[k] || "";
+    input.addEventListener("input", () => { S[k] = input.value; save(); });
+    form.append(el("div", { class: "field" }, el("label", { for: id }, label), input));
+  });
+  $app.replaceChildren(
+    phases(st.phase),
+    kicker(PHASES[st.phase][0]),
+    el("p", { class: "stepno" }, `Step ${step + 1} of ${STEPS.length}`),
+    el("h1", {}, st.title),
+    el("p", { class: "q" }, st.q),
+    form,
+    el("div", { class: "hint" }, el("b", {}, step === 0 ? "Tip" : "From Lea's Graphic Design lesson"), st.hint),
+    el("div", { class: "nav" },
+      el("button", { class: "btn alt", onclick: () => { step--; step < 0 ? intro() : show(); } }, "Back"),
+      el("button", { class: "btn mint", onclick: () => { step++; step < STEPS.length ? show() : done(); } }, step + 1 < STEPS.length ? "Next" : "Finish"))
+  );
+  window.scrollTo({ top: 0 });
+  const first = form.querySelector("input,textarea"); if (first && !first.value && matchMedia("(pointer:fine)").matches) first.focus();
+}
+
+const val = k => (S[k] || "").trim();
+const gqs = () => ["gq1", "gq2", "gq3"].map(val).filter(Boolean);
+
+function summaryText() {
+  const L = ["MY CHALLENGE" + (val("course") ? " · " + val("course") : "")];
+  if (val("outcome")) L.push("Course outcome: " + val("outcome"));
+  L.push("", "ENGAGE");
+  if (val("bigidea")) L.push("Big idea: " + val("bigidea"));
+  if (val("eq")) L.push("Essential question: " + val("eq"));
+  if (val("challenge")) L.push("The challenge: " + val("challenge"));
+  L.push("", "INVESTIGATE"); gqs().forEach(q => L.push("• " + q));
+  L.push("", "ACT"); if (val("evidence")) L.push("Evidence: " + val("evidence"));
+  L.push("", "Built at Instructional Design Using AI · Mapúa University · 1 Oct 2026");
+  return L.join("\n");
+}
+
+function done() {
+  const dl = el("dl", { class: "sum" });
+  const add = (t, cls, v) => { if (v) dl.append(el("dt", { class: cls }, t), el("dd", {}, v)); };
+  add("Course outcome", "butter", val("outcome"));
+  add("Big idea", "pink", val("bigidea"));
+  add("Essential question", "pink", val("eq"));
+  add("The challenge", "pink", val("challenge"));
+  if (gqs().length) dl.append(el("dt", { class: "sky" }, "Guiding questions"), el("dd", {}, el("ul", {}, ...gqs().map(q => el("li", {}, q)))));
+  add("Evidence", "mint", val("evidence"));
+  const status = el("p", { class: "status", "aria-live": "polite" });
+  const img = el("img", { id: "preview", alt: "Your challenge card" });
+  $app.replaceChildren(
+    phases(2), kicker("Your challenge"),
+    el("h1", {}, val("course") || "My challenge"),
+    el("div", { class: "panel" }, dl.childNodes.length ? dl : el("p", { class: "small" }, "You haven't filled anything in yet. Go back and add at least a challenge.")),
+    el("p", { class: "q" }, "Check the chain: can a student finish the challenge without meeting the course outcome? If not, alignment is built in."),
+    el("div", { class: "row" },
+      el("button", { class: "btn mint", onclick: () => download(status, img) }, "Download card"),
+      el("button", { class: "btn alt", onclick: () => copy(status) }, "Copy text")),
+    status, img,
+    el("div", { class: "row", style: "margin-top:18px" },
+      el("button", { class: "btn alt", onclick: () => { step = 0; show(); } }, "Edit"),
+      el("a", { class: "btn butter", href: "../pledge/" }, "Last stop: the pledge"))
+  );
+  window.scrollTo({ top: 0 });
+}
+
+async function copy(status) {
+  const t = summaryText();
+  try { await navigator.clipboard.writeText(t); status.textContent = "Copied. Paste it into your notes or lesson plan."; }
+  catch {
+    const ta = el("textarea", { readonly: "" }); ta.value = t; ta.style.cssText = "position:fixed;opacity:0"; document.body.append(ta); ta.select();
+    try { document.execCommand("copy"); status.textContent = "Copied."; } catch { status.textContent = "Couldn't copy. Use Download card instead."; }
+    ta.remove();
+  }
+}
+
+/* ---------- card (1080 × 1350) ---------- */
+const loadImg = src => new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; });
+function lines(x, t, max) {
+  const out = []; let line = "";
+  for (const w of String(t).split(/\s+/)) { const test = line ? line + " " + w : w;
+    if (x.measureText(test).width > max && line) { out.push(line); line = w; } else line = test; }
+  if (line) out.push(line); return out;
+}
+function block(x, t, X, Y, max, lh, maxLines) {
+  let L = lines(x, t, max);
+  if (L.length > maxLines) { L = L.slice(0, maxLines); let s = L[maxLines - 1]; while (s && x.measureText(s + "…").width > max) s = s.slice(0, -1); L[maxLines - 1] = s + "…"; }
+  L.forEach((l, k) => x.fillText(l, X, Y + k * lh)); return Y + L.length * lh;
+}
+async function drawCard() {
+  try { await Promise.all([document.fonts.load("800 60px Poppins"), document.fonts.load("600 26px Poppins"), document.fonts.load("400 28px Poppins")]); } catch {}
+  const [chev, p1, p2, p3] = await Promise.all(["../img/chev.png", "../img/pin-pink.png", "../img/pin-sky.png", "../img/pin-mint.png"].map(loadImg));
+  const W = 1080, H = 1350, c = document.createElement("canvas"); c.width = W; c.height = H;
+  const x = c.getContext("2d"), F = (w, s) => `${w} ${s}px Poppins, "Avenir Next", system-ui, sans-serif`;
+  x.fillStyle = "#35445A"; x.fillRect(0, 0, W, H);
+  x.textBaseline = "alphabetic";
+  if (chev) x.drawImage(chev, 80, 92, 30, 30 * chev.height / chev.width);
+  x.fillStyle = "#A9B4C2"; x.font = F(700, 24); x.fillText("CHALLENGE BASED LEARNING", 122, 116);
+  x.fillStyle = "#9FC4AB"; x.font = F(800, 64);
+  let y = block(x, (val("course") || "My challenge").toUpperCase(), 80, 200, 920, 72, 2);
+  if (val("outcome")) { x.fillStyle = "#E5D698"; x.font = F(400, 26); y = block(x, "Proves: " + val("outcome"), 80, y + 6, 920, 38, 2); }
+
+  // dashed trail
+  const X0 = 110; let top = y + 40;
+  x.strokeStyle = "#607187"; x.lineWidth = 4; x.setLineDash([12, 12]);
+  x.beginPath(); x.moveTo(X0, top + 30); x.lineTo(X0, H - 210); x.stroke(); x.setLineDash([]);
+
+  const section = (pin, name, color, parts, maxL) => {
+    if (pin) x.drawImage(pin, X0 - 22, top, 44, 44 * pin.height / pin.width);
+    x.fillStyle = color; x.font = F(800, 30); x.fillText(name, 160, top + 32);
+    let yy = top + 76;
+    for (const [lab, txt] of parts) {
+      if (!txt) continue;
+      x.fillStyle = "#A9B4C2"; x.font = F(600, 20); x.fillText(lab.toUpperCase(), 160, yy); yy += 34;
+      x.fillStyle = "#E9F1FA"; x.font = F(400, 27); yy = block(x, txt, 160, yy, 840, 38, maxL) + 14;
+    }
+    top = yy + 20;
+  };
+  section(p1, "ENGAGE", "#F4ACB7", [["Big idea", val("bigidea")], ["Essential question", val("eq")], ["The challenge", val("challenge")]], 3);
+  section(p2, "INVESTIGATE", "#B6D8E1", [["Guiding questions", gqs().map(q => "• " + q).join("   ")]], 3);
+  section(p3, "ACT", "#9FC4AB", [["Evidence", val("evidence")]], 3);
+
+  x.fillStyle = "#A9B4C2"; x.font = F(400, 22);
+  x.fillText("Instructional Design Using AI · Mapúa University · 1 October 2026", 80, H - 110);
+  x.fillStyle = "#F4ACB7"; x.font = F(600, 22); x.fillText("events.webprvw.xyz/mapua", 80, H - 74);
+  return new Promise(r => c.toBlob(b => r(b), "image/png"));
+}
+
+async function download(status, img) {
+  status.textContent = "Making your card…";
+  const blob = await drawCard();
+  if (!blob) { status.textContent = "Couldn't make the card on this browser."; return; }
+  const url = URL.createObjectURL(blob);
+  img.src = url; img.style.display = "block";
+  const a = el("a", { href: url, download: "my-challenge.png" }); document.body.append(a); a.click(); a.remove();
+  status.textContent = "Saved. If nothing downloaded, press and hold the card below and choose Save to Photos.";
+}
+
+intro();
+</script>
+</body>
+</html>

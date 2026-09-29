@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Educator's Pledge</title>
+<meta name="description" content="Sign the Educator's Pledge from the Instructional Design Using AI plenary and take it home as a photo card.">
+<meta property="og:title" content="The Educator's Pledge · Instructional Design Using AI">
+<meta property="og:description" content="Add your name and photo, and take home your pledge as an image.">
+<meta property="og:image" content="https://events.webprvw.xyz/mapua/og.png">
+<meta name="theme-color" content="#35445A">
+<link rel="icon" href="../img/pin-pink.png">
+<link rel="stylesheet" href="../m.css">
+<style>
+  .lines { list-style: none; margin: 0 0 22px; padding: 0; }
+  .lines li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; padding: 10px 0; font-size: 17px; line-height: 1.45; }
+  .lines li img { width: 20px; margin-top: 3px; }
+  .lines li:last-child { font-weight: 700; color: var(--pink); }
+  .photo-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .photo-btns label.btn { margin: 0; flex: 1 1 150px; font-size: 15px; }
+  .photo-btns input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .zoom { display: none; margin: 14px 0 0; }
+  .zoom.on { display: block; }
+  input[type=range] { width: 100%; accent-color: var(--pink); height: 32px; }
+  .privacy { display: grid; grid-template-columns: 22px 1fr; gap: 10px; font-size: 13px; color: var(--muted); margin: 12px 0 0; }
+  .privacy img { width: 18px; margin-top: 2px; }
+  #card { width: 100%; height: auto; border-radius: 14px; display: block; background: var(--ink); }
+  .save-note { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+  #final { width: 100%; border-radius: 14px; margin-top: 14px; display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a href="../">&larr; All activities</a><span class="tag">Last stop</span></div>
+
+  <p class="kicker"><img src="../img/chev.png" alt="">Please stand · right hand up · read with me</p>
+  <h1>The Educator's <span class="pink">Pledge</span></h1>
+  <hr class="rule">
+  <ul class="lines" id="lines"></ul>
+
+  <div class="panel">
+    <h2>Make it yours</h2>
+    <p class="small" style="margin:0 0 16px">Add your name and a photo, and take the pledge home as an image. Post it, or keep it where you'll see it on a hard day.</p>
+    <div class="field"><label for="name">Your name</label><input id="name" type="text" maxlength="60" autocomplete="name" placeholder="e.g. Prof. Maria Santos"></div>
+    <div class="field"><label for="school">School or department <span class="small">(optional)</span></label><input id="school" type="text" maxlength="80" placeholder="e.g. Mapúa University · School of IT"></div>
+    <label>Your photo <span class="small">(optional)</span></label>
+    <div class="photo-btns">
+      <label class="btn sky" for="cam">Take a selfie<input id="cam" type="file" accept="image/*" capture="user"></label>
+      <label class="btn alt" for="pick">Choose a photo<input id="pick" type="file" accept="image/*"></label>
+    </div>
+    <div class="zoom" id="zoomBox">
+      <label for="zoom" style="margin-top:6px">Zoom</label><input id="zoom" type="range" min="1" max="2.5" step="0.05" value="1">
+      <label for="shift">Move up or down</label><input id="shift" type="range" min="-1" max="1" step="0.05" value="0">
+      <button class="btn alt block" id="removePhoto" type="button" style="margin-top:6px">Remove photo</button>
+    </div>
+    <div class="privacy"><img src="../img/pin-mint.png" alt=""><span>Your photo never leaves your phone. The card is made right here in your browser, and nothing is uploaded or saved on any server.</span></div>
+  </div>
+
+  <canvas id="card" width="1080" height="1350" aria-label="Preview of your pledge card"></canvas>
+  <div class="row" style="margin-top:14px">
+    <button class="btn" id="dl">Download my card</button>
+    <button class="btn alt" id="share" hidden>Share</button>
+  </div>
+  <p class="status" id="status" aria-live="polite"></p>
+  <img id="final" alt="Your pledge card. Press and hold to save it.">
+
+  <div class="foot"><span>Instructional Design Using AI</span><span>Lea Abarentos</span></div>
+</div>
+
+<script>
+const PLEDGE = [
+  "I will align what I promise, what I teach, and what I test.",
+  "I will know my learners, and design for the class in front of me.",
+  "I will let AI draft, and keep the judgment, the feedback, and the care.",
+  "I will protect my students' data and their trust.",
+  "I will tell the stories only I can tell.",
+  "I will create learning experiences that matter, so every learner can flourish.",
+];
+const PIN_IMGS = ["pin-pink", "pin-sky", "pin-mint", "pin-pink", "pin-sky", "pin-mint"];
+const ul = document.getElementById("lines");
+PLEDGE.forEach((t, k) => {
+  const li = document.createElement("li"), im = document.createElement("img"), sp = document.createElement("span");
+  im.src = `../img/${PIN_IMGS[k]}.png`; im.alt = ""; sp.textContent = t; li.append(im, sp); ul.append(li);
+});
+
+const $ = id => document.getElementById(id);
+const canvas = $("card"), x = canvas.getContext("2d"), W = 1080, H = 1350;
+const F = (w, s) => `${w} ${s}px Poppins, "Avenir Next", system-ui, sans-serif`;
+let photo = null, assets = {};
+
+const loadImg = src => new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; });
+
+function lines(t, max) {
+  const out = []; let line = "";
+  for (const w of t.split(/\s+/)) { const test = line ? line + " " + w : w;
+    if (x.measureText(test).width > max && line) { out.push(line); line = w; } else line = test; }
+  if (line) out.push(line); return out;
+}
+function fit(t, max, weight, size, min) {
+  let s = size; x.font = F(weight, s);
+  while (x.measureText(t).width > max && s > min) { s -= 2; x.font = F(weight, s); }
+  if (x.measureText(t).width > max) { while (t && x.measureText(t + "…").width > max) t = t.slice(0, -1); t += "…"; }
+  return t;
+}
+function initials(n) {
+  const parts = n.replace(/^(prof|dr|mr|mrs|ms|engr|atty|sir|ma'am)\.?\s+/i, "").split(/\s+/).filter(Boolean);
+  return ((parts[0] || "")[0] || "") + (parts.length > 1 ? parts[parts.length - 1][0] : "");
+}
+
+// Lea's journey pin: pink ring, round photo, pointed bottom
+function drawPin(cx, cy, R) {
+  const tipY = cy + R * 1.62, a = Math.asin(R / (tipY - cy));
+  x.save();
+  x.fillStyle = "#F4ACB7"; x.beginPath();
+  x.moveTo(cx, tipY);
+  x.arc(cx, cy, R, Math.PI / 2 + a, Math.PI / 2 - a, false);
+  x.closePath(); x.fill();
+  const r = R - 16;
+  x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.closePath();
+  x.fillStyle = "#FFFFFF"; x.fill(); x.clip();
+  const name = $("name").value.trim();
+  if (photo) {
+    const z = +$("zoom").value, sh = +$("shift").value;
+    const s = Math.max((2 * r) / photo.width, (2 * r) / photo.height) * z;
+    const w = photo.width * s, h = photo.height * s;
+    const maxShift = Math.max(0, (h - 2 * r) / 2);
+    x.drawImage(photo, cx - w / 2, cy - h / 2 - sh * maxShift, w, h);
+  } else if (name && initials(name)) {
+    x.fillStyle = "#3F5268"; x.fillRect(cx - r, cy - r, 2 * r, 2 * r);
+    x.fillStyle = "#F4ACB7"; x.font = F(800, r * 0.9); x.textAlign = "center"; x.textBaseline = "middle";
+    x.fillText(initials(name).toUpperCase(), cx, cy + r * 0.04);
+  } else if (assets.bow) {
+    x.fillStyle = "#FFFFFF"; x.fillRect(cx - r, cy - r, 2 * r, 2 * r);
+    const b = assets.bow, s = (1.7 * r) / b.height; x.drawImage(b, cx - b.width * s / 2, cy - r * 0.78, b.width * s, b.height * s);
+  }
+  x.restore();
+}
+
+function draw() {
+  x.textAlign = "left"; x.textBaseline = "alphabetic";
+  x.fillStyle = "#35445A"; x.fillRect(0, 0, W, H);
+  // kicker
+  if (assets.chev) x.drawImage(assets.chev, 80, 88, 30, 30 * assets.chev.height / assets.chev.width);
+  x.fillStyle = "#A9B4C2"; x.font = F(700, 24); x.fillText("INSTRUCTIONAL DESIGN USING AI", 122, 112);
+  // title
+  x.fillStyle = "#E9F1FA"; x.font = F(800, 80); x.fillText("THE", 80, 216); x.fillText("EDUCATOR'S", 80, 302);
+  x.fillStyle = "#F4ACB7"; x.fillText("PLEDGE", 80, 388);
+  x.fillStyle = "#F4ACB7"; x.fillRect(80, 418, 96, 6);
+
+  // pin with photo, top right
+  drawPin(840, 250, 150);
+
+  // name block
+  const name = $("name").value.trim(), school = $("school").value.trim();
+  let y = 510;
+  if (name) {
+    x.fillStyle = "#9FC4AB"; x.font = F(600, 24); x.fillText("SIGNED BY", 80, y); y += 58;
+    x.fillStyle = "#E9F1FA"; x.fillText(fit(name, 920, 700, 50, 32), 80, y); y += 10;
+    if (school) { y += 42; x.fillStyle = "#A9B4C2"; x.fillText(fit(school, 920, 400, 28, 20), 80, y); }
+    y += 80;
+  } else y = 540;
+
+  // pledge lines on a dashed trail
+  const X0 = 100, textX = 150, max = 850;
+  const avail = H - 190 - y;
+  let FS = 36, blocks, LH, GAP, total;
+  for (; FS >= 22; FS -= 1) {
+    blocks = PLEDGE.map((t, k) => { x.font = F(k === 5 ? 700 : 400, FS); return lines(t, max); });
+    LH = FS * 1.38; GAP = FS * 0.8;
+    total = blocks.reduce((s, b) => s + b.length * LH, 0) + GAP * 5;
+    if (total <= avail) break;
+  }
+  const scale = 1;
+  x.strokeStyle = "#607187"; x.lineWidth = 3; x.setLineDash([10, 10]);
+  x.beginPath(); x.moveTo(X0, y + 10); x.lineTo(X0, y + total * scale - LH); x.stroke(); x.setLineDash([]);
+  blocks.forEach((L, k) => {
+    const pin = assets[PIN_IMGS[k]];
+    if (pin) x.drawImage(pin, X0 - 14, y - FS + 2, 28, 28 * pin.height / pin.width);
+    x.font = F(k === 5 ? 700 : 400, FS); x.fillStyle = k === 5 ? "#F4ACB7" : "#E9F1FA";
+    L.forEach((l, j) => x.fillText(l, textX, y + j * LH));
+    y += L.length * LH + GAP;
+  });
+
+  // footer
+  x.fillStyle = "#3F5268"; x.fillRect(0, H - 130, W, 130);
+  x.fillStyle = "#E9F1FA"; x.font = F(600, 24); x.fillText("Mapúa University · 1 October 2026", 80, H - 72);
+  x.fillStyle = "#F4ACB7"; x.font = F(600, 22); x.textAlign = "right"; x.fillText("events.webprvw.xyz/mapua", W - 80, H - 72);
+  x.textAlign = "left";
+}
+
+let raf = 0; const redraw = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); };
+["name", "school", "zoom", "shift"].forEach(id => $(id).addEventListener("input", redraw));
+
+function takeFile(e) {
+  const f = e.target.files && e.target.files[0]; e.target.value = "";
+  if (!f) return;
+  const url = URL.createObjectURL(f), im = new Image();
+  im.onload = () => { photo = im; $("zoom").value = 1; $("shift").value = 0; $("zoomBox").classList.add("on"); redraw(); status(""); };
+  im.onerror = () => status("That photo couldn't be opened. Try a JPG or PNG.");
+  im.src = url;
+}
+$("cam").addEventListener("change", takeFile);
+$("pick").addEventListener("change", takeFile);
+$("removePhoto").addEventListener("click", () => { photo = null; $("zoomBox").classList.remove("on"); redraw(); });
+
+const status = t => { $("status").textContent = t; };
+const fileName = () => "educators-pledge" + ($("name").value.trim() ? "-" + $("name").value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") : "") + ".png";
+const toBlob = () => new Promise(r => { draw(); canvas.toBlob(b => r(b), "image/png"); });
+
+$("dl").addEventListener("click", async () => {
+  const blob = await toBlob(); if (!blob) { status("Couldn't make the card on this browser."); return; }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href = url; a.download = fileName(); document.body.append(a); a.click(); a.remove();
+  const img = $("final"); img.src = url; img.style.display = "block";
+  status("Saved. On an iPhone, if it opened instead, press and hold the card below and choose Save to Photos.");
+});
+
+if (navigator.canShare && navigator.share) {
+  try {
+    if (navigator.canShare({ files: [new File([new Blob(["x"], { type: "image/png" })], "t.png", { type: "image/png" })] })) {
+      $("share").hidden = false;
+      $("share").addEventListener("click", async () => {
+        const blob = await toBlob(); const file = new File([blob], fileName(), { type: "image/png" });
+        try { await navigator.share({ files: [file], title: "The Educator's Pledge", text: "I took the Educator's Pledge at Instructional Design Using AI, Mapúa University." }); status("Shared."); }
+        catch (e) { if (e && e.name !== "AbortError") status("Sharing didn't work here. Use Download instead."); }
+      });
+    }
+  } catch {}
+}
+
+(async () => {
+  const names = ["chev", "bow", "pin-pink", "pin-sky", "pin-mint"];
+  const imgs = await Promise.all(names.map(n => loadImg(`../img/${n}.png`)));
+  names.forEach((n, k) => assets[n] = imgs[k]);
+  draw();
+  try { await Promise.all([document.fonts.load("800 76px Poppins"), document.fonts.load("700 32px Poppins"), document.fonts.load("400 32px Poppins"), document.fonts.load("600 24px Poppins")]); } catch {}
+  draw();
+})();
+</script>
+</body>
+</html>

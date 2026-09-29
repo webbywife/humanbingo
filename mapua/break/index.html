@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spot the Break</title>
+<meta name="description" content="Eight course snippets. Is each one aligned, or did it quietly break? From the Instructional Design Using AI plenary, Mapúa, 1 Oct 2026.">
+<meta property="og:title" content="Spot the Break · Instructional Design Using AI">
+<meta property="og:description" content="Eight course snippets. Is each one aligned, or did it quietly break?">
+<meta property="og:image" content="https://events.webprvw.xyz/mapua/og.png">
+<meta name="theme-color" content="#35445A">
+<link rel="icon" href="../img/pin-pink.png">
+<link rel="stylesheet" href="../m.css">
+<style>
+  .progress { display: flex; gap: 6px; margin: 0 0 18px; }
+  .progress i { flex: 1; height: 6px; border-radius: 3px; background: var(--panel); }
+  .progress i.now { background: var(--sky); }
+  .progress i.ok { background: var(--mint); }
+  .progress i.no { background: var(--pink); }
+  .case .course { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--butter); margin: 0 0 12px; }
+  .snip { display: grid; grid-template-columns: 92px 1fr; gap: 4px 12px; margin: 0; }
+  .snip dt { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
+  .snip dd { margin: 0 0 12px; font-size: 15px; }
+  .snip dd b { color: var(--sky); font-weight: 700; }
+  .map { width: 100%; border-collapse: collapse; font-size: 14px; margin: 6px 0 4px; }
+  .map th, .map td { border-bottom: 1px solid var(--line); padding: 7px 4px; text-align: center; }
+  .map th:first-child, .map td:first-child { text-align: left; }
+  .map th { font-size: 11px; color: var(--muted); font-weight: 700; letter-spacing: .06em; }
+  .opts { display: grid; gap: 10px; margin: 16px 0 0; }
+  .opt { text-align: left; justify-content: flex-start; background: var(--ink); color: var(--text);
+    box-shadow: inset 0 0 0 2px var(--line); border-radius: 14px; font-weight: 600; }
+  .opt small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .opt.right { box-shadow: inset 0 0 0 3px var(--mint); }
+  .opt.wrong { box-shadow: inset 0 0 0 3px var(--pink); }
+  .opt[disabled] { opacity: 1; cursor: default; }
+  .opt[disabled]:not(.right):not(.wrong) { opacity: .45; }
+  .verdict { margin: 16px 0 0; padding: 16px 18px; border-radius: 14px; background: var(--ink); }
+  .verdict h2 { font-size: 18px; text-transform: uppercase; font-weight: 800; }
+  .verdict p { margin: 6px 0 0; font-size: 15px; }
+  .verdict .fix { color: var(--mint); }
+  .verdict .fix b { font-weight: 700; }
+  details { margin: 0 0 18px; }
+  summary { cursor: pointer; font-weight: 600; font-size: 14px; color: var(--sky); padding: 6px 0; min-height: 44px; display: flex; align-items: center; }
+  .defs { margin: 6px 0 0; padding: 0; list-style: none; font-size: 14px; }
+  .defs li { padding: 8px 0; border-bottom: 1px solid var(--line); color: var(--muted); }
+  .defs b { color: var(--text); }
+  .score { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; }
+  .score .big { font-size: 64px; font-weight: 800; line-height: 1; color: var(--pink); }
+  .review { list-style: none; margin: 0; padding: 0; }
+  .review li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .review li img { width: 22px; margin-top: 2px; }
+  .review .c { font-weight: 700; }
+  .review .f { color: var(--mint); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a href="../">&larr; All activities</a><span class="tag">Stop 2 · Alignment</span></div>
+  <main id="app"></main>
+  <div class="foot"><span>Instructional Design Using AI</span><span>Lea Abarentos</span></div>
+</div>
+
+<script>
+const TYPES = {
+  aligned: { label: "Aligned", note: "Outcome, activity and assessment line up" },
+  orphan:  { label: "Orphan outcome", note: "No assessment measures it" },
+  drift:   { label: "Verb drift", note: "The test asks for less than the outcome promises" },
+  gap:     { label: "Practice gap", note: "Assessed on something they never practised" },
+  lopsided:{ label: "Lopsided map", note: "Introduced everywhere, demonstrated nowhere" },
+};
+const ORDER = ["aligned", "orphan", "drift", "gap", "lopsided"];
+
+const CASES = [
+  { course: "Technopreneurship · CO3",
+    rows: [["Outcome", "<b>Evaluate</b> whether a business idea can work for a local community."],
+           ["Activity", "Groups interview sari-sari store owners near campus and build a lean canvas."],
+           ["Assessment", "Midterm: 40 multiple-choice items on the definitions of feasibility terms."]],
+    answer: "drift",
+    why: "The outcome says evaluate, but the test only checks whether they remember the words.",
+    fix: "Give them a short business idea and ask for a go / no-go decision with three reasons." },
+  { course: "Graphic Design · CO2",
+    rows: [["Outcome", "<b>Create</b> visual designs that send a clear message to a real audience."],
+           ["Activity", "Take apart good and poor posters, sketch on paper, then design in Canva."],
+           ["Assessment", "A final poster for a school org, a peer critique, and a four-level rubric."]],
+    answer: "aligned",
+    why: "They practise the exact thing the outcome promises, and the rubric scores that same thing.",
+    fix: "Nothing to fix. Keep the rubric visible from day one." },
+  { course: "Data Structures · CO1",
+    rows: [["Outcome", "<b>Implement</b> stacks, queues and linked lists in code."],
+           ["Activity", "Lectures with slide walk-throughs and trace-the-diagram exercises on paper."],
+           ["Assessment", "Lab practical: write a working queue in Python in 60 minutes."]],
+    answer: "gap",
+    why: "The assessment matches the outcome, but no class time let them write the code first.",
+    fix: "Add short weekly coding labs so the practical isn't their first time at the keyboard." },
+  { course: "Nursing Communication · CO4",
+    rows: [["Outcome", "<b>Demonstrate</b> therapeutic communication with patients and families."],
+           ["Activity", "Weekly role-plays in pairs, with the clinical instructor watching."],
+           ["Assessment", "Quizzes on chapters 1–6 and a research paper on communication theories."]],
+    answer: "orphan",
+    why: "Nothing graded ever watches them talk to a patient. The outcome is taught but never measured.",
+    fix: "Score one role-play or a simulated patient encounter with a checklist." },
+  { course: "BS Information Technology · Program map",
+    map: true,
+    rows: [["Program outcome", "<b>Communicate</b> technical information to people who aren't technical."]],
+    answer: "lopsided",
+    why: "Five courses introduce it, two enhance it, and none ever asks students to prove it.",
+    fix: "Pick one senior course, like the capstone, and make a non-technical presentation part of its grade." },
+  { course: "Professional Ethics · CO2",
+    rows: [["Outcome", "<b>Apply</b> the Code of Ethics to real workplace dilemmas."],
+           ["Activity", "Case discussions every week, taken from news stories and alumni."],
+           ["Assessment", "Final exam: “List the seven principles of the Code of Ethics.”"]],
+    answer: "drift",
+    why: "Apply turned into list. Students can pass without ever using a principle on a case.",
+    fix: "Give an unseen dilemma and ask which principles apply and what they would do." },
+  { course: "Research Methods · CO3",
+    rows: [["Outcome", "<b>Analyze</b> survey data using the right statistical test."],
+           ["Activity", "Weekly lab sessions running tests on the class's own survey data."],
+           ["Assessment", "Final paper: choose, run and justify the tests on their own dataset."]],
+    answer: "aligned",
+    why: "Same verb all the way through: they practise analyzing, then prove they can analyze.",
+    fix: "Nothing to fix. An AI tool would mark this one OK." },
+  { course: "Web Development · CO5",
+    rows: [["Outcome", "<b>Deploy</b> a web application to a live server."],
+           ["Activity", "Every project in the term runs on localhost on the student's laptop."],
+           ["Assessment", "Final demo must be a live URL on a real server."]],
+    answer: "gap",
+    why: "The final asks for a live deploy, but they never deployed anything before the final.",
+    fix: "Make one earlier project go live, even on a free host, so the final isn't the first try." },
+];
+
+const $app = document.getElementById("app");
+let i = -1, picks = [];
+
+function el(tag, attrs = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") e.className = v; else if (k === "html") e.innerHTML = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v);
+  }
+  for (const k of kids) if (k != null) e.append(k);
+  return e;
+}
+function defs() {
+  const d = el("details", {}, el("summary", {}, "The four ways alignment breaks"));
+  const ul = el("ul", { class: "defs" });
+  for (const t of ORDER.slice(1)) ul.append(el("li", {}, el("b", {}, TYPES[t].label + ": "), TYPES[t].note + "."));
+  d.append(ul); return d;
+}
+
+function intro() {
+  $app.replaceChildren(
+    el("p", { class: "kicker" }, el("img", { src: "../img/chev.png", alt: "" }), "Your turn · 4 minutes"),
+    el("h1", {}, "Spot the ", el("span", { class: "pink" }, "break")),
+    el("p", { class: "lead" }, "Eight snippets from real-looking syllabi. For each one, decide: is it aligned, or did it quietly break? There's one best answer per case."),
+    el("div", { class: "panel" },
+      el("h2", {}, "What you're looking for"),
+      el("ul", { class: "defs" }, ...ORDER.map(t => el("li", {}, el("b", {}, TYPES[t].label + ": "), TYPES[t].note + ".")))),
+    el("button", { class: "btn block", onclick: () => { i = 0; picks = []; show(); } }, "Start")
+  );
+}
+
+function progress() {
+  const p = el("div", { class: "progress", "aria-hidden": "true" });
+  CASES.forEach((c, k) => p.append(el("i", { class: k < picks.length ? (picks[k] === c.answer ? "ok" : "no") : k === i ? "now" : "" })));
+  return p;
+}
+
+function show() {
+  const c = CASES[i];
+  const dl = el("dl", { class: "snip" });
+  for (const [k, v] of c.rows) dl.append(el("dt", {}, k), el("dd", { html: v }));
+  if (c.map) {
+    const t = el("table", { class: "map" });
+    t.append(el("tr", {}, ...["Course", "Level"].map(h => el("th", {}, h))));
+    [["Intro to Computing", "I"], ["Networking 1", "I"], ["Systems Analysis", "I"], ["Web Development", "I"], ["IT Elective 1", "I"],
+     ["Project Management", "E"], ["Systems Integration", "E"], ["Capstone 1 and 2", "—"]].forEach(r => t.append(el("tr", {}, el("td", {}, r[0]), el("td", {}, r[1]))));
+    dl.append(el("dt", {}, "The map"), el("dd", {}, t, el("span", { class: "small" }, "I = Introduced · E = Enhanced · D = Demonstrated")));
+  }
+  const opts = el("div", { class: "opts", role: "group", "aria-label": "Your answer" });
+  const verdict = el("div", { "aria-live": "polite" });
+  ORDER.forEach(t => {
+    const b = el("button", { class: "btn opt", "data-t": t }, TYPES[t].label + (t === "aligned" ? " ✓" : ""), el("small", {}, TYPES[t].note));
+    b.addEventListener("click", () => answer(t, opts, verdict));
+    opts.append(b);
+  });
+  $app.replaceChildren(
+    progress(),
+    el("p", { class: "kicker" }, el("img", { src: "../img/chev.png", alt: "" }), `Case ${i + 1} of ${CASES.length}`),
+    el("div", { class: "panel case" }, el("p", { class: "course" }, c.course), dl),
+    defs(),
+    el("h2", {}, "Aligned, or broken?"),
+    opts, verdict
+  );
+  window.scrollTo({ top: 0 });
+}
+
+function answer(t, opts, verdict) {
+  const c = CASES[i]; picks.push(t);
+  opts.querySelectorAll("button").forEach(b => {
+    b.disabled = true;
+    if (b.dataset.t === c.answer) b.classList.add("right");
+    else if (b.dataset.t === t) b.classList.add("wrong");
+  });
+  const ok = t === c.answer;
+  verdict.replaceChildren(el("div", { class: "verdict" },
+    el("h2", { class: ok ? "mint" : "pink" }, ok ? "You spotted it" : "It's " + TYPES[c.answer].label.toLowerCase()),
+    el("p", {}, c.why),
+    el("p", { class: "fix" }, el("b", {}, "What to fix: "), c.fix)),
+    el("button", { class: "btn block", style: "margin-top:14px", onclick: () => { i++; i < CASES.length ? show() : done(); } },
+      i + 1 < CASES.length ? "Next case" : "See my score"));
+  verdict.querySelector(".verdict").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function done() {
+  const n = picks.filter((p, k) => p === CASES[k].answer).length;
+  const msg = n >= 7 ? "You'd catch these in a syllabus review." : n >= 5 ? "Good eye. The misses are usually verb drift and practice gaps." : "These are hard to see by hand. That's exactly why an alignment check helps.";
+  const ul = el("ul", { class: "review" });
+  CASES.forEach((c, k) => ul.append(el("li", {},
+    el("img", { src: picks[k] === c.answer ? "../img/pin-mint.png" : "../img/pin-pink.png", alt: picks[k] === c.answer ? "Correct" : "Missed" }),
+    el("div", {}, el("div", { class: "c" }, c.course + " · " + TYPES[c.answer].label), el("div", { class: "f" }, c.fix)))));
+  $app.replaceChildren(
+    progress(),
+    el("p", { class: "kicker" }, el("img", { src: "../img/chev.png", alt: "" }), "Your score"),
+    el("div", { class: "panel score" }, el("div", { class: "big" }, `${n}/${CASES.length}`), el("div", {}, el("h2", {}, msg))),
+    el("h2", { style: "margin-top:24px" }, "What to fix, case by case"),
+    ul,
+    el("p", { class: "lead", style: "margin-top:20px" }, "Now try it on one of your own courses: pick one outcome and trace it to the assessment that proves it."),
+    el("div", { class: "row" },
+      el("a", { class: "btn mint", href: "../challenge/" }, "Next: build a challenge"),
+      el("button", { class: "btn alt", onclick: () => { i = 0; picks = []; show(); } }, "Play again"))
+  );
+  window.scrollTo({ top: 0 });
+}
+
+intro();
+</script>
+</body>
+</html>
