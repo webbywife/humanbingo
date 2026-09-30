@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Responsive Design Lesson · Web Design in the Age of AI</title>
+<meta name="description" content="A sample Week 5 web design lesson built on Gagné's nine events of instruction, from Lea Abarentos's plenary at Mapúa University, 1 October 2026.">
+<meta property="og:title" content="Menus that fit every screen · A lesson in nine events">
+<meta property="og:description" content="Gain attention, share the objective, recall, present, guide, practice, feedback, assess, transfer: one responsive design lesson you can click through.">
+<meta property="og:image" content="https://events.webprvw.xyz/mapua/og.png">
+<meta property="og:url" content="https://events.webprvw.xyz/mapua/lesson/">
+<meta name="theme-color" content="#35445A">
+<link rel="icon" href="../img/pin-pink.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#35445A; --bg2:#2C394C; --card:#3F5268; --card2:#465a72; --line:#607187;
+  --text:#e9f1fa; --muted:#a9b4c2; --faint:#8793a6;
+  --pink:#F4ACB7; --blue:#B6D8E1; --green:#9FC4AB; --gold:#E5D698;
+  --ok:#9fc4ab; --bad:#f4a3a3;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --sans:"Poppins", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.6;padding-inline:16px;padding-block:0 48px}
+a{color:var(--blue)}
+.wrap{max-width:1120px;margin:0 auto}
+h1,h2,h3{text-wrap:balance;line-height:1.15;margin:0}
+p{margin:0}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* header */
+.top{padding-block:40px 20px;display:grid;gap:14px}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;gap:8px;align-items:center}
+.eyebrow b{color:var(--pink);font-weight:800}
+.top h1{font-size:clamp(32px,6vw,58px);font-weight:800;text-transform:uppercase;letter-spacing:-.01em}
+.top h1 span{color:var(--green)}
+.lede{color:var(--muted);max-width:64ch;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:13px;padding:4px 12px;border-radius:999px;background:var(--card);color:var(--text)}
+.chip i{font-style:normal;color:var(--muted)}
+
+/* event rail */
+.rail{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg2);border-radius:14px;padding:10px;margin-block:8px 28px;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.rail a{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:8px 10px;border-radius:9px;text-decoration:none;color:var(--muted);background:var(--card);border-left:4px solid var(--c);min-width:0}
+.rail a strong{font-size:18px;font-weight:800;color:var(--c);line-height:1}
+.rail a span{font-size:11px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.rail a.done{background:var(--card2)}
+.rail a.done strong::after{content:" ✓";font-size:12px}
+.rail a.here{outline:2px solid var(--c);outline-offset:-2px;color:var(--text)}
+@media (max-width:860px){.rail{grid-template-columns:repeat(9,minmax(34px,1fr));}.rail a span{display:none}.rail a{align-items:center;padding:8px 4px}}
+.progress{font-size:13px;color:var(--muted);margin-top:-18px;margin-bottom:22px}
+
+/* event sections */
+.event{--c:var(--pink);background:var(--card);border-left:6px solid var(--c);border-radius:4px 16px 16px 4px;padding:28px clamp(18px,3vw,36px);margin-bottom:22px;display:grid;gap:18px;scroll-margin-top:110px}
+.ev-head{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;align-items:start}
+.ev-num{font-size:52px;font-weight:800;color:var(--c);line-height:.9;grid-row:span 2}
+.ev-kicker{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--c)}
+.ev-head h2{font-size:clamp(22px,3vw,30px);font-weight:700}
+.ev-body{display:grid;gap:16px;max-width:900px}
+.muted{color:var(--muted)}
+.note{border-top:1px dashed var(--line);padding-top:12px}
+.note summary{cursor:pointer;color:var(--muted);font-size:14px;font-weight:600}
+.note p{color:var(--muted);font-size:14px;margin-top:8px;max-width:75ch}
+.btn{background:var(--c);color:#233042;border:0;border-radius:10px;padding:10px 18px;font-weight:700}
+.btn.ghost{background:transparent;color:var(--text);border:1.5px solid var(--line)}
+.btn[aria-pressed="true"]{background:var(--text);color:#233042}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.mark{margin-left:auto}
+.done-btn{background:transparent;border:1.5px solid var(--c);color:var(--c);border-radius:10px;padding:8px 14px;font-weight:700;font-size:14px}
+.done-btn[aria-pressed="true"]{background:var(--c);color:#233042}
+
+/* 1 hook */
+.hook{display:grid;grid-template-columns:260px 1fr;gap:26px;align-items:center}
+@media (max-width:700px){.hook{grid-template-columns:1fr}}
+.phone{width:240px;max-width:100%;aspect-ratio:9/18;background:#1d2433;border-radius:30px;padding:12px;margin:0 auto;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.phone iframe{width:100%;height:100%;border:0;border-radius:20px;background:#fff}
+.reply{font-size:15px;background:var(--bg2);border-radius:12px;padding:14px 16px}
+
+/* 2 objective */
+.obj{display:grid;gap:10px}
+.obj label{display:flex;gap:12px;align-items:flex-start;background:var(--bg2);border-radius:12px;padding:12px 14px;cursor:pointer}
+.obj input{width:20px;height:20px;accent-color:var(--pink);margin-top:3px;flex:none}
+.tag{font-size:12px;font-weight:700;color:#233042;background:var(--gold);border-radius:6px;padding:1px 8px;white-space:nowrap}
+
+/* quizzes */
+.q{background:var(--bg2);border-radius:12px;padding:16px;display:grid;gap:10px}
+.q p{font-weight:600}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{background:var(--card);border:1.5px solid var(--line);color:var(--text);border-radius:10px;padding:8px 14px;font-size:15px}
+.opt.right{border-color:var(--ok);background:#3f5a4c}
+.opt.wrong{border-color:var(--bad);background:#5a3f46}
+.fb{font-size:14px;color:var(--muted);min-height:1.2em}
+.score{font-weight:700;color:var(--c)}
+
+/* 4 tabs + code */
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tab{background:var(--bg2);border:1.5px solid var(--line);color:var(--muted);border-radius:10px;padding:8px 14px;font-weight:600;font-size:15px}
+.tab[aria-selected="true"]{border-color:var(--c);color:var(--text)}
+.panel{display:grid;gap:12px}
+pre{margin:0;background:#1f2736;color:#dce6f2;border-radius:12px;padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:14px;line-height:1.55}
+code{font-family:var(--mono)}
+.k{color:var(--pink)} .p{color:var(--blue)} .v{color:var(--gold)}
+
+/* device preview */
+.stage{background:var(--bg2);border-radius:14px;padding:14px;display:grid;gap:12px}
+.viewport{position:relative;height:430px;overflow:hidden;border-radius:10px;background:#1a2130}
+.viewport iframe{position:absolute;top:0;left:0;border:0;background:#fff;transform-origin:0 0}
+.size{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+input[type=range]{accent-color:var(--blue);width:min(360px,100%)}
+.steps{display:flex;flex-wrap:wrap;gap:8px}
+
+/* 6 editor */
+.editor{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:860px){.editor{grid-template-columns:1fr}}
+textarea{width:100%;background:#1f2736;color:#dce6f2;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:14px;line-height:1.55;resize:vertical}
+#css{min-height:420px}
+.task{display:grid;gap:6px;padding-left:20px;margin:0}
+
+/* 7 checks */
+.checks{display:grid;gap:8px;list-style:none;padding:0;margin:0}
+.checks li{display:grid;grid-template-columns:28px 1fr;gap:8px;background:var(--bg2);border-radius:10px;padding:10px 12px;font-size:15px}
+.checks li b{font-size:18px;line-height:1.3}
+.checks li.ok b{color:var(--ok)} .checks li.no b{color:var(--bad)}
+.nws{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.nws{grid-template-columns:1fr}}
+.nws label{display:grid;gap:6px;font-weight:700;color:var(--c)}
+.nws textarea{min-height:110px;font-family:var(--sans)}
+.hint{font-size:13px;color:var(--muted);font-weight:400}
+
+/* 8 rubric */
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--bg2);color:var(--c);font-weight:700}
+td:first-child{font-weight:600}
+
+/* 9 transfer */
+.challenge{background:var(--bg2);border-radius:14px;padding:18px 20px;display:grid;gap:10px;border:1.5px dashed var(--c)}
+.challenge h3{font-size:20px}
+.exit{display:grid;gap:12px}
+.exit label{display:grid;gap:6px;font-weight:600}
+.exit textarea{min-height:70px;font-family:var(--sans)}
+.toast{font-size:14px;color:var(--ok);min-height:1.2em}
+
+footer{color:var(--faint);font-size:13px;display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between;padding-top:10px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+html{scroll-behavior:smooth}
+.back{display:inline-block;margin-top:18px;color:var(--muted);text-decoration:none;font-size:14px;font-weight:500}
+.back:hover{color:var(--text)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <a class="back" href="../">&larr; All activities</a>
+  <header class="top">
+    <div class="eyebrow"><b>»</b> Web Design in the Age of AI · Week 5</div>
+    <h1>Menus that <span>fit every screen</span></h1>
+    <p class="lede">Today you fix a real problem: a canteen website that breaks on a phone. You will learn responsive design one idea at a time, try it yourself, check your work, and then use it on your own client's site.</p>
+    <div class="meta">
+      <span class="chip"><i>Course outcome</i> CO1 · Build responsive, accessible sites</span>
+      <span class="chip"><i>Time</i> 90 minutes</span>
+      <span class="chip"><i>Structure</i> Gagné's nine events of instruction</span>
+    </div>
+  </header>
+
+  <nav class="rail" id="rail" aria-label="Lesson steps">
+    <a href="#e1" style="--c:var(--pink)"><strong>1</strong><span>Attention</span></a>
+    <a href="#e2" style="--c:var(--pink)"><strong>2</strong><span>Objective</span></a>
+    <a href="#e3" style="--c:var(--pink)"><strong>3</strong><span>Recall</span></a>
+    <a href="#e4" style="--c:var(--blue)"><strong>4</strong><span>Content</span></a>
+    <a href="#e5" style="--c:var(--blue)"><strong>5</strong><span>Guidance</span></a>
+    <a href="#e6" style="--c:var(--blue)"><strong>6</strong><span>Practice</span></a>
+    <a href="#e7" style="--c:var(--green)"><strong>7</strong><span>Feedback</span></a>
+    <a href="#e8" style="--c:var(--green)"><strong>8</strong><span>Assess</span></a>
+    <a href="#e9" style="--c:var(--green)"><strong>9</strong><span>Transfer</span></a>
+  </nav>
+  <p class="progress" id="progress">0 of 9 steps done</p>
+
+  <!-- 1 -->
+  <section class="event" id="e1" style="--c:var(--pink)">
+    <div class="ev-head">
+      <div class="ev-num">1</div>
+      <div class="ev-kicker">Gain attention</div>
+      <h2>Would you order from this?</h2>
+    </div>
+    <div class="ev-body">
+      <div class="hook">
+        <div class="phone" aria-label="The canteen website on a phone"><iframe id="hookFrame" title="Broken canteen website on a phone" tabindex="-1"></iframe></div>
+        <div class="ev-body">
+          <p>This is the Corner Canteen's website, opened on a phone. It's lunchtime, you're hungry, and you want to see what's on the menu.</p>
+          <p><strong>Be honest: would you order from this?</strong></p>
+          <div class="row" role="group" aria-label="Your answer">
+            <button class="btn ghost vote" data-v="yes">Yes, no problem</button>
+            <button class="btn ghost vote" data-v="maybe">Only if I'm very hungry</button>
+            <button class="btn ghost vote" data-v="no">No, I'd go somewhere else</button>
+          </div>
+          <p class="reply" id="hookReply" hidden></p>
+        </div>
+      </div>
+    </div>
+    <details class="note"><summary>Designer's note: why start here?</summary>
+      <p>Gagné's first event gains attention. A real, local, slightly funny problem makes students care before any CSS appears. The vote is emotional engagement: they feel the customer's frustration, so the fix matters to them.</p></details>
+    <div class="row"><button class="done-btn mark" data-step="1" aria-pressed="false">Mark step 1 done</button></div>
+  </section>
+
+  <!-- 2 -->
+  <section class="event" id="e2" style="--c:var(--pink)">
+    <div class="ev-head">
+      <div class="ev-num">2</div>
+      <div class="ev-kicker">Share the objective</div>
+      <h2>By the end of this lesson, you can…</h2>
+    </div>
+    <div class="ev-body">
+      <div class="obj">
+        <label><input type="checkbox" id="o1"> <span>Build a page that works on a phone, a tablet, and a laptop. <span class="tag">CO1</span></span></label>
+        <label><input type="checkbox" id="o2"> <span>Start mobile-first: one column, then add columns as the screen grows.</span></label>
+        <label><input type="checkbox" id="o3"> <span>Write a media query that changes the layout at a breakpoint.</span></label>
+      </div>
+      <p class="muted">Tick each one when you can do it on your own. Come back at the end and see how many you can tick.</p>
+    </div>
+    <details class="note"><summary>Designer's note</summary>
+      <p>Objectives are written as things students can do and check themselves. Each one is proven later: in the practice (event 6), the automatic check (event 7), and the rubric (event 8). That's alignment you can see.</p></details>
+    <div class="row"><button class="done-btn mark" data-step="2" aria-pressed="false">Mark step 2 done</button></div>
+  </section>
+
+  <!-- 3 -->
+  <section class="event" id="e3" style="--c:var(--pink)">
+    <div class="ev-head">
+      <div class="ev-num">3</div>
+      <div class="ev-kicker">Recall prior learning</div>
+      <h2>Warm-up: what do you remember from Week 4?</h2>
+    </div>
+    <div class="ev-body quiz" data-quiz="warm">
+      <div class="q" data-answer="1"><p>1. Which property adds space inside a box, between its content and its border?</p>
+        <div class="opts"><button class="opt">margin</button><button class="opt">padding</button><button class="opt">gap</button></div>
+        <p class="fb" data-right="Yes. Padding is inside the border; margin is outside." data-wrong="Not quite. Margin is outside the border. Padding is the space inside."></p></div>
+      <div class="q" data-answer="0"><p>2. With <code>display: flex</code>, items line up in which direction by default?</p>
+        <div class="opts"><button class="opt">In a row, left to right</button><button class="opt">In a column, top to bottom</button></div>
+        <p class="fb" data-right="Right. flex-direction is row unless you change it." data-wrong="Close, but the default is row. You change it with flex-direction: column."></p></div>
+      <div class="q" data-answer="2"><p>3. Which of these widths can shrink to fit a small screen?</p>
+        <div class="opts"><button class="opt">width: 900px</button><button class="opt">width: 280px</button><button class="opt">max-width: 900px; width: 100%</button></div>
+        <p class="fb" data-right="Exactly. It can be up to 900px, but never wider than the screen. Remember this one." data-wrong="A fixed pixel width can't shrink. Look for the one that can be smaller than its maximum."></p></div>
+      <p class="score" aria-live="polite"></p>
+    </div>
+    <details class="note"><summary>Designer's note</summary>
+      <p>Recall connects new learning to what students already know. Question 3 quietly sets up today's key idea, so the content in event 4 feels like the next step, not a new topic.</p></details>
+    <div class="row"><button class="done-btn mark" data-step="3" aria-pressed="false">Mark step 3 done</button></div>
+  </section>
+
+  <!-- 4 -->
+  <section class="event" id="e4" style="--c:var(--blue)">
+    <div class="ev-head">
+      <div class="ev-num">4</div>
+      <div class="ev-kicker">Present the content</div>
+      <h2>Three ideas, one at a time</h2>
+    </div>
+    <div class="ev-body">
+      <div class="tabs" role="tablist" aria-label="Three ideas">
+        <button class="tab" role="tab" id="t1" aria-controls="p1" aria-selected="true">1 · Mobile-first</button>
+        <button class="tab" role="tab" id="t2" aria-controls="p2" aria-selected="false">2 · Flexible grid</button>
+        <button class="tab" role="tab" id="t3" aria-controls="p3" aria-selected="false">3 · Media queries</button>
+      </div>
+      <div class="panel" role="tabpanel" id="p1" aria-labelledby="t1">
+        <p><strong>Design for the smallest screen first.</strong> On a phone, everything sits in one column. Nothing has a fixed width wider than the screen, and images shrink to fit. Then you add columns as the screen gets wider.</p>
+<pre><code><span class="p">.menu</span> {
+  <span class="k">max-width</span>: <span class="v">1000px</span>;   <span class="p">/* never wider than this… */</span>
+  <span class="k">width</span>: <span class="v">100%</span>;         <span class="p">/* …but it can shrink */</span>
+  <span class="k">margin</span>: <span class="v">0 auto</span>;
+}
+<span class="p">img</span> { <span class="k">max-width</span>: <span class="v">100%</span>; }</code></pre>
+      </div>
+      <div class="panel" role="tabpanel" id="p2" aria-labelledby="t2" hidden>
+        <p><strong>Let the grid decide how many columns fit.</strong> Instead of saying "3 columns", say "as many columns as fit, each at least 220px wide". The browser does the rest.</p>
+<pre><code><span class="p">.menu</span> {
+  <span class="k">display</span>: <span class="v">grid</span>;
+  <span class="k">grid-template-columns</span>: <span class="v">repeat(auto-fit, minmax(220px, 1fr))</span>;
+  <span class="k">gap</span>: <span class="v">16px</span>;
+}</code></pre>
+      </div>
+      <div class="panel" role="tabpanel" id="p3" aria-labelledby="t3" hidden>
+        <p><strong>Change the layout at a breakpoint.</strong> A media query applies CSS only when the screen is at least a certain width. Mobile-first means you use <code>min-width</code>: small screens get the base CSS, bigger screens get extras.</p>
+<pre><code><span class="p">/* phones: one column (the base CSS) */</span>
+<span class="k">@media</span> (<span class="k">min-width</span>: <span class="v">700px</span>) {
+  <span class="p">.header</span> { <span class="k">display</span>: <span class="v">flex</span>; <span class="k">justify-content</span>: <span class="v">space-between</span>; }
+  <span class="p">h1</span> { <span class="k">font-size</span>: <span class="v">40px</span>; }
+}</code></pre>
+      </div>
+    </div>
+    <details class="note"><summary>Designer's note</summary>
+      <p>Content is chunked into three short ideas, each with one code example. Students see one idea at a time instead of a long lecture, which keeps the cognitive load low before they try it.</p></details>
+    <div class="row"><button class="done-btn mark" data-step="4" aria-pressed="false">Mark step 4 done</button></div>
+  </section>
+
+  <!-- 5 -->
+  <section class="event" id="e5" style="--c:var(--blue)">
+    <div class="ev-head">
+      <div class="ev-num">5</div>
+      <div class="ev-kicker">Guide the learning</div>
+      <h2>Watch the menu get fixed, step by step</h2>
+    </div>
+    <div class="ev-body">
+      <p>Click through the four steps, then drag the slider to change the screen width. Watch what each step changes.</p>
+      <div class="steps" role="group" aria-label="Guided steps">
+        <button class="btn ghost gstep" data-g="0" aria-pressed="true">Step 0 · The broken page</button>
+        <button class="btn ghost gstep" data-g="1" aria-pressed="false">Step 1 · Let it shrink</button>
+        <button class="btn ghost gstep" data-g="2" aria-pressed="false">Step 2 · Flexible grid</button>
+        <button class="btn ghost gstep" data-g="3" aria-pressed="false">Step 3 · Media query</button>
+      </div>
+      <p class="muted" id="gExplain"></p>
+      <div class="stage">
+        <div class="row">
+          <button class="btn ghost dev" data-w="375" data-for="g">Phone 375</button>
+          <button class="btn ghost dev" data-w="768" data-for="g">Tablet 768</button>
+          <button class="btn ghost dev" data-w="1280" data-for="g">Laptop 1280</button>
+          <label class="size" for="gWidth">Width <input type="range" id="gWidth" min="320" max="1280" value="375"> <span id="gWidthOut">375px</span></label>
+        </div>
+        <div class="viewport" id="gView"><iframe id="gFrame" title="Guided example preview" tabindex="-1"></iframe></div>
+      </div>
+    </div>
+    <details class="note"><summary>Designer's note</summary>
+      <p>Guidance means worked examples with cues. Each step changes one thing, and the resizable preview makes the effect visible immediately. This is the "I do, we do" moment before students work alone.</p></details>
+    <div class="row"><button class="done-btn mark" data-step="5" aria-pressed="false">Mark step 5 done</button></div>
+  </section>
+
+  <!-- 6 -->
+  <section class="event" id="e6" style="--c:var(--blue)">
+    <div class="ev-head">
+      <div class="ev-num">6</div>
+      <div class="ev-kicker">Let them practice</div>
+      <h2>Your turn: fix the canteen menu</h2>
+    </div>
+    <div class="ev-body">
+      <ol class="task">
+        <li>Make the menu shrink: replace the fixed width with <code>max-width</code> and <code>width: 100%</code>.</li>
+        <li>Turn the cards into a flexible grid with <code>repeat(auto-fit, minmax(…))</code>.</li>
+        <li>Add one <code>@media (min-width: …)</code> rule that improves the laptop layout.</li>
+        <li>Make the text readable on a phone (16px or more).</li>
+      </ol>
+      <div class="editor">
+        <label for="css" class="ev-body" style="gap:8px"><span class="muted">Edit the CSS. The preview updates as you type.</span>
+          <textarea id="css" spellcheck="false"></textarea></label>
+        <div class="stage">
+          <div class="row">
+            <button class="btn ghost dev" data-w="375" data-for="p">Phone</button>
+            <button class="btn ghost dev" data-w="768" data-for="p">Tablet</button>
+            <button class="btn ghost dev" data-w="1280" data-for="p">Laptop</button>
+            <span class="size" id="pWidthOut">375px</span>
+          </div>
+          <div class="viewport" id="pView"><iframe id="pFrame" title="Your page preview" tabindex="-1"></iframe></div>
+        </div>
+      </div>
+      <div class="row"><button class="btn ghost" id="resetCss">Start over</button><span class="muted" style="font-size:14px">Your work is saved in this browser.</span></div>
+    </div>
+    <details class="note"><summary>Designer's note</summary>
+      <p>Practice means doing it, not watching it. The task mirrors the guided demo but with a new page, so students must apply the ideas themselves. The live preview lets them test at three screen sizes as they go.</p></details>
+    <div class="row"><button class="done-btn mark" data-step="6" aria-pressed="false">Mark step 6 done</button></div>
+  </section>
+
+  <!-- 7 -->
+  <section class="event" id="e7" style="--c:var(--green)">
+    <div class="ev-head">
+      <div class="ev-num">7</div>
+      <div class="ev-kicker">Give feedback</div>
+      <h2>Check your work, then swap with a partner</h2>
+    </div>
+    <div class="ev-body">
+      <div class="row"><button class="btn" id="runCheck">Check my CSS</button><span class="muted" style="font-size:14px">Specific feedback on your code, right away.</span></div>
+      <ul class="checks" id="checks" aria-live="polite"></ul>
+      <p><strong>Peer feedback.</strong> Swap devices with a partner. Open their page at phone size and write one of each:</p>
+      <div class="nws">
+        <label for="nw1">I Notice <span class="hint">"I notice your menu becomes two columns at tablet size…"</span><textarea id="nw1"></textarea></label>
+        <label for="nw2">I Wonder <span class="hint">"I wonder why you chose 700px for the breakpoint…"</span><textarea id="nw2"></textarea></label>
+        <label for="nw3">I Suggest <span class="hint">"I suggest making the prices larger on a phone…"</span><textarea id="nw3"></textarea></label>
+      </div>
+    </div>
+    <details class="note"><summary>Designer's note</summary>
+      <p>Feedback should be specific and timely. The automatic check gives instant, code-level feedback; the peer protocol adds a human reader's view. Both happen before the graded assessment, so students can still improve.</p></details>
+    <div class="row"><button class="done-btn mark" data-step="7" aria-pressed="false">Mark step 7 done</button></div>
+  </section>
+
+  <!-- 8 -->
+  <section class="event" id="e8" style="--c:var(--green)">
+    <div class="ev-head">
+      <div class="ev-num">8</div>
+      <div class="ev-kicker">Assess performance</div>
+      <h2>Show what you can do</h2>
+    </div>
+    <div class="ev-body">
+      <p><strong>Your page is graded with this rubric.</strong> It checks the same things as the objectives in step 2.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Criterion</th><th>Excellent (4)</th><th>Proficient (3)</th><th>Developing (2)</th><th>Beginning (1)</th></tr></thead>
+        <tbody>
+          <tr><td>Works at 3 sizes</td><td>Looks designed at phone, tablet, and laptop</td><td>Works at all three with small issues</td><td>Works at two sizes</td><td>Breaks on a phone</td></tr>
+          <tr><td>Mobile-first layout</td><td>One column base; columns added with min-width</td><td>Flexible grid, no media query</td><td>Some fixed widths remain</td><td>Fixed-width layout</td></tr>
+          <tr><td>Readable</td><td>16px+ text, clear prices, good contrast</td><td>Readable with minor issues</td><td>Small or crowded text</td><td>Hard to read on a phone</td></tr>
+          <tr><td>Accessible</td><td>Alt text, headings in order, tap targets 44px+</td><td>Two of these three</td><td>One of these three</td><td>None</td></tr>
+        </tbody>
+      </table></div>
+      <p><strong>Quick check.</strong> Five questions, scored as you go.</p>
+      <div class="ev-body quiz" data-quiz="final">
+        <div class="q" data-answer="2"><p>1. A menu card is <code>width: 900px</code>. What happens on a 375px phone?</p>
+          <div class="opts"><button class="opt">It shrinks to fit</button><button class="opt">It becomes 375px</button><button class="opt">It overflows and the page scrolls sideways</button></div>
+          <p class="fb" data-right="Correct. Fixed widths don't shrink." data-wrong="Fixed pixel widths never shrink, so the page scrolls sideways."></p></div>
+        <div class="q" data-answer="0"><p>2. Mobile-first media queries usually use…</p>
+          <div class="opts"><button class="opt">min-width</button><button class="opt">max-width</button><button class="opt">device-name</button></div>
+          <p class="fb" data-right="Yes. Base CSS for phones, then min-width adds changes for bigger screens." data-wrong="Mobile-first starts small and adds, so it uses min-width."></p></div>
+        <div class="q" data-answer="1"><p>3. What does <code>repeat(auto-fit, minmax(220px, 1fr))</code> do?</p>
+          <div class="opts"><button class="opt">Always makes 3 columns</button><button class="opt">Fits as many 220px+ columns as the screen allows</button><button class="opt">Makes every card 220px exactly</button></div>
+          <p class="fb" data-right="Right. The browser decides the column count for each screen." data-wrong="It adapts: as many columns as fit, each at least 220px wide."></p></div>
+        <div class="q" data-answer="1"><p>4. Which rule stops images from overflowing their card?</p>
+          <div class="opts"><button class="opt">img { width: 400px }</button><button class="opt">img { max-width: 100% }</button><button class="opt">img { display: none }</button></div>
+          <p class="fb" data-right="Yes. The image can be smaller than its natural size, never bigger than its box." data-wrong="Hiding or fixing the size doesn't help. max-width: 100% keeps it inside its box."></p></div>
+        <div class="q" data-answer="2"><p>5. An AI assistant writes your CSS. What should you do before you submit it?</p>
+          <div class="opts"><button class="opt">Submit it as is</button><button class="opt">Delete the comments</button><button class="opt">Test it at three sizes and explain each rule</button></div>
+          <p class="fb" data-right="Exactly. AI drafts, you check and understand it. That's CO2 in this course." data-wrong="AI can be wrong. Test at three sizes and make sure you can explain every rule."></p></div>
+        <p class="score" aria-live="polite"></p>
+      </div>
+    </div>
+    <details class="note"><summary>Designer's note</summary>
+      <p>Assessment is the proof of the outcome. The rubric criteria match the objectives in event 2 and the checks in event 7, so nothing is graded that wasn't taught and practiced. Question 5 links to CO2: judging AI-written code.</p></details>
+    <div class="row"><button class="done-btn mark" data-step="8" aria-pressed="false">Mark step 8 done</button></div>
+  </section>
+
+  <!-- 9 -->
+  <section class="event" id="e9" style="--c:var(--green)">
+    <div class="ev-head">
+      <div class="ev-num">9</div>
+      <div class="ev-kicker">Help them transfer</div>
+      <h2>Now use it on your real client's site</h2>
+    </div>
+    <div class="ev-body">
+      <div class="challenge">
+        <p class="ev-kicker">Course challenge · Module 3 milestone</p>
+        <h3>Make your client's page work on the phone their customers actually use.</h3>
+        <p class="muted">Take the local business you're building a site for (a sari-sari store, a carinderia, a parish office, a small clinic). Open their current page, or your draft, on a real phone. Then apply today's three ideas.</p>
+        <ul class="task" style="list-style:disc">
+          <li>Test on a real phone and take a before screenshot.</li>
+          <li>Apply mobile-first, a flexible grid, and one media query.</li>
+          <li>Ask the client (or a family member) to order or find something on the phone. Watch them.</li>
+          <li>Bring your before and after screenshots to Week 6.</li>
+        </ul>
+      </div>
+      <p><strong>Exit ticket.</strong> Answer in one or two sentences each.</p>
+      <div class="exit">
+        <label for="x1">1. Name one idea from today and show where it appears in your code.<textarea id="x1"></textarea></label>
+        <label for="x2">2. Name a website or app you use every day. Does it work well on your phone? Why?<textarea id="x2"></textarea></label>
+        <label for="x3">3. Complete this: "Before today I thought a website was ___. Now I think it's ___."<textarea id="x3"></textarea></label>
+      </div>
+      <div class="row"><button class="btn" id="copyExit">Copy my exit ticket</button><span class="toast" id="copyMsg" aria-live="polite"></span></div>
+    </div>
+    <details class="note"><summary>Designer's note</summary>
+      <p>Transfer means using the skill somewhere new. The challenge moves the lesson from a practice canteen page to a real client with real customers. That's challenge-based learning, and it keeps the course outcome, "create a site for a real client", in view every week.</p></details>
+    <div class="row"><button class="done-btn mark" data-step="9" aria-pressed="false">Mark step 9 done</button></div>
+  </section>
+
+  <footer>
+    <span>Sample lesson · Web Design in the Age of AI · Week 5 of 14</span>
+    <span>Built on Gagné's nine events of instruction · Designed with LXD at lxd.skooled.online</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
+  const store = {
+    get(k, d){ try { const v = localStorage.getItem('rdl_' + k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+    set(k, v){ try { localStorage.setItem('rdl_' + k, JSON.stringify(v)); } catch(e){} }
+  };
+
+  /* ── the canteen page used in the hook, the demo, and the practice ── */
+  const MENU = [
+    ['Adobo rice bowl','₱85','#c98b5b'], ['Pancit canton','₱60','#d9b36c'], ['Tapsilog','₱95','#b8704e'],
+    ['Turon (2 pcs)','₱20','#e0a458'], ['Buko juice','₱35','#b9d9a8'], ['Halo-halo','₱70','#c8a2c8']
+  ];
+  const cards = MENU.map(([n,p,c]) =>
+    `<article class="card"><div class="photo" style="background:${c}" role="img" aria-label="${n}"></div><h2>${n}</h2><p class="price">${p}</p><button>Order</button></article>`).join('');
+  const PAGE_HTML = `<header class="header"><h1>The Corner Canteen</h1><p class="hours">Open 7am to 5pm · Order ahead, skip the line</p></header><main class="menu">${cards}</main>`;
+  const BASE = `*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:#fffaf2;color:#2b2b2b}.photo{height:120px;border-radius:8px}.price{font-weight:700;color:#b4506a}button{background:#2e3a4f;color:#fff;border:0;border-radius:8px;padding:10px 14px}h2{margin:10px 0 4px}.header{padding:12px 16px;background:#2e3a4f;color:#fff}.hours{margin:4px 0 0;opacity:.8}`;
+  const BROKEN = `/* The Corner Canteen: this CSS breaks on a phone */
+body {
+  font-size: 11px;
+}
+
+.menu {
+  width: 900px;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+}
+
+.card {
+  width: 280px;
+  background: #fff;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.photo {
+  width: 260px;
+}
+`;
+  const GUIDED = [
+    { css: BROKEN, say: 'The original: a 900px menu and 11px text. On a phone you have to scroll sideways and squint.' },
+    { css: `body { font-size: 17px; }
+.menu { max-width: 1000px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; padding: 12px; }
+.card { background: #fff; padding: 12px; border-radius: 10px; }
+.photo { width: 100%; }`, say: 'Step 1: max-width with width: 100% lets the menu shrink, one card per row, and 17px text is readable. It works on a phone, but a laptop wastes space.' },
+    { css: `body { font-size: 17px; }
+.menu { max-width: 1000px; width: 100%; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; padding: 12px; }
+.card { background: #fff; padding: 12px; border-radius: 10px; }
+.photo { width: 100%; }`, say: 'Step 2: a flexible grid. One column on a phone, two on a tablet, three or more on a laptop. Drag the slider and watch the columns appear.' },
+    { css: `body { font-size: 17px; }
+.menu { max-width: 1000px; width: 100%; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; padding: 12px; }
+.card { background: #fff; padding: 12px; border-radius: 10px; }
+.photo { width: 100%; }
+@media (min-width: 700px) {
+  .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 32px; }
+  h1 { font-size: 40px; margin: 0; }
+  .photo { height: 160px; }
+}`, say: 'Step 3: a media query. At 700px and wider, the header spreads out, the title grows, and the photos get taller. Below 700px, nothing changes.' }
+  ];
+  const doc = css => `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${BASE}\n${css}</style></head><body>${PAGE_HTML}</body></html>`;
+
+  /* ── device previews: real iframe at the chosen width, scaled to fit ── */
+  function fit(view, frame, w){
+    const box = view.clientWidth || 600, h = view.clientHeight;
+    const s = Math.min(1, box / w);
+    frame.style.width = w + 'px';
+    frame.style.height = (h / s) + 'px';
+    frame.style.transform = `scale(${s})`;
+    frame.style.left = Math.max(0, (box - w * s) / 2) + 'px';
+  }
+  const views = { g: { view: $('#gView'), frame: $('#gFrame'), w: 375, out: $('#gWidthOut') },
+                  p: { view: $('#pView'), frame: $('#pFrame'), w: 375, out: $('#pWidthOut') } };
+  function setWidth(k, w){
+    const v = views[k]; v.w = w; fit(v.view, v.frame, w);
+    if (v.out) v.out.textContent = w + 'px';
+    if (k === 'g') $('#gWidth').value = w;
+  }
+  $$('.dev').forEach(b => b.addEventListener('click', () => setWidth(b.dataset.for, +b.dataset.w)));
+  $('#gWidth').addEventListener('input', e => setWidth('g', +e.target.value));
+  window.addEventListener('resize', () => Object.keys(views).forEach(k => setWidth(k, views[k].w)));
+
+  /* 1: hook */
+  $('#hookFrame').srcdoc = doc(BROKEN).replace('width=device-width,initial-scale=1', 'width=900');
+  const replies = {
+    yes: "You're patient! Most customers aren't. They pinch, zoom, scroll sideways, and give up. Let's make it easy for them.",
+    maybe: "Honest answer. You'd struggle through it, but many customers would just walk to the next stall. Let's fix that.",
+    no: "Same here. A site that doesn't fit the phone loses the customer. By the end of today, you'll know how to fix it."
+  };
+  $$('.vote').forEach(b => b.addEventListener('click', () => {
+    $$('.vote').forEach(x => x.setAttribute('aria-pressed', x === b));
+    const r = $('#hookReply'); r.hidden = false; r.textContent = replies[b.dataset.v];
+  }));
+
+  /* 2: objectives remembered */
+  ['o1','o2','o3'].forEach(id => { const el = $('#' + id); el.checked = store.get(id, false); el.addEventListener('change', () => store.set(id, el.checked)); });
+
+  /* 3 & 8: quizzes */
+  $$('.quiz').forEach(qz => {
+    const qs = Array.from(qz.querySelectorAll('.q')), score = qz.querySelector('.score');
+    const update = () => {
+      const answered = qs.filter(q => q.dataset.done), right = qs.filter(q => q.dataset.done === 'right').length;
+      if (answered.length) score.textContent = `${right} of ${qs.length} correct` + (answered.length === qs.length ? (right === qs.length ? '. Excellent!' : '. Try the ones you missed again.') : '');
+    };
+    qs.forEach(q => {
+      const opts = Array.from(q.querySelectorAll('.opt')), fb = q.querySelector('.fb'), ans = +q.dataset.answer;
+      opts.forEach((o, i) => o.addEventListener('click', () => {
+        opts.forEach(x => x.classList.remove('right', 'wrong'));
+        const ok = i === ans; o.classList.add(ok ? 'right' : 'wrong');
+        fb.textContent = ok ? fb.dataset.right : fb.dataset.wrong;
+        if (!q.dataset.done || ok) q.dataset.done = ok ? 'right' : 'wrong';
+        update();
+      }));
+    });
+  });
+
+  /* 4: tabs */
+  const tabs = $$('.tab');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => { x.setAttribute('aria-selected', x === t); $('#' + x.getAttribute('aria-controls')).hidden = x !== t; });
+  }));
+
+  /* 5: guided steps */
+  function guided(i){
+    $$('.gstep').forEach(b => b.setAttribute('aria-pressed', +b.dataset.g === i));
+    $('#gFrame').srcdoc = doc(GUIDED[i].css);
+    $('#gExplain').textContent = GUIDED[i].say;
+  }
+  $$('.gstep').forEach(b => b.addEventListener('click', () => guided(+b.dataset.g)));
+
+  /* 6: practice editor */
+  const css = $('#css');
+  css.value = store.get('css', BROKEN);
+  let t;
+  const render = () => { $('#pFrame').srcdoc = doc(css.value); };
+  css.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { render(); store.set('css', css.value); }, 250); });
+  $('#resetCss').addEventListener('click', () => { css.value = BROKEN; render(); store.set('css', BROKEN); $('#checks').innerHTML = ''; });
+
+  /* 7: automatic feedback */
+  function check(src){
+    const s = src.toLowerCase().replace(/\/\*[\s\S]*?\*\//g, '');
+    const out = [];
+    const fixed = [...s.matchAll(/(^|[^-])width\s*:\s*(\d+)px/g)].map(m => +m[2]).filter(n => n >= 400);
+    out.push(fixed.length
+      ? [false, `You still have a fixed width of ${fixed[0]}px. That can't fit a 375px phone. Try max-width: ${fixed[0]}px; width: 100%;`]
+      : [true, 'No fixed widths wider than a phone. The layout can shrink.']);
+    out.push(/max-width|width\s*:\s*100%|\bfr\b/.test(s)
+      ? [true, 'You used flexible sizing (max-width, %, or fr).']
+      : [false, 'Add flexible sizing: max-width with width: 100%, or grid fr units.']);
+    out.push(/auto-fit|auto-fill|flex-wrap\s*:\s*wrap/.test(s)
+      ? [true, 'Your cards can wrap into more or fewer columns.']
+      : [false, 'Let the cards wrap: display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));']);
+    out.push(/@media[^{]*min-width/.test(s)
+      ? [true, 'You have a mobile-first media query (min-width).']
+      : /@media[^{]*max-width/.test(s)
+        ? [false, 'You used max-width in your media query. It works, but mobile-first uses min-width. Try @media (min-width: 700px).']
+        : [false, 'Add one media query, for example @media (min-width: 700px) { … }, to improve the laptop layout.']);
+    const sizes = [...s.matchAll(/font-size\s*:\s*(\d+)px/g)].map(m => +m[1]);
+    const small = sizes.filter(n => n < 16);
+    out.push(small.length
+      ? [false, `Some text is ${Math.min(...small)}px. On a phone, use 16px or more for body text.`]
+      : [true, 'Your text sizes are readable on a phone.']);
+    return out;
+  }
+  $('#runCheck').addEventListener('click', () => {
+    const res = check(css.value), list = $('#checks');
+    list.innerHTML = '';
+    res.forEach(([ok, msg]) => {
+      const li = document.createElement('li'); li.className = ok ? 'ok' : 'no';
+      const b = document.createElement('b'); b.textContent = ok ? '✓' : '✗';
+      const span = document.createElement('span'); span.textContent = msg;
+      li.append(b, span); list.appendChild(li);
+    });
+    const n = res.filter(r => r[0]).length;
+    const li = document.createElement('li'); li.className = n === res.length ? 'ok' : 'no';
+    const b = document.createElement('b'); b.textContent = n === res.length ? '★' : '→';
+    const span = document.createElement('span'); span.textContent = n === res.length ? 'All five checks pass. Now test it on a real phone and ask a partner for feedback.' : `${n} of ${res.length} checks pass. Fix the ✗ items, then check again.`;
+    li.append(b, span); list.appendChild(li);
+  });
+  ['nw1','nw2','nw3','x1','x2','x3'].forEach(id => { const el = $('#' + id); el.value = store.get(id, ''); el.addEventListener('input', () => store.set(id, el.value)); });
+
+  /* 9: copy exit ticket */
+  $('#copyExit').addEventListener('click', () => {
+    const text = ['Exit ticket · Responsive design (Week 5)', ...['x1','x2','x3'].map((id, i) => `${i + 1}. ${$('#' + id).value.trim() || '(blank)'}`)].join('\n');
+    const msg = $('#copyMsg');
+    const fallback = () => { const ta = $('#x1'); ta.focus(); ta.select(); msg.textContent = 'Copy is blocked here. Select your answers and copy them manually.'; };
+    try {
+      navigator.clipboard.writeText(text).then(() => { msg.textContent = 'Copied. Paste it into your LMS or send it to your teacher.'; }, fallback);
+    } catch (e) { fallback(); }
+  });
+
+  /* progress: marked steps + current step on the rail */
+  const done = new Set(store.get('done', []));
+  const railLinks = $$('#rail a');
+  function paint(){
+    railLinks.forEach((a, i) => a.classList.toggle('done', done.has(i + 1)));
+    $$('.mark').forEach(b => { const on = done.has(+b.dataset.step); b.setAttribute('aria-pressed', on); b.textContent = on ? `Step ${b.dataset.step} done ✓` : `Mark step ${b.dataset.step} done`; });
+    $('#progress').textContent = `${done.size} of 9 steps done` + (done.size === 9 ? '. Great work: now go back to step 2 and tick your objectives.' : '');
+  }
+  $$('.mark').forEach(b => b.addEventListener('click', () => {
+    const n = +b.dataset.step; done.has(n) ? done.delete(n) : done.add(n);
+    store.set('done', [...done]); paint();
+  }));
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => entries.forEach(en => {
+      if (en.isIntersecting) railLinks.forEach(a => a.classList.toggle('here', a.getAttribute('href') === '#' + en.target.id));
+    }), { rootMargin: '-40% 0px -55% 0px' });
+    $$('.event').forEach(s => io.observe(s));
+  }
+
+  guided(0); render(); paint();
+  setWidth('g', 375); setWidth('p', 375);
+})();
+</script>
+
+</body>
+</html>
