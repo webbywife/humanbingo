@@ -218,6 +218,64 @@ table.rub{width:100%;border-collapse:collapse;font-size:12px;min-width:560px}
 .audit ul{list-style:none;margin:0;padding:0}
 .audit time{font-family:var(--f-data);color:var(--muted)}
 
+/* agent */
+.agent-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;padding:6px 14px 6px 10px;font-weight:600;font-size:13px;cursor:pointer;margin-bottom:14px}
+.agent-btn:hover{background:rgba(255,255,255,.2)}
+.agent-btn .dot{width:8px;height:8px;border-radius:50%;background:#7CF0B5;box-shadow:0 0 0 3px rgba(124,240,181,.25)}
+.spark{font-style:normal;color:var(--accent-2)}
+.agent-strip{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:var(--accent-soft);border-radius:var(--r);padding:10px 14px;margin-bottom:14px;font-size:13px}
+.agent-strip b{color:var(--accent)}
+.agent-strip .btn{margin-left:auto}
+.ask{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:500;cursor:pointer;color:var(--accent)}
+.ask:hover{border-color:var(--accent-2);background:var(--accent-soft)}
+.panel-h .ask{margin-left:8px}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--surface);border-left:1px solid var(--line);box-shadow:-12px 0 40px rgba(0,0,0,.12);display:flex;flex-direction:column;z-index:20;transform:translateX(105%);transition:transform .25s ease;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.drawer.open{transform:none}
+.dr-h{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.dr-h .av{width:34px;height:34px;border-radius:10px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-size:17px}
+.dr-h b{display:block;font-size:14.5px}
+.dr-h small{display:block;font-size:11.5px;color:var(--muted)}
+.dr-h .x{margin-left:auto;border:0;background:none;font-size:22px;line-height:1;cursor:pointer;color:var(--muted);padding:4px 8px;border-radius:6px}
+.dr-body{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:14px}
+.dr-sec h3{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px}
+.dial{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--sunk);border-radius:9px;padding:3px}
+.dial button{border:0;background:none;border-radius:7px;padding:6px 4px;font-size:11.5px;font-weight:500;color:var(--muted);cursor:pointer;line-height:1.25}
+.dial button b{display:block;font-size:13px}
+.dial button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.dial button.locked{opacity:.55}
+.dial-note{font-size:11.5px;color:var(--muted);margin-top:6px}
+.tasks{display:flex;flex-direction:column;gap:6px}
+.task{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px}
+.task small{display:block;color:var(--muted);font-size:11.5px}
+.sw{position:relative;width:34px;height:20px;appearance:none;background:var(--line);border-radius:999px;cursor:pointer;margin:0;transition:background .2s}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--surface);transition:left .2s}
+.sw:checked{background:var(--accent-2)}
+.sw:checked::after{left:16px}
+.convo{display:flex;flex-direction:column;gap:10px}
+.msg-u{align-self:flex-end;background:var(--accent);color:var(--on-accent);border-radius:12px 12px 2px 12px;padding:8px 12px;font-size:13px;max-width:85%}
+.run{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;font-size:12.5px}
+.step{display:grid;grid-template-columns:70px minmax(0,1fr);gap:8px;align-items:start}
+.ph{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:5px;padding:2px 6px;text-align:center}
+.ph.P{background:var(--accent-soft);color:var(--accent)}
+.ph.T{background:var(--sunk);color:var(--ink)}
+.ph.A{background:var(--accent);color:var(--on-accent)}
+.tool{display:inline-block;font-family:var(--f-data);font-size:11px;background:var(--sunk);border:1px solid var(--line);border-radius:5px;padding:1px 6px;margin-top:3px;color:var(--muted);word-break:break-all}
+.result{background:var(--sunk);border-radius:8px;padding:8px 10px}
+.result ul{margin:4px 0 0;padding-left:18px}
+.approve{border:2px solid var(--human);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.approve .acts{display:flex;flex-wrap:wrap;gap:8px}
+.thinking{color:var(--muted);font-size:12px;display:flex;align-items:center;gap:8px}
+.thinking .btn{margin-left:auto;padding:3px 10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:12px;cursor:pointer;text-align:left}
+.chips button:hover{border-color:var(--accent-2);background:var(--accent-soft)}
+.dr-f{border-top:1px solid var(--line);padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.composer{display:flex;gap:8px}
+.composer textarea{flex:1;min-width:0;resize:none;height:42px}
+.dr-f .fine{margin:0}
+.hl{animation:hl 1.8s ease}
+@keyframes hl{0%,40%{box-shadow:0 0 0 3px var(--accent-2)}100%{box-shadow:0 0 0 0 transparent}}
+
 @media (max-width:980px){
   .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
   .grid2,.b-grid{grid-template-columns:minmax(0,1fr)}
@@ -247,6 +305,7 @@ table.rub{width:100%;border-collapse:collapse;font-size:12px;min-width:560px}
       <button class="tab" role="tab" id="tab-dash" aria-selected="true" aria-controls="view-dash">Dashboard</button>
       <button class="tab" role="tab" id="tab-build" aria-selected="false" aria-controls="view-build">Module Builder</button>
     </nav>
+    <button class="agent-btn" id="agent-open" aria-controls="agent" aria-expanded="false"><span class="dot" aria-hidden="true"></span>✦ Agent</button>
     <div class="who"><i>MR</i><span>Ma. Reyes · Faculty, CITE</span></div>
   </div>
 </header>
@@ -270,10 +329,11 @@ table.rub{width:100%;border-collapse:collapse;font-size:12px;min-width:560px}
     </div>
 
     <div id="learn">
+      <div class="agent-strip"><i class="spark">✦</i><span><b>Agent</b> ran the weekly outcome check at 7:00 AM. It found 2 outcomes below target and 6 students who may need a check-in.</span><button class="btn" data-goal="why">See what it found</button></div>
       <div class="tiles" id="tiles"></div>
       <div class="grid2">
         <div class="panel">
-          <div class="panel-h"><h2>Course outcome attainment</h2><p>Target: 70% of students score ≥ 70% on CO-tagged items</p></div>
+          <div class="panel-h"><h2>Course outcome attainment<button class="ask" data-goal="why">✦ Ask agent why</button></h2><p>Target: 70% of students score ≥ 70% on CO-tagged items</p></div>
           <div class="bars" id="bars"></div>
           <div class="axis"><span></span><div class="ticks" id="ticks"></div><span></span></div>
         </div>
@@ -294,7 +354,7 @@ table.rub{width:100%;border-collapse:collapse;font-size:12px;min-width:560px}
         </div>
       </div>
       <div class="panel">
-        <div class="panel-h"><h2>Students who may need a check-in</h2><p>Flag rule: 3+ missed submissions, or CO average below 60%</p></div>
+        <div class="panel-h"><h2>Students who may need a check-in<button class="ask" data-goal="checkin">✦ Draft check-in notes</button></h2><p>Flag rule: 3+ missed submissions, or CO average below 60%</p></div>
         <div class="tbl-wrap"><table class="risk" id="risk"></table></div>
         <p class="fine">Visible only to the subject teacher and assigned adviser. The system never labels or ranks a student on its own. An adviser decides every follow-up (RA 10173).</p>
       </div>
@@ -373,6 +433,37 @@ table.rub{width:100%;border-collapse:collapse;font-size:12px;min-width:560px}
 </main>
 <div class="tip" id="tip" hidden></div>
 <div class="toast" id="toast" hidden></div>
+
+<aside class="drawer" id="agent" role="dialog" aria-label="DLSL Agent" aria-hidden="true">
+  <div class="dr-h"><span class="av" aria-hidden="true">✦</span><div><b>DLSL Agent</b><small id="ag-sub">Level 2 · prepares and drafts, you approve</small></div><button class="x" id="agent-close" aria-label="Close agent panel">×</button></div>
+  <div class="dr-body" id="dr-body">
+    <div class="dr-sec"><h3>Autonomy dial</h3>
+      <div class="dial" id="dial">
+        <button data-l="1" aria-pressed="false"><b>1</b>Suggest</button>
+        <button data-l="2" aria-pressed="true"><b>2</b>Draft</button>
+        <button data-l="3" class="locked" aria-pressed="false"><b>3</b>Routine 🔒</button>
+        <button data-l="4" class="locked" aria-pressed="false"><b>4</b>Alone 🔒</button>
+      </div>
+      <p class="dial-note" id="dial-note">Level 2: it drafts, you approve each step. Levels 3–4 need TOIC and DPO approval.</p></div>
+    <div class="dr-sec"><h3>What it watches</h3>
+      <div class="tasks">
+        <label class="task"><span>Weekly outcome check<small>Mondays 7:00 AM · last run today</small></span><input type="checkbox" class="sw" id="t1" checked></label>
+        <label class="task"><span>Submission watch<small>Daily · flags 3+ missed submissions</small></span><input type="checkbox" class="sw" id="t2" checked></label>
+        <label class="task"><span>Module alignment check<small>Every time you save a module</small></span><input type="checkbox" class="sw" id="t3" checked></label>
+      </div></div>
+    <div class="dr-sec"><h3>Give it a goal</h3><div class="convo" id="convo"></div></div>
+  </div>
+  <div class="dr-f">
+    <div class="chips" id="chips">
+      <button data-goal="why">Why is CO3 below target?</button>
+      <button data-goal="checkin">Who needs a check-in this week?</button>
+      <button data-goal="module">Draft a CO3 review module</button>
+      <button data-goal="report">Prepare the weekly report for the program chair</button>
+    </div>
+    <form class="composer" id="composer"><textarea id="goal" placeholder="Describe a goal for the agent" aria-label="Goal for the agent"></textarea><button class="btn primary" type="submit">Send</button></form>
+    <p class="fine">Prototype: the agent's replies are scripted. Every step is logged with your name, and student data stays inside DLSL.</p>
+  </div>
+</aside>
 
 <script>
 const $=s=>document.querySelector(s);
@@ -585,8 +676,99 @@ $("#f-course").onchange=e=>{course=e.target.value;renderDash()};
 $("#gen").onclick=genDraft;
 document.addEventListener("change",e=>{if(e.target.id&&e.target.id.startsWith("co-")&&$("#matrix"))renderMatrix()});
 
+/* ---------- agent (design prototype: scripted runs) ---------- */
+const drawer=$("#agent"),convo=$("#convo");
+function openAgent(){drawer.classList.add("open");drawer.setAttribute("aria-hidden","false");$("#agent-open").setAttribute("aria-expanded","true");setTimeout(()=>$("#goal").focus({preventScroll:true}),250)}
+function closeAgent(){drawer.classList.remove("open");drawer.setAttribute("aria-hidden","true");$("#agent-open").setAttribute("aria-expanded","false")}
+$("#agent-open").onclick=()=>drawer.classList.contains("open")?closeAgent():openAgent();
+$("#agent-close").onclick=closeAgent;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeAgent()});
+
+const LV={1:"Level 1 · suggests only, you do every step",2:"Level 2 · prepares and drafts, you approve"};
+$("#dial").querySelectorAll("button").forEach(b=>b.onclick=()=>{
+  const l=b.dataset.l;
+  if(b.classList.contains("locked")){toast(`Level ${l} needs TOIC and DPO approval first.`);return}
+  $("#dial").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  $("#ag-sub").textContent=LV[l];
+  $("#dial-note").textContent=l==="1"?"Level 1: it only suggests. It won't draft anything.":"Level 2: it drafts, you approve each step. Levels 3–4 need TOIC and DPO approval.";
+  logAudit(`Ma. Reyes set the agent to level ${l}`);
+});
+["t1","t2","t3"].forEach(id=>$("#"+id).onchange=e=>{const name=e.target.closest(".task").firstChild.firstChild.textContent;logAudit(`Ma. Reyes turned ${e.target.checked?"on":"off"} “${name}”`);toast(`${name} ${e.target.checked?"on":"off"}`)});
+
+const GOALS={
+  why:{ask:"Why is CO3 below target?",steps:[
+    ["P","Read CO attainment for IT 213. CO3 is at 61%, 9 points under target. BSIT 2B (58%), 2D (61%) and 2C (68%) are below.",'read_attainment(course="IT 213", co="CO3")'],
+    ["P","Read the Quiz 4 item analysis. Items 3, 4 and 7 (base cases and tracing) had the lowest scores, 41–48% correct.",'read_item_analysis(quiz="Quiz 4")'],
+    ["T","Errors cluster on base cases, not on writing the recursive step. The two lowest sections also had the fewest lab hours.",null]],
+    result:"<b>Likely cause:</b> students can write the recursive call but miss or misplace the base case.<ul><li>Add guided tracing before independent work</li><li>Re-check CO3 after the next quiz</li></ul>",
+    who:"You decide",acts:[["Draft a CO3 review module","module","primary"],["Not now",null,""]]},
+  checkin:{ask:"Who needs a check-in this week?",steps:[
+    ["P","Read submissions for weeks 5–8 across 4 sections.",'read_submissions(course="IT 213", weeks="5-8")'],
+    ["P","Read CO averages and applied the flag rule: 3+ missed submissions, or CO average below 60%.",'read_co_averages(threshold=60)'],
+    ["T","6 students match. 1 more was left out because an approved leave is on file.",null],
+    ["A","Drafted 6 check-in notes for the advisers. Each note has a link only, with no grades in the message.",'draft_messages(to="advisers", send=false)']],
+    result:"<b>6 drafts are ready</b> in your LMS inbox. Nothing has been sent.",
+    who:"Adviser decides",acts:[["Review the list","showrisk","primary"],["Open drafts","drafts",""]]},
+  module:{ask:"Draft a CO3 review module",steps:[
+    ["P","Read the IT 213 syllabus, your Week 6 notes and the DLSL module template.",'read_files(["syllabus","week6_notes","module_template"])'],
+    ["T","Plan: base cases first, guided tracing, then one creative task. Tag every item to CO3 or CO4.",null],
+    ["A","Ready to draft objectives, lesson flow, an 8-item quiz and a rubric in the Module Builder.",'draft_module(course="IT 213", cos=["CO3","CO4"], save="draft")']],
+    result:"The draft will open in the Module Builder, where you approve, edit or reject each section.",
+    who:"You decide",acts:[["Start the draft","build","primary"],["Change the plan","edit",""]]},
+  report:{ask:"Prepare the weekly report for the program chair",steps:[
+    ["P","Read this week's attainment, submissions and flags for IT 213.",'read_dashboard(course="IT 213", week=8)'],
+    ["T","Picked the 3 things a chair needs to act on. Left out individual student names.",null],
+    ["A","Drafted a one-page summary email.",'draft_email(to="Program Chair, CITE", send=false)']],
+    result:"<b>IT 213 · Week 8 summary</b><ul><li>3 of 5 outcomes on target; CO3 (61%) and CO4 (66%) below</li><li>Submission rate 84%, recovering after the midterm dip</li><li>6 students referred for adviser check-ins</li></ul>",
+    who:"You decide",acts:[["Save as draft email","saveReport","primary"],["Edit first","edit",""]]}
+};
+let running=null;
+function matchGoal(t){t=t.toLowerCase();
+  if(/why|cause|below|co3 low|explain/.test(t))return"why";
+  if(/check|risk|slipping|student|adviser|advisor/.test(t))return"checkin";
+  if(/module|lesson|quiz|draft|rubric/.test(t))return"module";
+  if(/report|chair|summary|weekly/.test(t))return"report";
+  return null}
+function runGoal(key,text){
+  openAgent();
+  if(running){toast("The agent is still working. Stop it first or wait.");return}
+  convo.insertAdjacentHTML("beforeend",`<div class="msg-u">${esc(text||GOALS[key]?.ask||"")}</div>`);
+  const body=$("#dr-body");
+  if(!key){convo.insertAdjacentHTML("beforeend",`<div class="run"><div class="result">In this prototype I can run four goals. Pick one of the suggestions below.</div></div>`);body.scrollTop=body.scrollHeight;return}
+  const g=GOALS[key],run=document.createElement("div");run.className="run";convo.appendChild(run);
+  const th=document.createElement("div");th.className="thinking";th.innerHTML=`<span>Working…</span><button class="btn" type="button">Stop</button>`;run.appendChild(th);
+  const timers=[];running={timers,run,th};
+  th.querySelector("button").onclick=()=>{timers.forEach(clearTimeout);th.remove();run.insertAdjacentHTML("beforeend",`<div class="result">Stopped by you. Nothing was changed.</div>`);logAudit("Ma. Reyes stopped an agent run");running=null};
+  logAudit(`Ma. Reyes asked the agent: “${esc(g.ask)}”`);
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches,gap=reduce?0:700;
+  const names={P:"Perceive",T:"Think",A:"Act"};
+  g.steps.forEach((s,i)=>timers.push(setTimeout(()=>{
+    th.insertAdjacentHTML("beforebegin",`<div class="step"><span class="ph ${s[0]}">${names[s[0]]}</span><span>${s[1]}${s[2]?`<br><code class="tool">${esc(s[2])}</code>`:""}</span></div>`);
+    body.scrollTop=body.scrollHeight},gap*(i+1))));
+  timers.push(setTimeout(()=>{
+    th.remove();
+    run.insertAdjacentHTML("beforeend",`<div class="result">${g.result}</div><div class="approve"><span class="decide">${g.who}</span><div class="acts">${g.acts.map(a=>`<button class="btn ${a[2]}" data-do="${a[1]||""}">${a[0]}</button>`).join("")}</div></div>`);
+    run.querySelectorAll("[data-do]").forEach(b=>b.onclick=()=>doAction(b.dataset.do,b));
+    logAudit("Agent finished and is waiting for your decision");
+    body.scrollTop=body.scrollHeight;running=null},gap*(g.steps.length+1)));
+}
+function doAction(a,btn){
+  btn.closest(".acts").querySelectorAll("button").forEach(b=>b.disabled=true);
+  if(a==="module"){runGoal("module");return}
+  if(a==="build"){logAudit("Ma. Reyes approved drafting the module");closeAgent();switchTab("build");genDraft();return}
+  if(a==="showrisk"){closeAgent();switchTab("dash");$("#v-learn").click();const t=$("#risk");t.scrollIntoView({behavior:"smooth",block:"center"});t.closest(".panel").classList.remove("hl");void t.offsetWidth;t.closest(".panel").classList.add("hl");return}
+  if(a==="drafts"){toast("6 drafts are in your LMS inbox. Nothing was sent.");logAudit("Ma. Reyes opened the check-in drafts");return}
+  if(a==="saveReport"){toast("Saved as a draft email to the program chair. Not sent.");logAudit("Ma. Reyes saved the weekly report as a draft");return}
+  if(a==="edit"){$("#goal").value="Change the plan: ";$("#goal").focus();return}
+  toast("Okay. Nothing was changed.");logAudit("Ma. Reyes declined the agent's suggestion");
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-goal]");if(b)runGoal(b.dataset.goal)});
+$("#composer").addEventListener("submit",e=>{e.preventDefault();const t=$("#goal").value.trim();if(!t)return;$("#goal").value="";runGoal(matchGoal(t),t)});
+$("#goal").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("#composer").requestSubmit()}});
+
 renderDash();renderCOs();
 if(location.hash==="#builder")switchTab("build");
+else if(location.hash==="#agent"){openAgent();runGoal("why")}
 else{try{if(localStorage.getItem("dlsl-hub-tab")==="build")switchTab("build")}catch(e){}}
 </script>
 </body>
