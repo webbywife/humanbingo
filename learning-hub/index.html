@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="description" content="Prototype: DLSL learning analytics dashboard and agent-assisted module builder. Sample data only.">
+<title>DLSL Learning Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: app shell — green brand bar with tabs, then a working surface; dashboard = summary tiles → charts → agent notes → table; builder = loop stepper → inputs | draft */
+:root{
+  --bg:#F3F6F4; --surface:#FFFFFF; --sunk:#EAF0EC; --ink:#13241B; --muted:#56675D; --line:#D9E3DC;
+  --accent:#026947; --accent-2:#11955F; --accent-soft:#E2F1E9; --on-accent:#FFFFFF;
+  --human:#A3325E; --human-soft:#F8E6EE;
+  --good:#11804F; --warn:#A85A07; --warn-soft:#FBEEDC; --crit:#B42318;
+  --bar-top:#013D29; --bar-bottom:#026947;
+  --f-display:"Poppins",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Poppins",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-data:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1712; --surface:#15211A; --sunk:#1B2A21; --ink:#E4EEE8; --muted:#9DB2A6; --line:#2A3D32;
+  --accent:#3DBE85; --accent-2:#6DD3A6; --accent-soft:#1D3A2C; --on-accent:#06170F;
+  --human:#F2A7C0; --human-soft:#3A1E2A;
+  --good:#5ACF93; --warn:#F0B35E; --warn-soft:#3A2A14; --crit:#F58C80;
+  --bar-top:#07130D; --bar-bottom:#0F3B27; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1712; --surface:#15211A; --sunk:#1B2A21; --ink:#E4EEE8; --muted:#9DB2A6; --line:#2A3D32;
+  --accent:#3DBE85; --accent-2:#6DD3A6; --accent-soft:#1D3A2C; --on-accent:#06170F;
+  --human:#F2A7C0; --human-soft:#3A1E2A;
+  --good:#5ACF93; --warn:#F0B35E; --warn-soft:#3A2A14; --crit:#F58C80;
+  --bar-top:#07130D; --bar-bottom:#0F3B27; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+button,select,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+
+/* brand bar */
+.brand{background:linear-gradient(135deg,var(--bar-top),var(--bar-bottom));color:#fff;padding-inline:16px}
+.brand-in{max-width:1240px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px;padding-block:14px 0}
+.wordmark{display:flex;align-items:center;gap:10px;padding-bottom:14px}
+.wordmark .seal{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.85);display:grid;place-items:center;font-weight:700;font-size:12px;letter-spacing:.04em}
+.wordmark b{display:block;font-size:16px;letter-spacing:.01em}
+.wordmark small{display:block;font-size:11px;opacity:.75;letter-spacing:.08em;text-transform:uppercase}
+.tabs{display:flex;gap:4px;margin-left:auto;align-self:flex-end}
+.tab{background:none;border:0;color:rgba(255,255,255,.72);padding:10px 16px 12px;border-radius:8px 8px 0 0;font-weight:500;cursor:pointer}
+.tab:hover{color:#fff}
+.tab[aria-selected="true"]{background:var(--bg);color:var(--ink);font-weight:600}
+.who{display:flex;align-items:center;gap:8px;font-size:12px;opacity:.9;padding-bottom:14px}
+.who i{font-style:normal;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;font-weight:600}
+
+.wrap{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:18px 48px}
+.notice{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:12px;color:var(--muted);margin-bottom:16px}
+.notice .pill{background:var(--warn-soft);color:var(--warn);font-weight:600}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:500;white-space:nowrap}
+
+/* filter row */
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-bottom:16px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
+select,input[type=text],textarea{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;max-width:100%}
+.seg{display:inline-flex;background:var(--sunk);border-radius:9px;padding:3px;margin-left:auto}
+.seg button{border:0;background:none;padding:6px 14px;border-radius:7px;cursor:pointer;font-weight:500;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+
+/* tiles */
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.tile .k{font-size:12px;color:var(--muted);font-weight:500}
+.tile .v{font-size:28px;font-weight:600;letter-spacing:-.01em}
+.tile .s{font-size:12px;color:var(--muted)}
+.tile .s b{font-weight:600}
+.up{color:var(--good)} .down{color:var(--warn)}
+
+/* panels */
+.grid2{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:12px;margin-bottom:12px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.panel-h{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 12px;margin-bottom:12px}
+.panel-h h2{font-size:15px;font-weight:600}
+.panel-h p{margin:0;font-size:12px;color:var(--muted)}
+
+/* CO bars */
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar-row{display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr) 92px;gap:12px;align-items:center}
+.bar-row .lab{font-size:12.5px;line-height:1.3}
+.bar-row .lab b{font-family:var(--f-data);font-weight:500;font-size:12px;margin-right:4px}
+.track{position:relative;height:18px;background:var(--sunk);border-radius:4px;cursor:default}
+.fill{position:absolute;inset:0 auto 0 0;border-radius:0 4px 4px 0;background:var(--accent-2)}
+.fill.below{background:var(--warn)}
+.target{position:absolute;top:-4px;bottom:-4px;width:0;border-left:2px dashed var(--ink);opacity:.55}
+.bar-row .val{font-size:12.5px;font-weight:600;text-align:right;white-space:nowrap}
+.bar-row .val small{display:block;font-weight:500;color:var(--warn);font-size:11px}
+.bar-row .val small.ok{color:var(--good)}
+.axis{display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr) 92px;gap:12px;font-size:11px;color:var(--muted);margin-top:6px}
+.axis .ticks{position:relative;height:14px}
+.axis .ticks span{position:absolute;transform:translateX(-50%)}
+
+/* heatmap */
+.heat-wrap{overflow-x:auto}
+table.heat{border-collapse:separate;border-spacing:3px;width:100%;min-width:360px}
+.heat th{font-size:11px;font-weight:600;color:var(--muted);text-align:center;padding:2px}
+.heat th.row{text-align:left;white-space:nowrap;padding-right:6px;color:var(--ink);font-weight:500}
+.heat td{height:42px;border-radius:5px;text-align:center;font-size:12.5px;font-weight:600;position:relative;cursor:default}
+.heat td.low{outline:2px solid var(--warn);outline-offset:-2px}
+.legend{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;font-size:11.5px;color:var(--muted);margin-top:10px}
+.legend .ramp{display:inline-block;width:110px;height:10px;border-radius:3px;background:linear-gradient(90deg,color-mix(in oklab,var(--accent) 10%,var(--surface)),var(--accent))}
+.legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;outline:2px solid var(--warn);outline-offset:-2px;vertical-align:-2px;margin-right:4px}
+
+/* line */
+svg text{fill:var(--muted);font-family:var(--f-body);font-size:11px}
+.gridline{stroke:var(--line);stroke-width:1}
+.ln{fill:none;stroke:var(--accent-2);stroke-width:2}
+.area{fill:var(--accent-2);opacity:.12}
+.pt{fill:var(--accent-2);stroke:var(--surface);stroke-width:2}
+.pt.end{r:5}
+
+/* agent notes */
+.notes{display:flex;flex-direction:column;gap:10px}
+.note{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;background:var(--surface)}
+.note .ic{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--warn-soft);color:var(--warn);font-weight:700;grid-row:span 3}
+.note .ic.info{background:var(--accent-soft);color:var(--accent)}
+.note h3{font-size:13.5px;font-weight:600}
+.note p{margin:0;font-size:12.5px;color:var(--muted)}
+.note .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;align-items:center}
+.decide{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--human)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:500;font-size:12.5px}
+.btn:hover{border-color:var(--accent-2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.human{border-color:var(--human);color:var(--human)}
+.btn.human:hover{background:var(--human-soft)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;filter:none}
+
+/* risk table */
+.tbl-wrap{overflow-x:auto}
+table.risk{width:100%;border-collapse:collapse;min-width:640px}
+.risk th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line)}
+.risk td{padding:10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}
+.risk tr:last-child td{border-bottom:0}
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:600}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.human{background:var(--human-soft);color:var(--human)}
+.chip.ok{background:var(--accent-soft);color:var(--accent)}
+.fine{font-size:11.5px;color:var(--muted);margin-top:10px}
+
+/* ops */
+.ops-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ops-item{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;background:var(--surface)}
+.ops-item h3{font-size:13.5px;font-weight:600;margin-bottom:4px}
+.ops-item p{margin:0;font-size:12.5px;color:var(--muted)}
+
+/* builder */
+.loop{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;margin-bottom:14px}
+.loop .st{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--muted);background:var(--sunk)}
+.loop .st i{font-style:normal;font-family:var(--f-data);font-size:11px;opacity:.8}
+.loop .st.on{background:var(--accent);color:var(--on-accent)}
+.loop .st.done{background:var(--accent-soft);color:var(--accent)}
+.loop .st.hum{outline:2px solid var(--human);outline-offset:-2px}
+.loop .st.hum.on{background:var(--human);color:var(--surface);outline:0}
+.loop .arr{color:var(--muted);font-size:12px}
+.loop .lvl{margin-left:auto;font-size:12px;color:var(--muted)}
+.b-grid{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:14px;align-items:start}
+.stack{display:flex;flex-direction:column;gap:12px}
+.cos{display:flex;flex-direction:column;gap:6px}
+.co-opt{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;font-size:12.5px;padding:6px 8px;border-radius:8px}
+.co-opt:hover{background:var(--sunk)}
+.co-opt b{font-family:var(--f-data);font-weight:500;font-size:12px}
+.co-opt .flag{color:var(--warn);font-weight:600;font-size:11px;margin-left:4px}
+.files{display:flex;flex-direction:column;gap:6px}
+.file{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:7px 10px;border:1px dashed var(--line);border-radius:8px}
+.file span:last-child{color:var(--muted);font-size:11.5px}
+.guard{display:flex;flex-direction:column;gap:6px;font-size:12.5px}
+.guard div{display:flex;gap:8px;align-items:start}
+.guard .lock{color:var(--accent);font-weight:700}
+.context{background:var(--warn-soft);border-radius:8px;padding:10px 12px;font-size:12.5px}
+.context b{color:var(--warn)}
+.log{font-family:var(--f-data);font-size:12px;background:var(--sunk);border-radius:8px;padding:10px 12px;min-height:44px;display:flex;flex-direction:column;gap:4px}
+.log .p{color:var(--accent)} .log .t{color:var(--accent-2)} .log .a{color:var(--ink)} .log .h{color:var(--human)}
+.empty{border:1px dashed var(--line);border-radius:var(--r);padding:28px;text-align:center;color:var(--muted)}
+.blk{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.blk-h{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--sunk)}
+.blk-h h3{font-size:14px;font-weight:600;margin-right:auto}
+.blk-b{padding:12px 14px;font-size:13px}
+.blk-b[contenteditable="true"]{outline:2px dashed var(--accent-2);outline-offset:-4px;background:var(--surface)}
+.blk.approved{border-color:var(--accent-2)}
+.blk.rejected{opacity:.55}
+.blk-b ol,.blk-b ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.tag{font-family:var(--f-data);font-size:11px;font-weight:500;background:var(--accent-soft);color:var(--accent);border-radius:5px;padding:1px 6px;margin-left:4px;white-space:nowrap}
+.tag.bl{background:var(--sunk);color:var(--muted)}
+.flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.flow div{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px}
+.flow div b{display:block;font-size:12.5px}
+.flow div span{color:var(--muted)}
+.flow .cr{border-color:var(--accent-2);background:var(--accent-soft)}
+table.rub{width:100%;border-collapse:collapse;font-size:12px;min-width:560px}
+.rub th,.rub td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.rub th{background:var(--sunk);font-weight:600}
+.matrix{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.matrix div{border-radius:8px;padding:8px;text-align:center;font-size:12px;background:var(--sunk)}
+.matrix div b{display:block;font-family:var(--f-data);font-size:12px}
+.matrix div.hit{background:var(--accent-soft);color:var(--accent)}
+.matrix div.miss{background:var(--sunk);color:var(--muted)}
+.savebar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.savebar p{margin:0;font-size:12.5px;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 6px 24px rgba(0,0,0,.2);max-width:calc(100% - 32px)}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;padding:6px 9px;border-radius:7px;line-height:1.35;z-index:9;max-width:240px}
+.audit{font-size:12px}
+.audit li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;padding:4px 0;border-bottom:1px solid var(--line)}
+.audit li:last-child{border-bottom:0}
+.audit ul{list-style:none;margin:0;padding:0}
+.audit time{font-family:var(--f-data);color:var(--muted)}
+
+@media (max-width:980px){
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid2,.b-grid{grid-template-columns:minmax(0,1fr)}
+  .ops-list{grid-template-columns:minmax(0,1fr)}
+  .flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:560px){
+  .tabs{margin-left:0;width:100%}
+  .tab{flex:1}
+  .who{display:none}
+  .bar-row,.axis{grid-template-columns:minmax(0,1fr) 76px}
+  .bar-row .lab{grid-column:1/-1}
+  .axis > span:first-child{display:none}
+  .seg{margin-left:0}
+  .matrix{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .tile .v{font-size:24px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="brand">
+  <div class="brand-in">
+    <div class="wordmark"><span class="seal" aria-hidden="true">DLSL</span><div><b>Learning Hub</b><small>De La Salle Lipa · TOIC</small></div></div>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button class="tab" role="tab" id="tab-dash" aria-selected="true" aria-controls="view-dash">Dashboard</button>
+      <button class="tab" role="tab" id="tab-build" aria-selected="false" aria-controls="view-build">Module Builder</button>
+    </nav>
+    <div class="who"><i>MR</i><span>Ma. Reyes · Faculty, CITE</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="notice"><span class="pill">Prototype</span><span>Sample data only. Every student and teacher name here is fictional.</span></div>
+
+  <!-- ================= DASHBOARD ================= -->
+  <section id="view-dash" role="tabpanel" aria-labelledby="tab-dash">
+    <div class="filters">
+      <div class="field"><label for="f-term">Term</label><select id="f-term"><option>1st Sem, AY 2026–2027</option></select></div>
+      <div class="field"><label for="f-course">Course</label>
+        <select id="f-course">
+          <option value="it213">IT 213 · Data Structures and Algorithms</option>
+          <option value="ge105">GE 105 · Purposive Communication</option>
+        </select></div>
+      <div class="seg" role="group" aria-label="Dashboard view">
+        <button id="v-learn" aria-pressed="true">Learning</button>
+        <button id="v-ops" aria-pressed="false">Operations</button>
+      </div>
+    </div>
+
+    <div id="learn">
+      <div class="tiles" id="tiles"></div>
+      <div class="grid2">
+        <div class="panel">
+          <div class="panel-h"><h2>Course outcome attainment</h2><p>Target: 70% of students score ≥ 70% on CO-tagged items</p></div>
+          <div class="bars" id="bars"></div>
+          <div class="axis"><span></span><div class="ticks" id="ticks"></div><span></span></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><h2>Attainment by section</h2><p>% of students meeting each CO</p></div>
+          <div class="heat-wrap"><table class="heat" id="heat"></table></div>
+          <div class="legend"><span>Lower</span><span class="ramp"></span><span>Higher</span><span><span class="sw"></span>Below 70% target</span></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <div class="panel-h"><h2>What the agent noticed</h2><p>Suggestions only. You decide what happens next.</p></div>
+          <div class="notes" id="notes"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><h2>Weekly submission rate</h2><p>All sections, weeks 1–8</p></div>
+          <svg id="line" viewBox="0 0 560 220" width="100%" role="img" aria-label="Submission rate by week"></svg>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h2>Students who may need a check-in</h2><p>Flag rule: 3+ missed submissions, or CO average below 60%</p></div>
+        <div class="tbl-wrap"><table class="risk" id="risk"></table></div>
+        <p class="fine">Visible only to the subject teacher and assigned adviser. The system never labels or ranks a student on its own. An adviser decides every follow-up (RA 10173).</p>
+      </div>
+    </div>
+
+    <div id="ops" hidden>
+      <div class="tiles">
+        <div class="tile"><span class="k">Core systems uptime</span><span class="v num">99.8%</span><span class="s">Last 30 days · <b class="up">▲ 0.3</b></span></div>
+        <div class="tile"><span class="k">Open tickets</span><span class="v num">14</span><span class="s">3 linked to one Wi-Fi incident</span></div>
+        <div class="tile"><span class="k">PM compliance</span><span class="v num">92%</span><span class="s">6 devices overdue</span></div>
+        <div class="tile"><span class="k">First response, median</span><span class="v num">18 min</span><span class="s">Target: 30 min</span></div>
+      </div>
+      <div class="ops-list">
+        <div class="ops-item"><h3>Monitoring agent</h3><p>Opened an incident for AP-SH-3F (St. Benilde Hall, 3rd floor) at 7:12 AM. Sysadmin confirmed at 7:20 AM.</p></div>
+        <div class="ops-item"><h3>Service desk agent</h3><p>Linked 3 We Help requests to that incident instead of opening new tickets.</p></div>
+        <div class="ops-item"><h3>Maintenance agent</h3><p>Projector in Room 204 has 3 tickets in 30 days. Drafted a work order for supervisor review.</p></div>
+      </div>
+      <p class="fine">Same dashboard, operations side. Learning and operations data are stored separately, with separate access.</p>
+    </div>
+  </section>
+
+  <!-- ================= MODULE BUILDER ================= -->
+  <section id="view-build" role="tabpanel" aria-labelledby="tab-build" hidden>
+    <div class="loop" id="loop" aria-label="Agent loop">
+      <span class="st on" data-s="0"><i>1</i>Perceive</span><span class="arr">→</span>
+      <span class="st" data-s="1"><i>2</i>Think</span><span class="arr">→</span>
+      <span class="st" data-s="2"><i>3</i>Act · draft</span><span class="arr">→</span>
+      <span class="st hum" data-s="3"><i>4</i>Teacher decides</span><span class="arr">→</span>
+      <span class="st" data-s="4"><i>5</i>Learn from results</span>
+      <span class="lvl">Autonomy level 2 · drafts only</span>
+    </div>
+
+    <div class="b-grid">
+      <div class="stack">
+        <div class="panel">
+          <div class="panel-h"><h2>What the agent will read</h2></div>
+          <div class="stack">
+            <div class="field"><label for="b-course">Course</label><select id="b-course"><option>IT 213 · Data Structures and Algorithms</option></select></div>
+            <div class="field"><label for="b-topic">Module</label><input type="text" id="b-topic" value="Week 6 · Recursion and problem decomposition"></div>
+            <div class="field"><label>Course outcomes to target</label>
+              <div class="cos" id="cos"></div></div>
+            <div class="field"><label>Materials</label>
+              <div class="files">
+                <div class="file"><span>IT213_Syllabus_2026.pdf</span><span>Syllabus</span></div>
+                <div class="file"><span>Week6_Lecture_Notes.pptx</span><span>Your notes</span></div>
+                <div class="file"><span>DLSL_Module_Template_v3.docx</span><span>Template</span></div>
+              </div></div>
+            <div class="context" id="ctx"><b>From the dashboard:</b> CO3 is below target in BSIT 2B, 2C and 2D (58%, 68%, 61%). Quiz 4 recursion items had the lowest scores.</div>
+            <div class="field"><label for="b-note">Your instructions</label><textarea id="b-note" rows="3">Keep lectures short. Add one creative, hands-on task. Students struggled with base cases.</textarea></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><h2>Guardrails</h2><p>Set by TOIC</p></div>
+          <div class="guard">
+            <div><span class="lock">✓</span><span>Saves drafts only. Never publishes to students.</span></div>
+            <div><span class="lock">✓</span><span>Uses course-level results only. No individual student data.</span></div>
+            <div><span class="lock">✓</span><span>Every step is logged with your name.</span></div>
+          </div>
+        </div>
+        <button class="btn primary" id="gen">Draft the module</button>
+        <div class="panel audit">
+          <div class="panel-h"><h2>Activity log</h2></div>
+          <ul id="audit"></ul>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="panel">
+          <div class="panel-h"><h2>Agent working notes</h2></div>
+          <div class="log" id="log"><span style="color:var(--muted)">Press “Draft the module” to start.</span></div>
+        </div>
+        <div id="draft" class="stack"><div class="empty">The draft module will appear here, section by section, for you to approve, edit, or reject.</div></div>
+      </div>
+    </div>
+  </section>
+</main>
+<div class="tip" id="tip" hidden></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const TARGET=70;
+const DATA={
+  it213:{
+    cos:[["CO1","Explain core data structures"],["CO2","Implement linear structures"],["CO3","Apply recursion to solve problems"],["CO4","Analyze algorithm efficiency"],["CO5","Design with trees and graphs"]],
+    att:[82,76,61,66,73], prev:[80,74,64,63,70],
+    sections:["BSIT 2A","BSIT 2B","BSIT 2C","BSIT 2D"],
+    heat:[[86,80,72,70,76],[79,73,58,64,71],[84,78,68,69,74],[78,72,61,62,69]],
+    subm:[96,95,93,92,88,83,86,84], enrolled:148,
+    risk:[["Andrea Villanueva","BSIT 2B",4,55,"Missed Labs 5–8"],["Carlo Mendoza","BSIT 2D",3,58,"CO3 quiz scores dropped"],["Bea Santiago","BSIT 2B",1,52,"CO3 and CO4 below 60%"],["Miguel Tan","BSIT 2D",3,63,"No submissions since Week 5"],["Janelle Cruz","BSIT 2C",3,66,"Late submissions, weeks 4–7"],["Paolo Ramos","BSIT 2A",0,57,"CO3 below 60%"]]
+  },
+  ge105:{
+    cos:[["CO1","Evaluate messages in context"],["CO2","Adapt language to audience"],["CO3","Present ideas with visuals"],["CO4","Write for academic purposes"],["CO5","Apply ethical communication"]],
+    att:[78,74,81,64,85], prev:[75,72,78,66,83],
+    sections:["ABM 1A","HUMSS 1B","STEM 1C","STEM 1D"],
+    heat:[[80,76,84,67,88],[77,75,79,66,86],[79,72,82,62,84],[76,73,80,61,82]],
+    subm:[97,96,95,93,92,90,91,89], enrolled:162,
+    risk:[["Lara Dizon","STEM 1D",3,59,"Missed essay drafts 2–3"],["Ramon Aquino","STEM 1C",1,57,"CO4 below 60%"],["Isabel Flores","HUMSS 1B",4,62,"No submissions since Week 6"]]
+  }
+};
+let course="it213";
+const tip=$("#tip");
+function showTip(e,html){tip.innerHTML=html;tip.hidden=false;moveTip(e)}
+function moveTip(e){const x=Math.min(e.clientX+14,innerWidth-250);tip.style.left=x+"px";tip.style.top=(e.clientY+14)+"px"}
+function hideTip(){tip.hidden=true}
+function bindTip(el,html){el.addEventListener("mouseenter",e=>showTip(e,html));el.addEventListener("mousemove",moveTip);el.addEventListener("mouseleave",hideTip)}
+function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2800)}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function renderDash(){
+  const d=DATA[course];
+  const met=d.att.filter(v=>v>=TARGET).length;
+  const avg=Math.round(d.att.reduce((a,b)=>a+b)/d.att.length);
+  const pavg=Math.round(d.prev.reduce((a,b)=>a+b)/d.prev.length);
+  const last=d.subm[d.subm.length-1];
+  $("#tiles").innerHTML=`
+   <div class="tile"><span class="k">Outcomes on target</span><span class="v num">${met} of ${d.att.length}</span><span class="s">${d.att.length-met} below the 70% target</span></div>
+   <div class="tile"><span class="k">Average CO attainment</span><span class="v num">${avg}%</span><span class="s">vs. last term <b class="${avg>=pavg?"up":"down"}">${avg>=pavg?"▲":"▼"} ${Math.abs(avg-pavg)}</b></span></div>
+   <div class="tile"><span class="k">Submission rate, Week 8</span><span class="v num">${last}%</span><span class="s">${d.enrolled} students enrolled</span></div>
+   <div class="tile"><span class="k">Flagged for check-in</span><span class="v num">${d.risk.length}</span><span class="s">Waiting for adviser review</span></div>`;
+  // bars
+  $("#bars").innerHTML="";
+  d.cos.forEach(([c,t],i)=>{
+    const v=d.att[i],below=v<TARGET;
+    const row=document.createElement("div");row.className="bar-row";
+    row.innerHTML=`<span class="lab"><b>${c}</b>${esc(t)}</span>
+      <div class="track"><div class="fill ${below?"below":""}" style="width:${v}%"></div><div class="target" style="left:${TARGET}%"></div></div>
+      <span class="val num">${v}%<small class="${below?"":"ok"}">${below?"▲ Below target":"✓ On target"}</small></span>`;
+    bindTip(row.querySelector(".track"),`<b>${c}</b> · ${v}% met<br>Target ${TARGET}% · last term ${d.prev[i]}%`);
+    $("#bars").appendChild(row);
+  });
+  $("#ticks").innerHTML=[0,25,50,70,100].map(t=>`<span style="left:${t}%">${t}${t===70?" target":""}</span>`).join("");
+  // heat
+  let h=`<tr><th></th>${d.cos.map(c=>`<th>${c[0]}</th>`).join("")}</tr>`;
+  d.sections.forEach((s,r)=>{
+    h+=`<tr><th class="row">${s}</th>`+d.heat[r].map((v,c)=>{
+      const p=Math.max(8,Math.min(100,Math.round((v-50)/40*100)));
+      const fg=p>58?"var(--on-accent)":"var(--ink)";
+      return `<td class="num ${v<TARGET?"low":""}" data-r="${r}" data-c="${c}" style="background:color-mix(in oklab,var(--accent) ${p}%,var(--surface));color:${fg}">${v}${v<TARGET?"<span aria-label=' below target'> ▲</span>":""}</td>`}).join("")+"</tr>";
+  });
+  $("#heat").innerHTML=h;
+  $("#heat").querySelectorAll("td").forEach(td=>{const r=+td.dataset.r,c=+td.dataset.c,v=d.heat[r][c];
+    bindTip(td,`<b>${d.sections[r]} · ${d.cos[c][0]}</b><br>${v}% of students met this outcome${v<TARGET?"<br>Below the 70% target":""}`)});
+  // notes
+  const lows=[];d.heat.forEach((row,r)=>row.forEach((v,c)=>{if(v<TARGET)lows.push([r,c,v])}));
+  const worst=d.att.indexOf(Math.min(...d.att));
+  const wSecs=lows.filter(x=>x[1]===worst).map(x=>`${d.sections[x[0]]} (${x[2]}%)`);
+  $("#notes").innerHTML=`
+   <div class="note"><span class="ic">▲</span><h3>${d.cos[worst][0]} is below target${wSecs.length?` in ${wSecs.join(", ")}`:""}</h3>
+     <p>Lowest-scoring items are on “${esc(d.cos[worst][1].toLowerCase())}”. A revised module could add more guided practice on this outcome.</p>
+     <div class="acts"><span class="decide">You decide</span><button class="btn primary" data-go="build">Revise in Module Builder</button><button class="btn" data-dismiss>Not now</button></div></div>
+   <div class="note"><span class="ic">!</span><h3>${d.risk.length} students may need a check-in</h3>
+     <p>They meet the flag rule. The list below shows why each one was flagged.</p>
+     <div class="acts"><span class="decide">Adviser decides</span><button class="btn" data-scroll>Review the list</button></div></div>
+   <div class="note"><span class="ic info">i</span><h3>Submission rate dipped in Week 6</h3>
+     <p>It fell 5 points during the midterm week and partly recovered. This is common across sections, so no action is suggested.</p></div>`;
+  $("#notes").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>switchTab("build"));
+  $("#notes").querySelectorAll("[data-dismiss]").forEach(b=>b.onclick=()=>{b.closest(".note").style.opacity=.5;b.disabled=true;toast("Dismissed. The note stays in the log.")});
+  $("#notes").querySelectorAll("[data-scroll]").forEach(b=>b.onclick=()=>$("#risk").scrollIntoView({behavior:"smooth",block:"center"}));
+  // risk
+  $("#risk").innerHTML=`<tr><th>Student</th><th>Section</th><th>Missed</th><th>CO average</th><th>Why flagged</th><th>Status</th><th></th></tr>`+
+    d.risk.map((r,i)=>`<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td class="num">${r[2]}</td><td class="num">${r[3]}%</td><td>${esc(r[4])}</td>
+      <td><span class="chip warn" id="st-${i}">▲ Flagged</span></td><td><button class="btn human" data-ref="${i}">Refer to adviser</button></td></tr>`).join("");
+  $("#risk").querySelectorAll("[data-ref]").forEach(b=>b.onclick=()=>{const i=b.dataset.ref;$("#st-"+i).className="chip human";$("#st-"+i).textContent="● Referred by you";b.disabled=true;toast("Referred. The adviser sees a link only, not the student's records.")});
+  drawLine(d.subm);
+}
+
+function drawLine(vals){
+  const W=560,H=220,L=40,R=16,T=14,B=30,min=60,max=100;
+  const x=i=>L+i*(W-L-R)/(vals.length-1), y=v=>T+(max-v)/(max-min)*(H-T-B);
+  let s="";
+  [60,70,80,90,100].forEach(t=>{s+=`<line class="gridline" x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}"/><text x="${L-8}" y="${y(t)+4}" text-anchor="end">${t}%</text>`});
+  vals.forEach((v,i)=>s+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle">W${i+1}</text>`);
+  const pts=vals.map((v,i)=>`${x(i)},${y(v)}`).join(" ");
+  s+=`<polygon class="area" points="${x(0)},${y(min)} ${pts} ${x(vals.length-1)},${y(min)}"/><polyline class="ln" points="${pts}"/>`;
+  vals.forEach((v,i)=>{const end=i===vals.length-1;s+=`<circle class="pt" cx="${x(i)}" cy="${y(v)}" r="${end?5:4}"/>`});
+  const lv=vals[vals.length-1];
+  s+=`<text x="${x(vals.length-1)-8}" y="${y(lv)-10}" text-anchor="end" style="fill:var(--ink);font-weight:600">${lv}%</text>`;
+  vals.forEach((v,i)=>s+=`<rect data-i="${i}" x="${x(i)-18}" y="${T}" width="36" height="${H-T-B}" fill="transparent"/>`);
+  const svg=$("#line");svg.innerHTML=s;
+  svg.querySelectorAll("rect").forEach(r=>{const i=+r.dataset.i;bindTip(r,`<b>Week ${i+1}</b><br>${vals[i]}% of work submitted on time`)});
+}
+
+/* ---------- builder ---------- */
+function renderCOs(){
+  const d=DATA.it213;
+  $("#cos").innerHTML=d.cos.map(([c,t],i)=>`<label class="co-opt"><input type="checkbox" id="co-${i}" ${i===2||i===3?"checked":""}><span><b>${c}</b> ${esc(t)}${d.att[i]<TARGET?`<span class="flag">▲ ${d.att[i]}%</span>`:""}</span></label>`).join("");
+}
+const audit=[];
+function logAudit(msg){const t=new Date();audit.unshift(`<li><time>${String(t.getHours()).padStart(2,"0")}:${String(t.getMinutes()).padStart(2,"0")}</time><span>${msg}</span></li>`);$("#audit").innerHTML=audit.join("")}
+function setLoop(n){document.querySelectorAll("#loop .st").forEach(el=>{const s=+el.dataset.s;el.classList.toggle("on",s===n);el.classList.toggle("done",s<n)})}
+
+const BLOCKS=[
+  {id:"obj",title:"Learning objectives",tags:["CO3","CO4"],html:`<ol>
+    <li>Identify the base case and recursive case in a given problem <span class="tag">CO3</span><span class="tag bl">Remember</span></li>
+    <li>Trace a recursive function using a call stack diagram <span class="tag">CO3</span><span class="tag bl">Understand</span></li>
+    <li>Write recursive solutions for factorial, sum of digits, and binary search <span class="tag">CO3</span><span class="tag bl">Apply</span></li>
+    <li>Compare the time cost of recursive and iterative versions <span class="tag">CO4</span><span class="tag bl">Analyze</span></li></ol>`},
+  {id:"flow",title:"Lesson flow · 3 hours",tags:["CO3"],html:`<div class="flow">
+    <div><b>Hook · 15 min</b><span>Russian dolls: what is the smallest doll?</span></div>
+    <div><b>Mini-lecture · 25 min</b><span>Base case first. Call stack, drawn live.</span></div>
+    <div><b>Guided practice · 45 min</b><span>Trace 3 functions in pairs; spot the missing base case.</span></div>
+    <div class="cr"><b>Creative task · 60 min</b><span>Draw a recursive fractal tree in Python turtle. Change one rule, explain what happens.</span></div>
+    <div><b>Exit ticket · 15 min</b><span>One bug, one fix, one sentence.</span></div></div>`},
+  {id:"quiz",title:"Quiz · 8 items",tags:["CO3","CO4"],html:`<ol>
+    <li>Which line is the base case in this function? <span class="tag">CO3</span></li>
+    <li>What happens when the base case is missing? <span class="tag">CO3</span></li>
+    <li>Trace <code>sum_digits(482)</code> and show each call. <span class="tag">CO3</span></li>
+    <li>Fix the recursive binary search so it stops correctly. <span class="tag">CO3</span></li>
+    <li>Write <code>count_down(n)</code> recursively. <span class="tag">CO3</span></li>
+    <li>How many calls does <code>fib(5)</code> make? <span class="tag">CO4</span></li>
+    <li>Compare recursive and iterative factorial in Big-O. <span class="tag">CO4</span></li>
+    <li>When would you choose iteration instead? Explain in 2 sentences. <span class="tag">CO4</span></li></ol>`},
+  {id:"rub",title:"Rubric · fractal tree task",tags:["CO3"],html:`<div class="tbl-wrap"><table class="rub">
+    <tr><th>Criterion</th><th>Excellent (4)</th><th>Proficient (3)</th><th>Developing (2)</th><th>Beginning (1)</th></tr>
+    <tr><td>Base case <span class="tag">CO3</span></td><td>Clear, correct, explained</td><td>Correct, not explained</td><td>Present but wrong</td><td>Missing</td></tr>
+    <tr><td>Recursive step <span class="tag">CO3</span></td><td>Shrinks the problem every call</td><td>Works with minor issues</td><td>Runs but loops too long</td><td>Does not recurse</td></tr>
+    <tr><td>Creative change <span class="tag">CO3</span></td><td>Original rule, effect explained well</td><td>Rule changed, effect described</td><td>Small change, little explanation</td><td>No change</td></tr></table></div>`}
+];
+const state={};
+function genDraft(){
+  const btn=$("#gen");btn.disabled=true;
+  const steps=[
+    ["p","Perceive · read syllabus, Week 6 notes, and the DLSL module template"],
+    ["p","Perceive · CO3 below target in BSIT 2B, 2C, 2D; Quiz 4 recursion items lowest"],
+    ["t","Think · focus on base cases; add guided tracing before independent work"],
+    ["t","Think · map every objective and quiz item to CO3 or CO4"],
+    ["a","Act · drafted objectives, lesson flow, 8-item quiz, and rubric"],
+    ["h","Waiting for you · approve, edit, or reject each section"]];
+  const log=$("#log");log.innerHTML="";
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  logAudit("Ma. Reyes asked the agent to draft Week 6 · Recursion");
+  steps.forEach((s,i)=>setTimeout(()=>{
+    log.insertAdjacentHTML("beforeend",`<span class="${s[0]}">${s[1]}</span>`);
+    setLoop(s[0]==="p"?0:s[0]==="t"?1:s[0]==="a"?2:3);
+    if(i===steps.length-1){renderDraft();logAudit("Agent saved a draft for review (not published)");btn.textContent="Draft again";btn.disabled=false}
+  },reduce?0:i*550));
+}
+function renderDraft(){
+  BLOCKS.forEach(b=>state[b.id]="pending");
+  const wrap=$("#draft");
+  wrap.innerHTML=BLOCKS.map(b=>`<div class="blk" id="blk-${b.id}">
+    <div class="blk-h"><h3>${b.title}</h3><span class="chip warn" id="chip-${b.id}">Needs review</span>
+      <button class="btn primary" data-a="approve" data-b="${b.id}">Approve</button>
+      <button class="btn" data-a="edit" data-b="${b.id}">Edit</button>
+      <button class="btn" data-a="reject" data-b="${b.id}">Reject</button></div>
+    <div class="blk-b" id="body-${b.id}">${b.html}</div></div>`).join("")+
+   `<div class="panel"><div class="panel-h"><h2>Outcome alignment check</h2><p>Items tagged to each CO in this draft</p></div><div class="matrix" id="matrix"></div></div>
+    <div class="savebar"><p id="save-msg">Approve every section to save. The module stays a draft until you publish it in the LMS yourself.</p>
+      <button class="btn primary" id="save" disabled>Save to LMS as draft</button></div>`;
+  renderMatrix();
+  wrap.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>act(b.dataset.a,b.dataset.b,b));
+  $("#save").onclick=()=>{$("#save").disabled=true;$("#save").textContent="Saved as draft";setLoop(4);
+    $("#save-msg").textContent="Saved to the LMS as a draft. The program chair gets a link to review CO alignment. After the quiz runs, CO3 results flow back to the dashboard.";
+    logAudit("Ma. Reyes saved the module to the LMS as a draft");logAudit("Program chair notified for alignment review (link only)");toast("Saved as a draft. Nothing was published.")};
+}
+function renderMatrix(){
+  const d=DATA.it213,counts=[0,0,0,0,0];
+  BLOCKS.forEach(b=>{if(state[b.id]==="rejected")return;(b.html.match(/class="tag">CO(\d)/g)||[]).forEach(m=>counts[+m.slice(-1)-1]++)});
+  $("#matrix").innerHTML=d.cos.map(([c],i)=>{const sel=$("#co-"+i).checked;const cls=counts[i]?"hit":"miss";
+    return `<div class="${cls}"><b>${c}</b>${counts[i]} item${counts[i]===1?"":"s"}${sel&&!counts[i]?"<br>▲ Targeted, not covered":""}</div>`}).join("");
+}
+function act(a,id,btn){
+  const blk=$("#blk-"+id),chip=$("#chip-"+id),body=$("#body-"+id),title=BLOCKS.find(b=>b.id===id).title;
+  if(a==="edit"){const on=body.getAttribute("contenteditable")==="true";body.setAttribute("contenteditable",on?"false":"true");btn.textContent=on?"Edit":"Done editing";
+    if(!on){body.focus();state[id]="pending";chip.className="chip warn";chip.textContent="Editing";blk.classList.remove("approved","rejected")}
+    else{chip.textContent="Edited · needs review";logAudit(`Ma. Reyes edited “${title}”`)}}
+  if(a==="approve"){body.setAttribute("contenteditable","false");state[id]="approved";chip.className="chip ok";chip.textContent="✓ Approved";blk.classList.add("approved");blk.classList.remove("rejected");logAudit(`Ma. Reyes approved “${title}”`)}
+  if(a==="reject"){state[id]="rejected";chip.className="chip human";chip.textContent="✕ Rejected";blk.classList.add("rejected");blk.classList.remove("approved");logAudit(`Ma. Reyes rejected “${title}”`)}
+  renderMatrix();
+  const done=BLOCKS.every(b=>state[b.id]==="approved"||state[b.id]==="rejected")&&BLOCKS.some(b=>state[b.id]==="approved");
+  $("#save").disabled=!done;
+  if(done)$("#save-msg").textContent="All sections reviewed. Save when ready. Students will not see anything yet.";
+}
+
+/* ---------- tabs & toggles ---------- */
+function switchTab(which){
+  const b=which==="build";
+  $("#tab-dash").setAttribute("aria-selected",!b);$("#tab-build").setAttribute("aria-selected",b);
+  $("#view-dash").hidden=b;$("#view-build").hidden=!b;
+  try{localStorage.setItem("dlsl-hub-tab",which)}catch(e){}
+  scrollTo({top:0});
+}
+$("#tab-dash").onclick=()=>switchTab("dash");$("#tab-build").onclick=()=>switchTab("build");
+$("#v-learn").onclick=()=>{$("#learn").hidden=false;$("#ops").hidden=true;$("#v-learn").setAttribute("aria-pressed","true");$("#v-ops").setAttribute("aria-pressed","false")};
+$("#v-ops").onclick=()=>{$("#learn").hidden=true;$("#ops").hidden=false;$("#v-ops").setAttribute("aria-pressed","true");$("#v-learn").setAttribute("aria-pressed","false")};
+$("#f-course").onchange=e=>{course=e.target.value;renderDash()};
+$("#gen").onclick=genDraft;
+document.addEventListener("change",e=>{if(e.target.id&&e.target.id.startsWith("co-")&&$("#matrix"))renderMatrix()});
+
+renderDash();renderCOs();
+if(location.hash==="#builder")switchTab("build");
+else{try{if(localStorage.getItem("dlsl-hub-tab")==="build")switchTab("build")}catch(e){}}
+</script>
+</body>
+</html>
