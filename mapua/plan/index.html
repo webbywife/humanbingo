@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Design That Speaks · A Challenge-Based Lesson Plan</title>
+<meta name="description" content="A complete 60-minute Challenge-Based Learning lesson plan: Fundamentals of Graphic Design using Canva on iPad, from Lea Abarentos's plenary at Mapúa University, 1 October 2026.">
+<meta property="og:title" content="Design That Speaks · A complete CBL lesson plan">
+<meta property="og:description" content="Engage, investigate, act: a 60-minute graphic design lesson with a real challenge, timeline, success criteria, critique protocol, and rubric.">
+<meta property="og:image" content="https://events.webprvw.xyz/mapua/og.png">
+<meta property="og:url" content="https://events.webprvw.xyz/mapua/plan/">
+<meta name="theme-color" content="#35445A">
+<link rel="icon" href="../img/pin-mint.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#35445A; --bg2:#2C394C; --card:#3F5268; --card2:#465a72; --line:#607187;
+  --text:#E9F1FA; --muted:#A9B4C2; --faint:#8793a6;
+  --pink:#F4ACB7; --sky:#B6D8E1; --mint:#9FC4AB; --butter:#E5D698; --ink:#2C394C;
+  --sans:"Poppins","Avenir Next",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.6;padding-inline:16px;padding-block:0 56px;overflow-x:hidden}
+a{color:var(--sky)}
+h1,h2,h3{margin:0;line-height:1.15;text-wrap:balance}
+p{margin:0}
+ul,ol{margin:0}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--butter);outline-offset:2px}
+.wrap{max-width:1040px;margin:0 auto}
+.back{display:inline-block;margin-top:18px;color:var(--muted);text-decoration:none;font-size:14px;font-weight:500}
+.back:hover{color:var(--text)}
+
+/* header */
+.head{padding-block:28px 18px;display:grid;gap:14px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.kicker b{color:var(--pink)}
+.head h1{font-size:clamp(34px,6.5vw,64px);font-weight:800;text-transform:uppercase;letter-spacing:-.01em}
+.head h1 span{color:var(--pink);display:block;font-size:.5em;letter-spacing:0;margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:13px;padding:5px 12px;border-radius:999px;background:var(--card)}
+.chip i{font-style:normal;color:var(--muted)}
+
+/* section nav */
+.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg2);border-radius:14px;padding:8px;display:flex;gap:6px;overflow-x:auto;margin-block:10px 30px;box-shadow:0 6px 18px rgba(0,0,0,.18);scrollbar-width:thin}
+.toc a{flex:none;text-decoration:none;color:var(--muted);font-size:13px;font-weight:600;padding:7px 12px;border-radius:9px;white-space:nowrap}
+.toc a:hover,.toc a.here{background:var(--card);color:var(--text)}
+
+section{scroll-margin-top:80px;margin-bottom:40px;display:grid;gap:16px}
+.sec-label{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--c,var(--pink))}
+section > h2{font-size:clamp(24px,3.6vw,34px);font-weight:800;text-transform:uppercase}
+.lead{color:var(--muted);max-width:70ch}
+.panel{background:var(--card);border-radius:16px;padding:20px 22px}
+
+/* tool + why */
+.intro{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:780px){.intro{grid-template-columns:1fr}}
+.intro .panel{display:grid;gap:10px;align-content:start}
+.intro h3{font-size:20px}
+.alts{font-size:14px;color:var(--muted)}
+
+/* framework */
+.frame{display:grid;gap:12px}
+.phase{display:grid;grid-template-columns:150px 1fr;gap:0;border-radius:16px;overflow:hidden;background:var(--card)}
+@media (max-width:680px){.phase{grid-template-columns:1fr}}
+.phase-name{background:var(--pc);color:var(--ink);padding:16px 18px;font-weight:800;letter-spacing:.06em;display:grid;align-content:center;gap:2px}
+.phase-name small{font-weight:600;letter-spacing:0;font-size:12px;opacity:.8}
+.phase dl{margin:0;display:grid}
+.phase dl > div{display:grid;grid-template-columns:170px 1fr;gap:14px;padding:12px 18px;border-top:1px solid var(--line)}
+.phase dl > div:first-child{border-top:0}
+@media (max-width:680px){.phase dl > div{grid-template-columns:1fr;gap:2px}}
+.phase dt{font-weight:700;color:var(--pc)}
+.phase dd{margin:0}
+
+/* objectives */
+.obj{counter-reset:o;list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:760px){.obj{grid-template-columns:1fr}}
+.obj li{counter-increment:o;background:var(--card);border-radius:14px;padding:14px 16px 14px 56px;position:relative}
+.obj li::before{content:counter(o);position:absolute;left:16px;top:10px;font-size:26px;font-weight:800;color:var(--sky)}
+
+/* CARPH */
+.carph{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+@media (max-width:980px){.carph{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.carph{grid-template-columns:1fr}}
+.fund{background:var(--card);border-radius:16px;padding:18px;display:grid;gap:8px;align-content:start;border-top:5px solid var(--fc)}
+.fund .letter{font-size:40px;font-weight:800;color:var(--fc);line-height:1}
+.fund h3{font-size:17px;text-transform:uppercase;letter-spacing:.04em}
+.fund .tagline{font-weight:600;font-size:14px}
+.fund p.body{font-size:14px;color:var(--muted)}
+
+/* challenge */
+.quote{font-size:clamp(20px,2.6vw,26px);font-weight:700;line-height:1.35;border-left:6px solid var(--mint);padding:6px 0 6px 20px;max-width:60ch}
+.contexts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.contexts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.contexts{grid-template-columns:1fr}}
+.ctx{background:var(--card);border-radius:14px;padding:16px;display:grid;gap:6px;align-content:start}
+.ctx h3{font-size:16px;color:var(--mint)}
+.ctx p{font-size:14px;color:var(--muted)}
+.must{font-weight:600;background:var(--bg2);border-radius:12px;padding:14px 16px}
+
+/* timeline */
+.tl-tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.switch{display:inline-flex;gap:10px;align-items:center;background:var(--card);border:1.5px solid var(--line);color:var(--text);border-radius:999px;padding:6px 14px 6px 8px;font-size:14px;font-weight:600}
+.switch i{width:34px;height:20px;border-radius:999px;background:var(--line);position:relative;flex:none}
+.switch i::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--text);transition:left .15s}
+.switch[aria-pressed="true"] i{background:var(--mint)}
+.switch[aria-pressed="true"] i::after{left:17px}
+.legend{display:flex;flex-wrap:wrap;gap:8px;font-size:13px}
+.legend span{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
+.legend b{width:12px;height:12px;border-radius:3px;background:var(--pc)}
+.tl{list-style:none;padding:0;display:grid;gap:12px}
+.step{display:grid;grid-template-columns:160px 1fr;background:var(--card);border-radius:16px;overflow:hidden;border-left:6px solid var(--pc)}
+@media (max-width:760px){.step{grid-template-columns:1fr}}
+.when{padding:16px;display:grid;gap:6px;align-content:start;background:var(--card2)}
+.when .time{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.when .ph{font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--pc)}
+.when .name{font-weight:600;font-size:14px}
+.gagne{display:flex;flex-wrap:wrap;gap:4px}
+.gagne span{font-size:11px;font-weight:700;background:var(--bg2);color:var(--butter);border-radius:6px;padding:2px 7px;white-space:nowrap}
+.no-gagne .gagne{display:none}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:0}
+@media (max-width:900px){.acts{grid-template-columns:1fr}}
+.acts > div{padding:16px 18px;display:grid;gap:6px;align-content:start}
+.acts > div + div{border-left:1px solid var(--line)}
+@media (max-width:900px){.acts > div + div{border-left:0;border-top:1px solid var(--line)}}
+.acts h3{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.acts ul{padding-left:18px;display:grid;gap:4px;font-size:15px}
+.acts .say{color:var(--butter)}
+
+/* criteria */
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:820px){.three{grid-template-columns:1fr}}
+.crit{background:var(--card);border-radius:16px;padding:18px;display:grid;gap:10px;align-content:start;border-top:5px solid var(--cc)}
+.crit h3{font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--cc)}
+.crit h3 small{color:var(--muted);font-weight:500;letter-spacing:0;text-transform:none}
+.crit ul{list-style:none;padding:0;display:grid;gap:8px;font-size:15px}
+.crit li{display:grid;grid-template-columns:22px 1fr;gap:6px}
+.crit li::before{content:var(--mk);color:var(--cc);font-weight:800}
+
+/* protocol */
+.frame-lines{display:grid;gap:10px;font-size:15px}
+.frame-lines p{background:var(--bg2);border-radius:10px;padding:10px 12px}
+.frame-lines .sub{background:none;padding:0;color:var(--muted);font-size:14px}
+
+/* rubric */
+.table-wrap{overflow-x:auto;border-radius:14px}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:14px;background:var(--card)}
+th,td{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+thead th{background:var(--bg2);font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+thead th:nth-child(2){color:var(--mint)} thead th:nth-child(3){color:var(--sky)} thead th:nth-child(4){color:var(--butter)} thead th:nth-child(5){color:var(--pink)}
+tbody th{font-weight:700;width:170px}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+
+/* reflection + next */
+.prompts{counter-reset:r;list-style:none;padding:0;display:grid;gap:10px}
+.prompts li{counter-increment:r;background:var(--card);border-radius:14px;padding:14px 16px 14px 52px;position:relative}
+.prompts li::before{content:counter(r);position:absolute;left:18px;top:12px;font-weight:800;font-size:20px;color:var(--butter)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+.two ul{padding-left:18px;display:grid;gap:6px;font-size:15px}
+
+footer{color:var(--faint);font-size:13px;display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between;border-top:1px solid var(--line);padding-top:12px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.switch i::after{transition:none}}
+@media print{
+  :root{color-scheme:light;--bg:#fff;--bg2:#f1f3f6;--card:#fff;--card2:#f6f7f9;--line:#ccd3dd;--text:#1c2433;--muted:#4b5563;--faint:#6b7280;--ink:#1c2433}
+  body{padding:0}.toc,.back,.tl-tools .switch{display:none}
+  .panel,.fund,.ctx,.step,.crit,.obj li,.prompts li,table{border:1px solid var(--line)}
+  section{break-inside:auto}.step,.fund,.crit{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">&larr; All activities</a>
+
+  <header class="head">
+    <p class="kicker"><b>»</b> Challenge-based lesson plan · A complete example</p>
+    <h1>Design That Speaks<span>Fundamentals of Graphic Design</span></h1>
+    <div class="chips">
+      <span class="chip"><i>Tool</i> Canva on iPad</span>
+      <span class="chip"><i>Subject</i> Technology &amp; ICT</span>
+      <span class="chip"><i>Level</i> Junior High School</span>
+      <span class="chip"><i>Time</i> 60 minutes</span>
+    </div>
+  </header>
+
+  <nav class="toc" id="toc" aria-label="Sections of this lesson plan">
+    <a href="#overview">Overview</a>
+    <a href="#framework">CBL framework</a>
+    <a href="#objectives">Objectives</a>
+    <a href="#carph">5 fundamentals</a>
+    <a href="#challenge">The challenge</a>
+    <a href="#timeline">60-minute timeline</a>
+    <a href="#criteria">Success criteria</a>
+    <a href="#critique">Critique protocol</a>
+    <a href="#rubric">Rubric</a>
+    <a href="#differentiation">Differentiation</a>
+    <a href="#reflection">Reflection</a>
+    <a href="#next">Next steps</a>
+  </nav>
+
+  <section id="overview">
+    <div class="intro">
+      <div class="panel">
+        <p class="sec-label" style="--c:var(--sky)">Recommended iPad tool</p>
+        <h3>Canva <span style="font-weight:500;color:var(--muted);font-size:15px">(Free · App Store / canva.com)</span></h3>
+        <p>Canva is a drag-and-drop design platform that makes professional design principles accessible on iPad with no prior design software experience. It includes 1,000+ templates, a full color wheel, typography tools, grid layouts, and free asset libraries, all on a touch-friendly interface. Students can design, export, and share entirely on iPad.</p>
+        <p class="alts"><strong>Free alternatives:</strong> Adobe Express (free tier) · Google Slides (simple layouts) · Keynote (built into iPad, advanced typography tools)</p>
+      </div>
+      <div class="panel">
+        <p class="sec-label" style="--c:var(--mint)">Why this matters</p>
+        <p>Design is the silent language of every brand, poster, app, and social media post students interact with daily. When students understand design fundamentals (contrast, alignment, hierarchy, color, and typography), they stop being passive consumers and become intentional communicators. This lesson gives them a framework to critique the world around them and the tools to shape it.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="framework">
+    <p class="sec-label">Challenge-Based Learning framework</p>
+    <h2>Engage. Investigate. Act.</h2>
+    <div class="frame">
+      <div class="phase" style="--pc:var(--pink)">
+        <div class="phase-name">ENGAGE<small>Emotional engagement</small></div>
+        <dl>
+          <div><dt>Big idea</dt><dd>Design is a language, and everyone deserves to speak it.</dd></div>
+          <div><dt>Essential question</dt><dd>How can intentional design choices make a message clearer, more powerful, and more meaningful to a specific audience?</dd></div>
+          <div><dt>The challenge</dt><dd>Design a real graphic (a poster, social media card, or event flyer) for an actual school or community need, applying the 5 fundamentals of graphic design.</dd></div>
+        </dl>
+      </div>
+      <div class="phase" style="--pc:var(--sky)">
+        <div class="phase-name">INVESTIGATE<small>Cognitive engagement</small></div>
+        <dl>
+          <div><dt>Guiding questions</dt><dd>What makes a design feel professional vs cluttered? Why do some colors feel urgent and others calm? How does font choice affect trust?</dd></div>
+          <div><dt>Guiding activities</dt><dd>Analyse real-world designs · deconstruct good vs poor examples · identify the 5 fundamentals in existing graphics · sketch a layout before opening Canva</dd></div>
+        </dl>
+      </div>
+      <div class="phase" style="--pc:var(--mint)">
+        <div class="phase-name">ACT<small>Behavioral engagement</small></div>
+        <dl>
+          <div><dt>Solution</dt><dd>Students design their chosen graphic in Canva, guided by design principles, peer-reviewed, and refined before final export.</dd></div>
+          <div><dt>Reflection</dt><dd>Students present their final design, explain their principle-based decisions, and reflect on what design choices they would change and why.</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section id="objectives">
+    <p class="sec-label" style="--c:var(--sky)">Learning objectives</p>
+    <h2>By the end of this lesson, students will be able to:</h2>
+    <ol class="obj">
+      <li>Identify and explain the 5 Fundamentals of Graphic Design: Contrast, Alignment, Repetition, Proximity, and Hierarchy (CARPH).</li>
+      <li>Analyse real-world designs and critique them using design vocabulary.</li>
+      <li>Apply all 5 fundamentals intentionally in an original graphic created in Canva on iPad.</li>
+      <li>Evaluate a peer's design using a structured critique framework.</li>
+      <li>Justify every design choice (font, color, layout, spacing) in relation to their target audience.</li>
+      <li>Distinguish between a purposeful design and a visually cluttered one.</li>
+    </ol>
+  </section>
+
+  <section id="carph">
+    <p class="sec-label" style="--c:var(--butter)">The 5 fundamentals of graphic design</p>
+    <h2>C · A · R · P · H</h2>
+    <p class="lead">These principles are the foundation of all visual communication, from logos to posters to websites. Post these on screen throughout the lesson.</p>
+    <div class="carph">
+      <article class="fund" style="--fc:var(--pink)"><span class="letter">C</span><h3>Contrast</h3><p class="tagline">Make the important thing impossible to miss.</p>
+        <p class="body">Contrast is the difference between elements: dark vs light, big vs small, bold vs thin, colorful vs neutral. Without contrast, everything competes equally for attention and nothing wins. Contrast creates visual hierarchy by telling the eye: "Start here." <em>Example:</em> a black headline on a white background has strong contrast; a grey headline on a light grey background does not.</p></article>
+      <article class="fund" style="--fc:var(--sky)"><span class="letter">A</span><h3>Alignment</h3><p class="tagline">Create invisible order on the page.</p>
+        <p class="body">Nothing should be placed randomly. Every element should have a visual connection to something else on the page. Alignment creates a sense of structure and professionalism; even subtle misalignment makes a design look amateur. Left-align blocks of text. Align images to a grid. Avoid centring everything: centred layouts are often the weakest for readability.</p></article>
+      <article class="fund" style="--fc:var(--mint)"><span class="letter">R</span><h3>Repetition</h3><p class="tagline">Consistency builds trust and recognition.</p>
+        <p class="body">Repeat visual elements (colors, fonts, shapes, line weights) throughout a design to create cohesion. Repetition is what makes a brand feel like a brand. On a single page, it unifies different sections so they feel like part of the same system. <em>Example:</em> the same font for all headings, the same icon style, and the same two colors everywhere.</p></article>
+      <article class="fund" style="--fc:var(--butter)"><span class="letter">P</span><h3>Proximity</h3><p class="tagline">Group related things together.</p>
+        <p class="body">Elements that are related should be physically close to each other; unrelated elements should be separated. Proximity reduces clutter, improves readability, and helps the viewer understand the structure without reading every word. <em>Example:</em> a photo and its caption should be close; the caption and the next section's heading should have more space between them.</p></article>
+      <article class="fund" style="--fc:var(--pink)"><span class="letter">H</span><h3>Hierarchy</h3><p class="tagline">Guide the eye through a story.</p>
+        <p class="body">Visual hierarchy tells the viewer what to look at first, second, and third. It comes from size (bigger is more important), color, weight (bold is more important), and position (top-left is read first in most cultures). A strong hierarchy means someone can glance at your design for 3 seconds and still understand the most important message.</p></article>
+    </div>
+  </section>
+
+  <section id="challenge">
+    <p class="sec-label" style="--c:var(--mint)">The challenge</p>
+    <h2>A real graphic for a real audience</h2>
+    <p class="quote">“Design a real graphic for an actual school or community need, applying all 5 design fundamentals, that is so clear your audience understands the message in 3 seconds.”</p>
+    <p>Students choose <strong>one</strong> real context for their graphic:</p>
+    <div class="contexts">
+      <div class="ctx"><h3>Event poster</h3><p>Design a poster for an upcoming school event, club, or program.</p></div>
+      <div class="ctx"><h3>Social media card</h3><p>Create an awareness post about a school rule, advocacy, or community issue.</p></div>
+      <div class="ctx"><h3>Infographic card</h3><p>Design a visual one-pager that explains a concept, process, or set of tips.</p></div>
+      <div class="ctx"><h3>Brand identity card</h3><p>Create a simple brand card for an imaginary school club, business, or NGO.</p></div>
+    </div>
+    <p class="must">Your design must demonstrate all 5 fundamentals. You must be able to point to each one and explain why you made that choice for your specific audience.</p>
+  </section>
+
+  <section id="timeline">
+    <p class="sec-label" style="--c:var(--sky)">60-minute lesson timeline</p>
+    <h2>Minute by minute</h2>
+    <div class="tl-tools">
+      <div class="legend">
+        <span style="--pc:var(--pink)"><b></b>Engage</span>
+        <span style="--pc:var(--sky)"><b></b>Investigate</span>
+        <span style="--pc:var(--mint)"><b></b>Act</span>
+        <span style="--pc:var(--butter)"><b></b>Reflect</span>
+      </div>
+      <button class="switch" id="gagneToggle" aria-pressed="true"><i aria-hidden="true"></i>Show Gagné's nine events</button>
+    </div>
+    <ol class="tl" id="tl">
+      <li class="step" style="--pc:var(--pink)">
+        <div class="when"><span class="time">0–7 min</span><span class="ph">ENGAGE</span><span class="name">Design audit</span>
+          <div class="gagne"><span>1 Gain attention</span><span>3 Recall prior learning</span></div></div>
+        <div class="acts">
+          <div><h3>Teacher actions</h3><ul>
+            <li>Display 3 pairs of real-world graphics on screen: a cluttered flyer vs a clean event poster; a generic social media post vs a branded one; a hard-to-read sign vs a clear informational sign.</li>
+            <li class="say">"For each pair: which one works better? Why?"</li>
+            <li>Take 4–5 responses. Don't give answers yet. Say: <span class="say">"Every answer you just gave has a name. Today you learn what they are."</span></li></ul></div>
+          <div><h3>Student actions</h3><ul>
+            <li>Look at each pair and share their instinctive reaction.</li>
+            <li>Try to articulate WHY one design is stronger, using their own words.</li>
+            <li>Personal connection: think of a poster or ad that annoyed or confused you recently. What made it bad?</li></ul></div>
+        </div>
+      </li>
+      <li class="step" style="--pc:var(--pink)">
+        <div class="when"><span class="time">7–15 min</span><span class="ph">ENGAGE</span><span class="name">Present the challenge</span>
+          <div class="gagne"><span>2 Share the objective</span></div></div>
+        <div class="acts">
+          <div><h3>Teacher actions</h3><ul>
+            <li>Introduce the Big Idea: <span class="say">"Design is a language. Everyone can learn to speak it."</span></li>
+            <li>Reveal the Essential Question and The Challenge.</li>
+            <li>Show the 4 context options. Ask: <span class="say">"Which one feels most real and urgent to you?"</span></li>
+            <li class="say">"Before you open Canva, you must know your audience and your message. Design without purpose is just decoration."</li></ul></div>
+          <div><h3>Student actions</h3><ul>
+            <li>Choose their design context. Write their audience contract on paper: <em>"My design is for ______. They need to feel ______ and do ______ after seeing it."</em></li>
+            <li>Share their choice with a partner for a 60-second reaction.</li></ul></div>
+        </div>
+      </li>
+      <li class="step" style="--pc:var(--sky)">
+        <div class="when"><span class="time">15–28 min</span><span class="ph">INVESTIGATE</span><span class="name">Learn the principles</span>
+          <div class="gagne"><span>4 Present the content</span><span>5 Guide the learning</span></div></div>
+        <div class="acts">
+          <div><h3>Teacher actions</h3><ul>
+            <li>Walk through all 5 fundamentals (C-A-R-P-H) using the slides or board.</li>
+            <li>For EACH principle: show a before/after visual example, name it, explain it in one sentence.</li>
+            <li>Guiding questions: <span class="say">"Where is the contrast in this design? What does it make you look at first?"</span> · <span class="say">"Is this aligned to anything? What would happen if we moved it 10 pixels left?"</span> · <span class="say">"Which elements repeat? Does that help or hurt?"</span></li>
+            <li>Quick activity: students annotate a printed or on-screen sample design, labelling where each of the 5 principles appears (or fails).</li></ul></div>
+          <div><h3>Student actions</h3><ul>
+            <li>Write the 5 principles in their notebook with a one-sentence definition each.</li>
+            <li>Annotate the sample design with labels: C, A, R, P, H.</li>
+            <li>Rate the sample design 1–5 stars for each principle, and defend each rating in one sentence: <em>"This design scores 2/5 for hierarchy because the headline and body text are nearly the same size."</em></li></ul></div>
+        </div>
+      </li>
+      <li class="step" style="--pc:var(--sky)">
+        <div class="when"><span class="time">28–30 min</span><span class="ph">INVESTIGATE</span><span class="name">Sketch first</span>
+          <div class="gagne"><span>5 Guide the learning</span><span>6 Let them practice</span></div></div>
+        <div class="acts">
+          <div><h3>Teacher actions</h3><ul>
+            <li>Hard rule: <span class="say">"No one opens Canva until they have a rough sketch."</span></li>
+            <li class="say">"Professionals sketch before they design. A 60-second thumbnail saves 10 minutes of wrong turns."</li>
+            <li>Show a teacher sketch example on the board, even a rough one.</li></ul></div>
+          <div><h3>Student actions</h3><ul>
+            <li>Sketch a rough layout on paper or iPad Notes, 60 seconds maximum.</li>
+            <li>Mark: where is the headline? The image zone? The body text? The call to action?</li>
+            <li>Audience check: does this layout make sense for the person who will see it?</li></ul></div>
+        </div>
+      </li>
+      <li class="step" style="--pc:var(--mint)">
+        <div class="when"><span class="time">30–50 min</span><span class="ph">ACT</span><span class="name">Build in Canva</span>
+          <div class="gagne"><span>6 Let them practice</span></div></div>
+        <div class="acts">
+          <div><h3>Teacher actions</h3><ul>
+            <li>Set a visible timer. Keep the 5 principles and the success criteria on screen.</li>
+            <li>Circulate and ask principle-based guiding questions: <span class="say">"What creates the hierarchy here? Is the most important thing biggest?"</span> · <span class="say">"I see 4 different fonts. What does Repetition say about that?"</span> · <span class="say">"Your text and background are both light. What does Contrast say?"</span> · <span class="say">"Why is this element floating? What can you align it to?"</span></li>
+            <li>At 44 min, announce: <span class="say">"6 minutes left. Make sure all 5 fundamentals are visible."</span></li></ul></div>
+          <div><h3>Student actions</h3><ul>
+            <li>Build their graphic in Canva on iPad. Required: a clear headline with strong hierarchy · contrast between at least 2 elements · all elements aligned to a grid or to each other · consistent color and font (repetition) · related elements grouped closely (proximity) · a purpose statement visible in the design.</li>
+            <li><em>Extension:</em> add a secondary information section, use brand colors, or create a second version for a different screen size.</li></ul></div>
+        </div>
+      </li>
+      <li class="step" style="--pc:var(--mint)">
+        <div class="when"><span class="time">50–56 min</span><span class="ph">ACT</span><span class="name">Design critique</span>
+          <div class="gagne"><span>7 Give feedback</span></div></div>
+        <div class="acts">
+          <div><h3>Teacher actions</h3><ul>
+            <li>Introduce the structured critique protocol: I Notice / I Wonder / I Suggest.</li>
+            <li>Demonstrate one round on a student example (with permission).</li>
+            <li class="say">"Critique is not 'I like it' or 'it's ugly.' It is specific, principle-based feedback."</li></ul></div>
+          <div><h3>Student actions</h3><ul>
+            <li>Pair share: swap iPads and use the protocol. <strong>I notice:</strong> one specific design choice I can name, using CARPH vocabulary. <strong>I wonder:</strong> one question about an intentional choice. <strong>I suggest:</strong> one specific, actionable improvement using a design principle.</li>
+            <li>Receive feedback, then make ONE refinement before sharing.</li></ul></div>
+        </div>
+      </li>
+      <li class="step" style="--pc:var(--butter)">
+        <div class="when"><span class="time">56–58 min</span><span class="ph">REFLECT</span><span class="name">Gallery and share</span>
+          <div class="gagne"><span>8 Assess performance</span><span>9 Help them transfer</span></div></div>
+        <div class="acts">
+          <div><h3>Teacher actions</h3><ul>
+            <li>Display 3–4 designs on screen (volunteers or selected).</li>
+            <li class="say">"Explain one design decision you made using the name of the principle."</li>
+            <li>Ask the class: <span class="say">"Which principle was hardest to apply? Why?"</span></li>
+            <li>Connect to the real world: <span class="say">"If this poster went up in the hallway tomorrow, would it work?"</span></li></ul></div>
+          <div><h3>Student actions</h3><ul>
+            <li>Briefly explain one principle-based decision in their design to the class.</li>
+            <li>Reflect: <em>"My strongest principle is ___ because ___. My weakest is ___ because ___."</em></li></ul></div>
+        </div>
+      </li>
+      <li class="step" style="--pc:var(--butter)">
+        <div class="when"><span class="time">58–60 min</span><span class="ph">REFLECT</span><span class="name">Exit ticket</span>
+          <div class="gagne"><span>8 Assess performance</span><span>9 Help them transfer</span></div></div>
+        <div class="acts">
+          <div><h3>Teacher actions</h3><ul>
+            <li>Students export their design (PNG or PDF) from Canva.</li>
+            <li>Collect the exit ticket or have students submit it through Google Classroom.</li></ul></div>
+          <div><h3>Student actions</h3><ul>
+            <li>(1) Name any ONE principle and show where it appears in your design.</li>
+            <li>(2) Name a design you see daily (an app, a sign, a brand) and identify one principle in it.</li>
+            <li>(3) Complete: <em>"Before today I thought good design was ___. Now I think it's ___."</em></li></ul></div>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section id="criteria">
+    <p class="sec-label" style="--c:var(--mint)">Success criteria · post on screen during the build</p>
+    <h2>Must, should, could</h2>
+    <div class="three">
+      <div class="crit" style="--cc:var(--pink);--mk:'✓'"><h3>Must have <small>(all students)</small></h3><ul>
+        <li>Contrast: at least 2 clearly contrasting elements</li>
+        <li>Alignment: all elements aligned to a grid or to each other</li>
+        <li>Repetition: consistent font and color use (max 2 fonts, 3 colors)</li>
+        <li>Proximity: related content grouped, unrelated content separated</li>
+        <li>Hierarchy: the most important message is visually dominant</li>
+        <li>Real context: a specific audience is clearly identified</li>
+        <li>Can explain every design choice using principle vocabulary</li></ul></div>
+      <div class="crit" style="--cc:var(--sky);--mk:'◎'"><h3>Should have <small>(most)</small></h3><ul>
+        <li>Visual tone matches the audience and topic</li>
+        <li>Typography: font choice reinforces the message</li>
+        <li>Design reads clearly in 3 seconds</li>
+        <li>Whitespace used intentionally (not filled randomly)</li></ul></div>
+      <div class="crit" style="--cc:var(--butter);--mk:'★'"><h3>Could have <small>(extension)</small></h3><ul>
+        <li>Two versions for different formats (story vs post)</li>
+        <li>Custom color palette with hex codes chosen deliberately</li>
+        <li>Icon set used consistently (repetition)</li>
+        <li>Design includes a clear call to action</li></ul></div>
+    </div>
+  </section>
+
+  <section id="critique">
+    <p class="sec-label" style="--c:var(--sky)">Design critique protocol · reproducible for students</p>
+    <h2>I notice · I wonder · I suggest</h2>
+    <div class="three">
+      <div class="crit" style="--cc:var(--pink);--mk:''"><h3>I notice</h3><div class="frame-lines">
+        <p class="sub">Something specific I can observe and name</p>
+        <p>I notice the ______ (element) uses ______ (principle).</p>
+        <p>This creates a feeling of ______.</p>
+        <p>The strongest principle applied is ______.</p></div></div>
+      <div class="crit" style="--cc:var(--sky);--mk:''"><h3>I wonder</h3><div class="frame-lines">
+        <p class="sub">A question about an intentional choice</p>
+        <p>I wonder why you chose ______ for the ______.</p>
+        <p>Did you consider ______ instead?</p>
+        <p>What audience were you thinking of when you chose ______?</p></div></div>
+      <div class="crit" style="--cc:var(--mint);--mk:''"><h3>I suggest</h3><div class="frame-lines">
+        <p class="sub">One specific, actionable improvement</p>
+        <p>To improve ______ (principle), you could ______.</p>
+        <p>If you increase / decrease / change ______, the ______ would improve.</p>
+        <p>This would help your audience ______.</p></div></div>
+    </div>
+  </section>
+
+  <section id="rubric">
+    <p class="sec-label" style="--c:var(--butter)">Assessment rubric</p>
+    <h2>How the design is scored</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">Criteria</th><th scope="col">Excellent · 4</th><th scope="col">Proficient · 3</th><th scope="col">Developing · 2</th><th scope="col">Beginning · 1</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Application of principles (CARPH)</th><td>All 5 principles are clearly present and applied with intention.</td><td>4 of 5 principles are present and mostly effective.</td><td>2–3 principles present; others are accidental or inconsistent.</td><td>Fewer than 2 principles are evident.</td></tr>
+        <tr><th scope="row">Audience and purpose</th><td>Design clearly serves a defined audience; message understood in 3 seconds.</td><td>Audience is identifiable; message requires 5–10 seconds.</td><td>Audience is vague; message requires reading all text.</td><td>No clear audience or message identifiable.</td></tr>
+        <tr><th scope="row">Visual cohesion</th><td>Consistent fonts (≤2), colors (≤3), and style throughout.</td><td>Mostly consistent; 1–2 elements feel out of place.</td><td>Multiple fonts or colors create visual noise.</td><td>No visual consistency; design feels chaotic.</td></tr>
+        <tr><th scope="row">Explanation and critique</th><td>Confidently names and justifies every decision using principle vocabulary.</td><td>Explains most choices using some design vocabulary.</td><td>Explains some choices; relies on "I just thought it looked good."</td><td>Cannot explain design choices in relation to principles.</td></tr>
+        <tr><th scope="row">Critique participation</th><td>Gives specific, principle-based feedback; applies feedback received.</td><td>Gives useful feedback; applies one improvement.</td><td>Gives surface-level feedback ("looks good").</td><td>Does not complete critique or apply any feedback.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="differentiation">
+    <p class="sec-label" style="--c:var(--pink)">Differentiation</p>
+    <h2>Support, stretch, and tips</h2>
+    <div class="three">
+      <div class="crit" style="--cc:var(--sky);--mk:'·'"><h3>Support <small>(scaffold)</small></h3><ul>
+        <li>Provide a pre-built Canva template with a correct grid layout; the student only changes content.</li>
+        <li>Give a printed CARPH checklist to mark off as they build.</li>
+        <li>Limit font choice to 2 pre-selected fonts and a 3-color palette.</li>
+        <li>Pair with a stronger student for the critique phase.</li></ul></div>
+      <div class="crit" style="--cc:var(--mint);--mk:'·'"><h3>Extension <small>(stretch)</small></h3><ul>
+        <li>Create two versions: one for print (A4 poster) and one for Instagram (1080×1080).</li>
+        <li>Build a mini brand guide: 2 fonts, 3 hex colors, and a rationale for each.</li>
+        <li>Critique two peer designs in writing using I Notice / I Wonder / I Suggest.</li>
+        <li>Research color psychology: why did they choose those specific colors for their audience?</li></ul></div>
+      <div class="crit" style="--cc:var(--butter);--mk:'·'"><h3>Canva iPad tips</h3><ul>
+        <li>Tap the grid icon to turn on alignment guides; they snap elements into place.</li>
+        <li>Use Brand Kit (free) to lock colors and fonts for repetition.</li>
+        <li>Pinch to zoom in for precise alignment work.</li>
+        <li>Export as PNG (high quality) or PDF for printing.</li>
+        <li>Use Canva's color palette generator to build cohesive palettes.</li></ul></div>
+    </div>
+  </section>
+
+  <section id="reflection">
+    <p class="sec-label" style="--c:var(--butter)">Reflection prompts</p>
+    <h2>Questions to close the loop</h2>
+    <ol class="prompts">
+      <li>Walk through your design and name the principle behind each major choice. Which one did you apply most confidently?</li>
+      <li>Think of a brand, poster, or app you interact with daily. Now that you know CARPH, what do you notice about how it uses (or fails to use) these principles?</li>
+      <li>What is the difference between a design that "looks nice" and a design that "communicates effectively"?</li>
+      <li>If your target audience saw your design for only 3 seconds, what would they understand? Is that what you intended?</li>
+      <li>What would you change if you had 30 more minutes? Which principle would you strengthen first, and why?</li>
+    </ol>
+  </section>
+
+  <section id="next">
+    <p class="sec-label" style="--c:var(--mint)">Next steps and extension resources</p>
+    <h2>Where the unit goes next</h2>
+    <div class="two">
+      <div class="panel"><p class="sec-label" style="--c:var(--sky)">Next lessons</p><ul>
+        <li><strong>Lesson 2 · Color theory:</strong> primary, secondary, complementary, and analogous palettes, and their emotional associations</li>
+        <li><strong>Lesson 3 · Typography:</strong> font categories, pairing rules, readability, and hierarchy through type</li>
+        <li><strong>Lesson 4 · Layout and grids:</strong> the rule of thirds, the 12-column grid, and whitespace as a design tool</li>
+        <li><strong>Lesson 5 · Brand identity:</strong> creating a logo, brand kit, and style guide for a school club or business</li></ul></div>
+      <div class="panel"><p class="sec-label" style="--c:var(--pink)">Self-study resources</p><ul>
+        <li>Canva Design School (free): canva.com/learn/design</li>
+        <li><em>The Non-Designer's Design Book</em> by Robin Williams (classic reference on the principles of design)</li>
+        <li>GCFGlobal.org: free visual design fundamentals course</li>
+        <li>Figma (free): industry-standard design tool for advanced students</li>
+        <li>Pinterest: follow design inspiration boards to train your visual eye daily</li></ul></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>CBL Lesson Plan · Design That Speaks: Fundamentals of Graphic Design · Technology &amp; ICT · JHS · 60 min</span>
+    <span>Lea Abarentos · Instructional Design Using AI</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var btn = document.getElementById('gagneToggle'), tl = document.getElementById('tl');
+  function set(on){ btn.setAttribute('aria-pressed', on); tl.classList.toggle('no-gagne', !on); try { localStorage.setItem('plan_gagne', on ? '1' : '0'); } catch (e) {} }
+  var saved = null; try { saved = localStorage.getItem('plan_gagne'); } catch (e) {}
+  set(saved !== '0');
+  btn.addEventListener('click', function(){ set(btn.getAttribute('aria-pressed') !== 'true'); });
+
+  var links = Array.prototype.slice.call(document.querySelectorAll('#toc a'));
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (!en.isIntersecting) return;
+        links.forEach(function(a){
+          var on = a.getAttribute('href') === '#' + en.target.id;
+          a.classList.toggle('here', on);
+          if (on && a.scrollIntoView) { var toc = document.getElementById('toc'); toc.scrollLeft = a.offsetLeft - 40; }
+        });
+      });
+    }, { rootMargin: '-35% 0px -60% 0px' });
+    document.querySelectorAll('section[id]').forEach(function(s){ io.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
