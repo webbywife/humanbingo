@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Build Your First Agent</title>
+<meta name="description" content="A 5-minute, hands-on workflow from Track A, “When AI Takes Action” (Mapúa iPeople, 1 Oct 2026). Pick a task, write the agent's job description, set its tools and autonomy, and leave with instructions you can paste into your school's AI tool." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://events.webprvw.xyz/build-agent/" />
+<meta property="og:title" content="Build your first agent in 5 minutes" />
+<meta property="og:description" content="From Track A, “When AI Takes Action.” Pick one task, write its job description, and leave with instructions you can use today." />
+<meta name="theme-color" content="#35445A" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2248%22 fill=%22%2335445A%22/><path d=%22M30 52l14 14 26-30%22 stroke=%22%239FC4AB%22 stroke-width=%2210%22 fill=%22none%22 stroke-linecap=%22round%22/></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: one phone-width column; progress rail on top; one step per screen; result = card + copyable instructions.
+     Dark-first = the "When AI Takes Action" deck navy; light = soft blue-grey with deeper inks. */
+  :root{
+    color-scheme:dark;
+    --ground:#35445A; --ground-deep:#2C394C; --card:#40516B; --card-hi:#4A5D7A; --line:#5A6C88;
+    --text:#E9F1FA; --muted:#A9B4C2; --mint:#9FC4AB; --pink:#F4ACB7; --sky:#B6D8E1;
+    --mint-ink:#9FC4AB; --pink-ink:#F4ACB7; --sky-ink:#B6D8E1; --on-accent:#2C394C;
+    --warn-bg:rgba(244,172,183,.14);
+    --font:"Poppins","Avenir Next","Segoe UI",system-ui,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+    --r:14px;
+  }
+  @media (prefers-color-scheme: light){:root{
+    color-scheme:light;
+    --ground:#E9EEF4; --ground-deep:#DCE3EC; --card:#FFFFFF; --card-hi:#F3F6FA; --line:#CBD5E1;
+    --text:#1F2A3A; --muted:#5B6879; --mint:#9FC4AB; --pink:#F4ACB7; --sky:#B6D8E1;
+    --mint-ink:#2F6B48; --pink-ink:#A3325E; --sky-ink:#2A6C80; --on-accent:#1F2A3A;
+    --warn-bg:#FBE9EE;
+  }}
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--ground);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:calc(18px + env(safe-area-inset-top,0px)) calc(40px + env(safe-area-inset-bottom,0px));min-height:100vh}
+  button,input,textarea{font:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+  .app{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+  .kicker{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;gap:8px;align-items:center}
+  .kicker b{color:var(--pink-ink);font-size:15px}
+  h1{font-size:clamp(26px,7vw,36px);font-weight:800;line-height:1.12;margin:0;letter-spacing:-.01em;text-wrap:balance;text-transform:uppercase;color:var(--mint-ink)}
+  h2{font-size:21px;font-weight:700;margin:0;line-height:1.25;text-wrap:balance}
+  p{margin:0}
+  .lead{color:var(--muted)}
+  .rail{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+  .rail span{height:6px;border-radius:3px;background:var(--line)}
+  .rail span.on{background:var(--mint)}
+  .rail span.now{background:var(--pink)}
+  .stepno{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+  .card{background:var(--card);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:12px}
+  .opts{display:grid;gap:10px}
+  .opts.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .opt{background:var(--card);border:2px solid transparent;border-radius:12px;padding:14px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;width:100%}
+  .opt:hover{background:var(--card-hi)}
+  .opt[aria-pressed="true"]{border-color:var(--mint);background:var(--card-hi)}
+  .opt b{font-size:15.5px}
+  .opt small{color:var(--muted);font-size:13px;line-height:1.4}
+  .tag{display:inline-block;align-self:flex-start;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--ground-deep);color:var(--sky-ink)}
+  .tag.obe{color:var(--mint-ink)} .tag.cre{color:var(--pink-ink)}
+  label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+  input[type=text],textarea{background:var(--ground-deep);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:15px;width:100%;resize:vertical}
+  .checks{display:flex;flex-direction:column;gap:8px}
+  .chk{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:start;background:var(--ground-deep);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:14px}
+  .chk input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--mint)}
+  .chk small{display:block;color:var(--muted);font-size:12.5px}
+  .chk .s{color:var(--pink-ink);font-weight:600;font-size:12px}
+  .sub{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+  .warn{background:var(--warn-bg);border-left:4px solid var(--pink);border-radius:8px;padding:10px 12px;font-size:13.5px}
+  .warn b{color:var(--pink-ink)}
+  .dial{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .dial button{background:var(--ground-deep);border:2px solid transparent;border-radius:10px;padding:10px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12.5px;color:var(--muted)}
+  .dial button b{font-size:20px;color:var(--text)}
+  .dial button[aria-pressed="true"]{border-color:var(--mint);color:var(--text)}
+  .nav{display:flex;gap:10px;justify-content:space-between}
+  .btn{border:0;border-radius:999px;padding:12px 22px;font-weight:700;font-size:15px;cursor:pointer;background:var(--mint);color:var(--on-accent)}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+  .btn.pink{background:var(--pink)}
+  .btn[disabled]{opacity:.4;cursor:not-allowed}
+  a.btn{text-decoration:none;display:inline-block}
+  .btn.sm{padding:8px 14px;font-size:13.5px}
+  .prompt{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--ground-deep);border:1px solid var(--line);border-radius:10px;padding:14px;white-space:pre-wrap;word-break:break-word;max-height:360px;overflow:auto}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .status{font-size:13px;color:var(--mint-ink);min-height:1.2em}
+  .sum{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;font-size:14px}
+  .sum dt{color:var(--muted);font-size:12.5px;font-weight:600;padding-top:1px}
+  .sum dd{margin:0}
+  .cardimg{width:100%;max-width:100%;border-radius:12px;display:block}
+  .foot{font-size:12.5px;color:var(--muted);text-align:center}
+  .foot a{color:var(--sky-ink)}
+  .loop{display:flex;flex-wrap:wrap;gap:6px}
+  .loop span{background:var(--ground-deep);border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:600}
+  .loop span.h{color:var(--pink-ink)}
+  @media (max-width:420px){.opts.two{grid-template-columns:minmax(0,1fr)}.sum{grid-template-columns:minmax(0,1fr)}.sum dt{padding-top:6px}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app" id="app" aria-live="polite"></main>
+<p class="foot">Track A · “When AI Takes Action” · Mapúa iPeople, 1 Oct 2026<br>Nothing you type leaves your phone. <a href="../agent-ready/">Agent-Ready Challenge</a></p>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+const ROLES={
+  faculty:{name:"Faculty",hint:"Plans, quizzes, rubrics, outcomes",tasks:[
+    {id:"quiz",name:"Weekly quiz and rubric",tag:["Instructional design",""],goal:"Draft next week's quiz and rubric from my syllabus and notes.",output:"10 quiz items with an answer key, plus a 4-level rubric.",obe:true,data:["syllabus","template","past"]},
+    {id:"coatt",name:"Outcome check after each quiz",tag:["OBE","obe"],goal:"After each quiz, summarize how the class did on each course outcome.",output:"A table of the % of students meeting each CO, plus the 2 weakest items and a suggested reteach.",obe:true,data:["cos","scores"]},
+    {id:"proj",name:"Creative project brief",tag:["Creative learning","cre"],goal:"Design a creative, hands-on project with student choice for this unit.",output:"A project brief with 3 choice options, milestones, and a rubric.",obe:true,data:["syllabus","cos","template"]}]},
+  chair:{name:"Program chair",hint:"Outcome maps, syllabi, CQI",tasks:[
+    {id:"map",name:"Course-to-outcome map",tag:["OBE","obe"],goal:"Map each course's assessments to the program outcomes and flag gaps.",output:"A course × outcome table marked covered / partly / missing, with the gaps listed first.",obe:true,data:["syllabus","cos"]},
+    {id:"syl",name:"Syllabus alignment check",tag:["Instructional design",""],goal:"Check new syllabi against our template and the program outcomes.",output:"A checklist of missing or misaligned parts for each syllabus.",obe:true,data:["syllabus","template","cos","policy"]},
+    {id:"cqi",name:"End-of-term CQI summary",tag:["OBE","obe"],goal:"Summarize CO attainment across sections and suggest improvement actions.",output:"A one-page summary with 3 suggested actions for the faculty meeting.",obe:true,data:["cos","scores"]}]},
+  registrar:{name:"Registrar & admin",hint:"Records, forms, reminders",tasks:[
+    {id:"req",name:"Missing requirements reminders",tag:["Admin workload",""],goal:"Find students with incomplete requirements and draft reminders.",output:"A list of what's missing per student and a reminder draft for each (not sent).",obe:false,data:["records","policy"]},
+    {id:"forms",name:"Weekly request summary",tag:["Admin workload",""],goal:"Summarize this week's request forms and suggest where each should go.",output:"A table: request, office, priority, suggested next step.",obe:false,data:["forms","policy"]},
+    {id:"faq",name:"Enrollment FAQ drafts",tag:["Admin workload",""],goal:"Draft answers to our most common enrollment questions.",output:"10 question-and-answer drafts in our office's tone, with the policy each is based on.",obe:false,data:["policy","past"]}]},
+  support:{name:"Student support",hint:"Check-ins, resources, feedback",tasks:[
+    {id:"check",name:"Weekly check-in list",tag:["Student success",""],goal:"Flag students who may need a check-in, using rules we agreed on.",output:"A list with the reason for each flag and an adviser note draft for each (not sent).",obe:false,data:["attendance","scores"]},
+    {id:"res",name:"Resource matcher",tag:["Student success",""],goal:"Match common student concerns to the right school resource.",output:"A table: concern, resource, office, how to reach them.",obe:false,data:["policy"]},
+    {id:"fb",name:"Program feedback themes",tag:["Student success",""],goal:"Summarize student feedback from a program into themes.",output:"The top 5 themes with short sample quotes (no names).",obe:false,data:["forms"]}]}
+};
+const DATA=[
+  ["syllabus","Syllabus or course guide",false],["template","Templates (lesson, quiz, module, forms)",false],["past","Past materials you made",false],
+  ["cos","Course / program outcomes list",false],["policy","Policies and handbook",false],["forms","Request or feedback forms",false],
+  ["scores","Grades or quiz scores",true],["attendance","Attendance or submissions",true],["records","Student records",true]];
+const NEVER=[["publish","Never publish, post, or send anything by itself"],["grade","Never give final grades or decisions about a student"],["names","Never use real student names while we are testing"],["guess","Flag anything it's unsure about instead of guessing"]];
+const TOOLS=[["No code",["Gemini Gem","Custom GPT","Claude Project","NotebookLM","Microsoft Copilot"]],["Low code (runs on a schedule)",["Apps Script","Power Automate","n8n"]]];
+const LEVELS=[[1,"Suggest","It suggests. You do every step."],[2,"Draft","It drafts. You approve each time."],[3,"Routine","It runs routine cases. You check exceptions."],[4,"Alone","It acts alone. You audit after."]];
+const TESTS=[["fake","Try it on fake or sample data first"],["ten","Check 10 outputs before trusting it"],["log","Keep a simple log of what it did"],["peer","Ask one colleague to try it and give feedback"],["dpo","Check with our DPO before using real student data"]];
+
+const KEY="build-agent-v1";
+let S={step:0,role:null,task:null,goal:"",output:"",obe:true,cos:"",never:["publish","grade","names","guess"],data:[],tool:"",level:2,approver:"Me",tests:["fake","ten","log"]};
+try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");if(saved&&typeof saved==="object")S=Object.assign(S,saved)}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const task=()=>S.role&&ROLES[S.role].tasks.find(t=>t.id===S.task);
+const sensitive=()=>S.data.some(d=>DATA.find(x=>x[0]===d)?.[2]);
+
+function rail(){return `<div class="rail" aria-hidden="true">${[1,2,3,4,5,6].map(i=>`<span class="${i<S.step?"on":i===S.step?"now":""}"></span>`).join("")}</div><p class="stepno">Step ${S.step} of 6</p>`}
+function nav(canNext,nextLabel="Next"){return `<div class="nav"><button class="btn ghost" id="back">Back</button><button class="btn" id="next" ${canNext?"":"disabled"}>${nextLabel}</button></div>`}
+
+const SCREENS={
+  0:()=>`<p class="kicker"><b>»</b> Track A · How to start</p>
+    <h1>Build your first agent</h1>
+    <p class="lead">You don't start by building an agent. You start with one boring task. In about 5 minutes you'll pick a task, write the agent's job description, and leave with instructions you can paste into your school's AI tool today.</p>
+    <div class="loop"><span>1 Pick a task</span><span>2 Job description</span><span>3 Tools and data</span><span class="h">4 Autonomy</span><span>5 Test plan</span><span>6 Your agent</span></div>
+    <div class="nav"><span></span><button class="btn" id="next">${S.role?"Continue":"Start"}</button></div>
+    ${S.role?`<button class="btn ghost sm" id="reset" style="align-self:flex-start">Start over</button>`:""}`,
+  1:()=>`${rail()}<h2>Whose Monday are we fixing?</h2><p class="lead">Pick the card that looks like your week.</p>
+    <div class="opts two">${Object.entries(ROLES).map(([k,r])=>`<button class="opt" data-role="${k}" aria-pressed="${S.role===k}"><b>${r.name}</b><small>${r.hint}</small></button>`).join("")}</div>
+    ${S.role?`<h2 style="margin-top:6px">Pick one task</h2><p class="lead">Repeated, rule-based, and boring is perfect.</p>
+    <div class="opts">${ROLES[S.role].tasks.map(t=>`<button class="opt" data-task="${t.id}" aria-pressed="${S.task===t.id}"><span class="tag ${t.tag[1]}">${t.tag[0]}</span><b>${t.name}</b><small>${esc(t.goal)}</small></button>`).join("")}</div>`:""}
+    ${nav(!!task())}`,
+  2:()=>`${rail()}<h2>Write its job description</h2><p class="lead">Like onboarding a new staff member: what's the goal, what does “done” look like, and what must it never do? Edit anything.</p>
+    <div class="card">
+      <label class="f">Goal<textarea id="goal" rows="2">${esc(S.goal)}</textarea></label>
+      <label class="f">What it should produce<textarea id="output" rows="2">${esc(S.output)}</textarea></label>
+      <label class="chk"><input type="checkbox" id="obe" ${S.obe?"checked":""}><span><b>Tag everything to course outcomes (OBE)</b><small>Each item gets a CO label, so you can track attainment later.</small></span></label>
+      ${S.obe?`<label class="f">Your course outcomes (short labels)<input type="text" id="cos" value="${esc(S.cos)}" placeholder="e.g. CO1 Explain…, CO2 Apply…, CO3 Design…"></label>`:""}
+      <p class="sub">It must never</p>
+      <div class="checks">${NEVER.map(([k,l])=>`<label class="chk"><input type="checkbox" data-never="${k}" ${S.never.includes(k)?"checked":""}><span>${l}</span></label>`).join("")}</div>
+    </div>${nav(S.goal.trim()&&S.output.trim())}`,
+  3:()=>`${rail()}<h2>Give it tools and data</h2><p class="lead">Only what it needs. Start read-only.</p>
+    <div class="card"><p class="sub">What it can read</p>
+      <div class="checks">${DATA.map(([k,l,s])=>`<label class="chk"><input type="checkbox" data-data="${k}" ${S.data.includes(k)?"checked":""}><span>${l}${s?` <span class="s">· student data</span>`:""}</span></label>`).join("")}</div>
+      ${sensitive()?`<p class="warn"><b>Student data selected.</b> Practice with fake names first, and check with your DPO before using real records (RA 10173).</p>`:""}
+      <p class="sub">Where you'll build it</p>
+      ${TOOLS.map(([g,list])=>`<p style="font-size:13px;color:var(--muted);font-weight:600">${g}</p><div class="opts two">${list.map(t=>`<button class="opt" data-tool="${t}" aria-pressed="${S.tool===t}"><b>${t}</b></button>`).join("")}</div>`).join("")}
+      <p style="font-size:13px;color:var(--muted)">Use the one your school licenses and approves, under your school account.</p>
+    </div>${nav(S.data.length&&S.tool)}`,
+  4:()=>`${rail()}<h2>How much can it do alone?</h2><p class="lead">Turn the autonomy dial one notch at a time. Most school tasks should start at 2.</p>
+    <div class="card"><div class="dial">${LEVELS.map(([n,l])=>`<button data-level="${n}" aria-pressed="${S.level===n}"><b>${n}</b>${l}</button>`).join("")}</div>
+      <p><b>Level ${S.level}:</b> ${LEVELS[S.level-1][2]}</p>
+      ${S.level>2?`<p class="warn"><b>Start at 2.</b> Levels 3 and 4 need a proven track record, clean data, and your school's approval. Your card will say “start at 2, then move up.”</p>`:""}
+      <label class="f">Who approves its work?<input type="text" id="approver" value="${esc(S.approver)}" placeholder="Me, my chair, the adviser…"></label>
+    </div>${nav(S.approver.trim())}`,
+  5:()=>`${rail()}<h2>Test it, then let it grow</h2><p class="lead">Pick your test plan. Good 10 times in a row? Then put it on a schedule.</p>
+    <div class="card"><div class="checks">${TESTS.map(([k,l])=>`<label class="chk"><input type="checkbox" data-test="${k}" ${S.tests.includes(k)?"checked":""}><span>${l}</span></label>`).join("")}</div>
+      ${sensitive()&&!S.tests.includes("dpo")?`<p class="warn"><b>You picked student data.</b> Add the DPO check to your plan.</p>`:""}
+    </div>${nav(S.tests.length,"See my agent")}`,
+  6:()=>{const t=task(),p=buildPrompt();return `${rail()}<h2>Your agent: ${esc(t.name)}</h2>
+    <div class="card"><dl class="sum">
+      <dt>Role</dt><dd>${ROLES[S.role].name}</dd><dt>Goal</dt><dd>${esc(S.goal)}</dd><dt>Output</dt><dd>${esc(S.output)}</dd>
+      ${S.obe?`<dt>OBE</dt><dd>Tagged to course outcomes${S.cos.trim()?`: ${esc(S.cos)}`:""}</dd>`:""}
+      <dt>Reads</dt><dd>${S.data.map(d=>DATA.find(x=>x[0]===d)[1]).join(", ")}</dd><dt>Built in</dt><dd>${esc(S.tool)}</dd>
+      <dt>Autonomy</dt><dd>Level ${Math.min(S.level,2)} · ${esc(approveLine().replace("It drafts. ",""))}${S.level>2?` (goal: level ${S.level} later)`:""}</dd></dl></div>
+    <h2>Paste this into ${esc(S.tool)}</h2><p class="lead">These are your agent's standing instructions. Add your files, then give it this week's task.</p>
+    <pre class="prompt" id="prompt">${esc(p)}</pre>
+    <div class="row"><button class="btn" id="copy">Copy instructions</button><span class="status" id="st"></span></div>
+    <h2>Your agent card</h2><img class="cardimg" id="cardimg" alt="Your agent card">
+    <div class="row"><a class="btn pink" id="dl" download="my-first-agent.png">Download card</a><button class="btn ghost" id="share" hidden>Share</button></div>
+    <p class="lead">Your next step: try it this week on fake data, and bring one colleague into the sandbox with you.</p>
+    <div class="nav"><button class="btn ghost" id="back">Back</button><button class="btn ghost" id="reset">Build another</button></div>`}
+};
+
+function buildPrompt(){
+  const t=task(),data=S.data.map(d=>DATA.find(x=>x[0]===d)[1]),nv=S.never.map(k=>NEVER.find(x=>x[0]===k)[1]);
+  const L=[];
+  L.push(`You are my "${t.name}" assistant. I work as ${ROLES[S.role].name.toLowerCase()} in a school.`,"");
+  L.push("GOAL",S.goal.trim(),"");
+  L.push("WHAT TO PRODUCE",S.output.trim(),"");
+  L.push("USE ONLY THESE SOURCES",...data.map(d=>"- "+d),"");
+  if(S.obe){L.push("OUTCOMES (OBE)",`Tag every item you produce to one course outcome${S.cos.trim()?": "+S.cos.trim():""}.`,"If something doesn't fit any outcome, say so instead of forcing it.","")}
+  L.push("RULES",`- You prepare drafts only. ${/^(me|i|myself)?$/i.test(S.approver.trim())?"I":S.approver.trim()} will review and approve before anything is used.`,...nv.map(n=>"- "+n+"."),"- If a source is missing or unclear, ask me before you start.","");
+  L.push("HOW TO WORK","1. List what you read and anything that's missing.","2. Show your plan in 3–5 steps.","3. Produce the draft.","4. End with a short checklist of what I should double-check.");
+  return L.join("\n");
+}
+
+function drawCard(){
+  const t=task(),W=1080,H=1350,c=document.createElement("canvas");c.width=W;c.height=H;const g=c.getContext("2d");
+  const F='"Poppins","Avenir Next",system-ui,sans-serif';
+  g.fillStyle="#35445A";g.fillRect(0,0,W,H);
+  g.fillStyle="#40516B";roundRect(g,60,60,W-120,H-120,36);g.fill();
+  g.fillStyle="#F4ACB7";g.font=`700 30px ${F}`;g.fillText("»  MY FIRST AGENT",110,150);
+  g.fillStyle="#9FC4AB";g.font=`800 64px ${F}`;let y=wrap(g,t.name.toUpperCase(),110,240,W-220,74);
+  g.fillStyle="#A9B4C2";g.font=`500 32px ${F}`;g.fillText(ROLES[S.role].name,110,y+64);
+  y+=150;
+  const rows=[["GOAL",S.goal],["PRODUCES",S.output],["BUILT IN",S.tool+(S.obe?"  ·  tagged to course outcomes":"")]];
+  rows.forEach(([k,v])=>{g.fillStyle="#B6D8E1";g.font=`700 26px ${F}`;g.fillText(k,110,y);g.fillStyle="#E9F1FA";g.font=`400 34px ${F}`;y=wrap(g,v.trim(),110,y+50,W-220,46,3)+70});
+  // dial
+  y+=10;g.fillStyle="#F4ACB7";g.font=`700 26px ${F}`;g.fillText("AUTONOMY DIAL",110,y);y+=34;
+  const lv=Math.min(S.level,2),bw=(W-220-3*16)/4;
+  LEVELS.forEach(([n,l],i)=>{const x=110+i*(bw+16);g.fillStyle=n===lv?"#9FC4AB":"#2C394C";roundRect(g,x,y,bw,110,16);g.fill();
+    g.fillStyle=n===lv?"#2C394C":"#A9B4C2";g.font=`800 42px ${F}`;g.textAlign="center";g.fillText(String(n),x+bw/2,y+54);g.font=`500 24px ${F}`;g.fillText(l,x+bw/2,y+90);g.textAlign="left"});
+  y+=170;
+  g.fillStyle="#E9F1FA";g.font=`600 36px ${F}`;wrap(g,approveLine(),110,y,W-220,46,2);
+  g.fillStyle="#2C394C";roundRect(g,60,H-200,W-120,140,0);g.fill();
+  g.fillStyle="#9FC4AB";g.font=`700 30px ${F}`;g.fillText("AI prepares. People decide.",110,H-128);
+  g.fillStyle="#A9B4C2";g.font=`400 22px ${F}`;g.fillText("Track A · When AI Takes Action · Mapúa iPeople 2026",110,H-88);
+  return c;
+}
+function approveLine(){const a=S.approver.trim();return /^(me|i|myself)?$/i.test(a)?"It drafts. I approve.":`It drafts. ${a} approves.`}
+function roundRect(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+function wrap(g,text,x,y,maxW,lh,maxLines=4){const words=String(text).split(/\s+/);let line="",n=0;
+  for(let i=0;i<words.length;i++){const test=line?line+" "+words[i]:words[i];
+    if(g.measureText(test).width>maxW&&line){n++;if(n>=maxLines){g.fillText(line.replace(/\s*\S*$/,"")+"…",x,y);return y}g.fillText(line,x,y);y+=lh;line=words[i]}else line=test}
+  if(line)g.fillText(line,x,y);return y}
+
+function render(){
+  $("#app").innerHTML=SCREENS[S.step]();save();bind();
+  if(S.step>0)window.scrollTo({top:0});
+}
+function go(n){S.step=Math.max(0,Math.min(6,n));render()}
+function bind(){
+  $("#next")&&($("#next").onclick=()=>go(S.step+1));
+  $("#back")&&($("#back").onclick=()=>go(S.step-1));
+  $("#reset")&&($("#reset").onclick=()=>{S={step:1,role:null,task:null,goal:"",output:"",obe:true,cos:"",never:["publish","grade","names","guess"],data:[],tool:"",level:2,approver:"Me",tests:["fake","ten","log"]};render()});
+  document.querySelectorAll("[data-role]").forEach(b=>b.onclick=()=>{if(S.role!==b.dataset.role){S.role=b.dataset.role;S.task=null}render()});
+  document.querySelectorAll("[data-task]").forEach(b=>b.onclick=()=>{const t=ROLES[S.role].tasks.find(x=>x.id===b.dataset.task);S.task=t.id;S.goal=t.goal;S.output=t.output;S.obe=t.obe;S.data=[...t.data];render();$("#next")?.scrollIntoView({behavior:"smooth",block:"center"})});
+  const txt=(id,k)=>{const el=$("#"+id);if(el)el.oninput=()=>{S[k]=el.value;save();const n=$("#next");if(n)n.disabled=!(S.step===2?S.goal.trim()&&S.output.trim():S.step===4?S.approver.trim():true)}};
+  txt("goal","goal");txt("output","output");txt("cos","cos");txt("approver","approver");
+  $("#obe")&&($("#obe").onchange=e=>{S.obe=e.target.checked;render()});
+  const multi=(attr,key)=>document.querySelectorAll(`[data-${attr}]`).forEach(el=>el.onchange=()=>{const v=el.dataset[attr];S[key]=el.checked?[...new Set([...S[key],v])]:S[key].filter(x=>x!==v);render()});
+  multi("never","never");multi("data","data");multi("test","tests");
+  document.querySelectorAll("[data-tool]").forEach(b=>b.onclick=()=>{S.tool=b.dataset.tool;render()});
+  document.querySelectorAll("[data-level]").forEach(b=>b.onclick=()=>{S.level=+b.dataset.level;render()});
+  if(S.step===6){
+    (document.fonts?document.fonts.ready:Promise.resolve()).then(()=>{if(S.step!==6||!$("#cardimg"))return;const c=drawCard();const url=c.toDataURL("image/png");$("#cardimg").src=url;$("#dl").href=url;
+    $("#copy").onclick=async()=>{const p=buildPrompt();try{await navigator.clipboard.writeText(p);$("#st").textContent="Copied. Paste it into "+S.tool+"."}catch(e){const r=document.createRange();r.selectNodeContents($("#prompt"));const s=getSelection();s.removeAllRanges();s.addRange(r);$("#st").textContent="Selected. Copy it from here."}};
+    if(navigator.canShare){c.toBlob(b=>{if(!b)return;const f=new File([b],"my-first-agent.png",{type:"image/png"});const data={files:[f],title:"My first agent",text:"AI prepares. People decide. #WhenAITakesAction"};
+      if(navigator.canShare(data)){const sb=$("#share");sb.hidden=false;sb.onclick=async()=>{try{await navigator.share(data)}catch(e){}}}},"image/png")}});
+  }
+}
+render();
+</script>
+</body>
+</html>
